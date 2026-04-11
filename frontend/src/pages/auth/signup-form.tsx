@@ -24,7 +24,7 @@ export function SignupForm({
   return (
     <GuestLayout>
       <div className={cn("flex flex-col gap-6 p-5", className)} {...props}>
-        <Card className="p-5">
+        <Card className="p-3">
           <CardHeader className="text-center my-5">
             <CardTitle className="text-xl">Create your account</CardTitle>
             <CardDescription>
