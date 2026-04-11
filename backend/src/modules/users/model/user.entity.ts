@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   Index,
+  BaseEntity,
 } from 'typeorm';
 
 export enum UserRole {
@@ -22,14 +23,14 @@ export enum UserStatus {
 }
 
 @Entity('users')
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'first_name', type: 'varchar', length: 100 })
+  @Column({ name: 'first_name', type: 'varchar', length: 100, nullable: true })
   firstName: string;
 
-  @Column({ name: 'last_name', type: 'varchar', length: 100 })
+  @Column({ name: 'last_name', type: 'varchar', length: 100, nullable: true })
   lastName: string;
 
   @Index({ unique: true })

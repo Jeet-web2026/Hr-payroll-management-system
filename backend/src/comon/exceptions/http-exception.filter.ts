@@ -35,11 +35,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof Error) {
       message = exception.message;
     }
-
-    this.logger.error(
-      `[${request.method}] ${request.url} - ${statusCode} - ${JSON.stringify(message)}`,
-      exception instanceof Error ? exception.stack : '',
-    );
+    
     response.status(statusCode).json({
       success: false,
       statusCode,

@@ -38,13 +38,9 @@ export function SignupForm({
                     placeholder="m@example.com"
                     required
                   />
-                  <FieldDescription>
-                    We&apos;ll use this to contact you. We will not share your
-                    email with anyone else.
-                  </FieldDescription>
                 </Field>
                 <Field>
-                  <Field className="grid grid-cols-2 gap-4">
+                  <Field className="flex flex-col gap-4">
                     <Field>
                       <FieldLabel htmlFor="password">Password</FieldLabel>
                       <Input id="password" type="password" required />
