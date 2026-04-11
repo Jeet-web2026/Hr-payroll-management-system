@@ -4,9 +4,29 @@ import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { UsersModule } from './modules/users/users.module';
+import { ConfigModule } from '@nestjs/config';
+import { HealthModule } from './modules/health/health.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [AuthModule, DashboardModule, UsersModule],
+  imports: [
+    AuthModule,
+    DashboardModule,
+    UsersModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    HealthModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DB_URL,
+      autoLoadEntities: true,
+      synchronize: true,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
