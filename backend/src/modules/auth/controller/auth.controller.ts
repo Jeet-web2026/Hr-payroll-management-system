@@ -1,13 +1,10 @@
-import {
-  Controller,
-  HttpException,
-  Post,
-} from '@nestjs/common';
+import { Controller, HttpCode, HttpException, Post } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
   @Post('signin')
+  @HttpCode(200)
   signin() {
-    return { message: 'Sign in successful' };
+    return true;
   }
 }
