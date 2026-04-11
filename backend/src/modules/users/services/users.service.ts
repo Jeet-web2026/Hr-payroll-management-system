@@ -18,4 +18,12 @@ export class UsersService {
       throw new NotFoundException(`User not exsists`);
     }
   }
+
+  async createUser(){
+    try {
+        
+    } catch (error) {
+        
+    }
+  }
 }
