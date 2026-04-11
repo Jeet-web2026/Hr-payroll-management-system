@@ -1,5 +1,9 @@
-export const AuthLayout = () => {
+import type React from "react"
+
+export const AuthLayout = ({ children } : { children: React.ReactNode }) => {
   return (
-    <div>authLayout</div>
+    <main>
+      {children}
+    </main>
   )
 }
