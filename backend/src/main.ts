@@ -2,11 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { onlyJsonValidation } from './comon/middlewares/onlyJsonValidation.middleware';
 import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './comon/exceptions/http-exception.filter';
+import { GlobalResponseInterceptor } from './comon/interceptors/globalSuccessResponse.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.use(onlyJsonValidation);
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new GlobalResponseInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
