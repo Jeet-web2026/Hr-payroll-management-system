@@ -45,12 +45,6 @@ export function SigninForm({
                       <FieldLabel htmlFor="password">Password</FieldLabel>
                       <Input id="password" type="password" required />
                     </Field>
-                    <Field>
-                      <FieldLabel htmlFor="confirm-password">
-                        Confirm Password
-                      </FieldLabel>
-                      <Input id="confirm-password" type="password" required />
-                    </Field>
                   </Field>
                   <FieldDescription>
                     Must be at least 8 characters long.

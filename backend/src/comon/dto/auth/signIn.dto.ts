@@ -12,7 +12,4 @@ export class SignInDto {
       'Password must contain at least one uppercase, one lowercase, and one special character',
   })
   password: string;
-
-  @IsNotEmpty()
-  confirmpassword: string;
 }
