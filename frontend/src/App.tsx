@@ -1,11 +1,17 @@
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
+import { SignupForm } from './components/signup-form'
+import { ThemeProvider } from './components/themes/theme-provider'
 
 function App() {
 
   return (
-    <>
-      <h1 className='underline'>hello world</h1>
-    </>
+    <ThemeProvider>
+      <Routes>
+        <Route path="/" element={<SignupForm />} />
+        <Route path="/auth/signin" element={"HI"} />
+      </Routes>
+    </ThemeProvider>
   )
 }
 
