@@ -42,12 +42,12 @@ export function SignupForm({
     const { "first-name": firstName, "last-name": lastName, email, password, "confirm-password": confirmPassword } = formData;
 
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      toast.error("All fields are required", { position: "bottom-right", richColors: true });
+      toast.error("All fields are required", { position: "top-right", richColors: true });
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match", { position: "bottom-right", richColors: true });
+      toast.error("Passwords do not match", { position: "top-right", richColors: true });
       return;
     }
   }
