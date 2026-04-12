@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignInDto } from '../../../comon/dto/auth/signIn.dto';
 import { UsersService } from '../../users/services/users.service';
+import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,5 +13,9 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Invalid credentials');
     }
+  }
+
+  async signUp(userData: UserDataDto): Promise<any> {
+    return this.userService.createUser(userData);
   }
 }
