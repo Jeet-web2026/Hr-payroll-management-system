@@ -1,6 +1,7 @@
 import {
   BadGatewayException,
   ConflictException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -42,7 +43,7 @@ export class UsersService {
       });
 
       if (userExists) {
-        throw new ConflictException();
+        throw new ConflictException('Duplicate entry');
       }
 
       const hashedPassword = await bcrypt.hash(userData.password, 10);
@@ -54,10 +55,14 @@ export class UsersService {
         role: UserRole.EMPLOYEE,
         status: UserStatus.INACTIVE,
       });
+
       return await this.userRepository.save(user);
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       console.log(error);
-      throw new BadGatewayException(`Failed to create user`);
+      throw new BadGatewayException('Failed to create user');
     }
   }
 }

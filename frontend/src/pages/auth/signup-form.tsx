@@ -16,11 +16,43 @@ import {
 import { Input } from "@/components/ui/input"
 import { GuestLayout } from "@/comon/guestLayout"
 import { Link } from "react-router-dom"
+import { useState } from "react"
+import { toast } from "sonner"
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+  const [formData, setFormData] = useState({
+    "first-name": "",
+    "last-name": "",
+    "email": "",
+    "password": "",
+    "confirm-password": ""
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const signupFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const { "first-name": firstName, "last-name": lastName, email, password, "confirm-password": confirmPassword } = formData;
+
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      toast.error("All fields are required", { position: "bottom-right", richColors: true });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match", { position: "bottom-right", richColors: true });
+      return;
+    }
+  }
+
+
   return (
     <GuestLayout>
       <div className={cn("flex flex-col gap-6 p-5", className)} {...props}>
@@ -32,16 +64,16 @@ export function SignupForm({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form>
+            <form onSubmit={signupFormSubmission}>
               <FieldGroup>
                 <Field className="flex flex-col lg:flex-row gap-3">
                   <Field>
                     <FieldLabel htmlFor="first-name">First Name</FieldLabel>
-                    <Input id="first-name" type="text" placeholder="e.g. John" required />
+                    <Input id="first-name" type="text" placeholder="e.g. John" name="first-name" onChange={handleChange} />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="last-name">Last Name</FieldLabel>
-                    <Input id="last-name" type="text" placeholder="e.g. Doe" required />
+                    <Input id="last-name" type="text" placeholder="e.g. Doe" name="last-name" onChange={handleChange} />
                   </Field>
                 </Field>
                 <Field>
@@ -50,20 +82,21 @@ export function SignupForm({
                     id="email"
                     type="email"
                     placeholder="e.g. m@example.com"
-                    required
+                    name="email"
+                    onChange={handleChange}
                   />
                 </Field>
                 <Field>
                   <Field className="flex flex-col gap-4">
                     <Field>
                       <FieldLabel htmlFor="password">Password</FieldLabel>
-                      <Input id="password" type="password" required />
+                      <Input id="password" type="password" name="password" onChange={handleChange} />
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="confirm-password">
                         Confirm Password
                       </FieldLabel>
-                      <Input id="confirm-password" type="password" required />
+                      <Input id="confirm-password" type="password" name="confirm-password" onChange={handleChange} />
                     </Field>
                   </Field>
                   <FieldDescription>
