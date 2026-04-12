@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -36,6 +37,14 @@ export class UsersService {
 
   async createUser(userData: UserDataDto): Promise<User> {
     try {
+      const userExists = await this.userRepository.findOne({
+        where: { email: userData.email },
+      });
+
+      if (userExists) {
+        throw new ConflictException();
+      }
+
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       const user = this.userRepository.create({
         firstName: userData.firstName,
