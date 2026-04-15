@@ -33,6 +33,8 @@ export function SignupForm({
     confirmpassword: ""
   });
 
+  const [isPending, setIsPending] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -52,11 +54,12 @@ export function SignupForm({
       return;
     }
 
+    setIsPending(true)
     try {
       const res = await apiService.post('/auth/signup', formData);
-      console.log(res.data);
       toast.success(res.data?.message, { position: "top-right", richColors: true });
     } catch (error: Array<any> | any) {
+      setIsPending(false);
       let responseStatus = error.response?.data.success;
 
       if (responseStatus === false) {
@@ -78,6 +81,8 @@ export function SignupForm({
           richColors: true,
         });
       }
+    } finally {
+      setIsPending(false);
     }
   }
 
@@ -133,8 +138,16 @@ export function SignupForm({
                   </FieldDescription>
                 </Field>
                 <Field>
-                  
-                  <Button type="submit">Create Account</Button>
+                  <Button type="submit" disabled={isPending}>
+                    {isPending ? (
+                      <>
+                        <i className="ri-loader-2-line animate-spin text-lg me-1"></i>
+                        Creating...
+                      </>
+                    ) : (
+                      'Create Account'
+                    )}
+                  </Button>
                   <FieldDescription className="text-center">
                     Already have an account? <Link to="/">Sign in</Link>
                   </FieldDescription>
