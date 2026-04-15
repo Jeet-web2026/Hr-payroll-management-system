@@ -16,6 +16,11 @@ import { MailService } from './service/mail.service';
             pass: process.env.MAIL_PASS,
           },
         },
+        tls: {
+          rejectUnauthorized: false,
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
         defaults: {
           from: `"TeamHub - Support" <${process.env.MAIL_FROM}>`,
         },
