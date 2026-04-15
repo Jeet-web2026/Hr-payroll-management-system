@@ -1,8 +1,9 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, HttpCode, Post, UseInterceptors } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { SignInDto } from '../../../comon/dto/auth/signIn.dto';
 import { User } from '../../users/model/user.entity';
 import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
+import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -16,7 +17,8 @@ export class AuthController {
 
   @Post('signup')
   @HttpCode(201)
-  signup(@Body() userData: UserDataDto): Promise<User> {
+  @UseInterceptors(ClassSerializerInterceptor)
+  signup(@Body() userData: UserDataDto): Promise<UserResponseDto> {
     return this.authService.signUp(userData);
   }
 }

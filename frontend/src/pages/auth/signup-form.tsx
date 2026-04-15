@@ -26,11 +26,11 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
 
   const [formData, setFormData] = useState({
-    "first-name": "",
-    "last-name": "",
-    "email": "",
-    "password": "",
-    "confirm-password": ""
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmpassword: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,14 +40,14 @@ export function SignupForm({
   const signupFormSubmission = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { "first-name": firstName, "last-name": lastName, email, password, "confirm-password": confirmPassword } = formData;
+    const { firstName, lastName, email, password, confirmpassword } = formData;
 
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    if (!firstName || !lastName || !email || !password || !confirmpassword) {
       toast.error("All fields are required", { position: "top-right", richColors: true });
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (password !== confirmpassword) {
       toast.error("Passwords do not match", { position: "top-right", richColors: true });
       return;
     }
@@ -55,18 +55,27 @@ export function SignupForm({
     try {
       const res = await apiService.post('/auth/signup', formData);
       console.log(res.data);
-      toast.success("Account created successfully! Please sign in.", { position: "top-right", richColors: true });
+      toast.success(res.data?.message, { position: "top-right", richColors: true });
     } catch (error: Array<any> | any) {
-      let errorMessages = error.response?.data.message;
+      let responseStatus = error.response?.data.success;
 
-      if (errorMessages && Array.isArray(errorMessages)) {
-        errorMessages.forEach((element: string, index: number) => {
-          setTimeout(() => {
-            toast.error(element, {
-              position: "top-right",
-              richColors: true,
-            });
-          }, index * 800);
+      if (responseStatus === false) {
+        let errorMessages = error.response?.data.message;
+
+        if (errorMessages && Array.isArray(errorMessages)) {
+          errorMessages.forEach((element: string, index: number) => {
+            setTimeout(() => {
+              toast.error(element, {
+                position: "top-right",
+                richColors: true,
+              });
+            }, index * 800);
+          });
+        }
+
+        toast.error(error.response?.data.message, {
+          position: "top-right",
+          richColors: true,
         });
       }
     }
@@ -89,11 +98,11 @@ export function SignupForm({
                 <Field className="flex flex-col lg:flex-row gap-3">
                   <Field>
                     <FieldLabel htmlFor="first-name">First Name</FieldLabel>
-                    <Input id="first-name" type="text" placeholder="e.g. John" name="first-name" onChange={handleChange} />
+                    <Input id="first-name" type="text" placeholder="e.g. John" name="firstName" onChange={handleChange} />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="last-name">Last Name</FieldLabel>
-                    <Input id="last-name" type="text" placeholder="e.g. Doe" name="last-name" onChange={handleChange} />
+                    <Input id="last-name" type="text" placeholder="e.g. Doe" name="lastName" onChange={handleChange} />
                   </Field>
                 </Field>
                 <Field>
@@ -116,7 +125,7 @@ export function SignupForm({
                       <FieldLabel htmlFor="confirm-password">
                         Confirm Password
                       </FieldLabel>
-                      <Input id="confirm-password" type="password" name="confirm-password" onChange={handleChange} />
+                      <Input id="confirm-password" type="password" name="confirmpassword" onChange={handleChange} />
                     </Field>
                   </Field>
                   <FieldDescription>
