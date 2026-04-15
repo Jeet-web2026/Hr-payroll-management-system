@@ -15,17 +15,10 @@ export class MailService {
     otp: number,
     otpExpiry: Date,
   ): Promise<void> {
-    // await this.mailerService.sendMail({
-    //   to,
-    //   subject: 'Welcome to Our App!',
-    //   html: ``,
-    // });
-    await this.resend.emails.send({
-      from: 'onboarding@resend.dev',
+    await this.mailerService.sendMail({
       to,
-      subject: 'Welcome!',
+      subject: 'Welcome to Our App!',
       html: `
-      
       <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding:20px;">
             <tr>
             <td align="center">
@@ -93,8 +86,7 @@ export class MailService {
 
             </td>
             </tr>
-        </table>
-      
+        </table>     
       `,
     });
   }
