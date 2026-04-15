@@ -17,7 +17,7 @@ export class MailService {
   ): Promise<void> {
     await this.mailerService.sendMail({
       to,
-      subject: 'Welcome to Our App!',
+      subject: 'Welcome to TeamHub',
       html: `
       <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding:20px;">
             <tr>
