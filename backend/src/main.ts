@@ -8,6 +8,12 @@ import { GlobalResponseInterceptor } from './comon/interceptors/globalSuccessRes
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
+  });
   app.use(onlyJsonValidation);
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new GlobalResponseInterceptor());
@@ -18,6 +24,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
   await app.listen(String(process.env.PORT));
 }
 bootstrap();

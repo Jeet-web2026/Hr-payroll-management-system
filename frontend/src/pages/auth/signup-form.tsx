@@ -18,6 +18,7 @@ import { GuestLayout } from "@/comon/guestLayout"
 import { Link } from "react-router-dom"
 import { useState } from "react"
 import { toast } from "sonner"
+import apiService from "@/comon/api/apiService"
 
 export function SignupForm({
   className,
@@ -36,7 +37,7 @@ export function SignupForm({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const signupFormSubmission = (e: React.FormEvent<HTMLFormElement>) => {
+  const signupFormSubmission = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const { "first-name": firstName, "last-name": lastName, email, password, "confirm-password": confirmPassword } = formData;
@@ -49,6 +50,25 @@ export function SignupForm({
     if (password !== confirmPassword) {
       toast.error("Passwords do not match", { position: "top-right", richColors: true });
       return;
+    }
+
+    try {
+      const res = await apiService.post('/auth/signup', formData);
+      console.log(res.data);
+      toast.success("Account created successfully! Please sign in.", { position: "top-right", richColors: true });
+    } catch (error: Array<any> | any) {
+      let errorMessages = error.response?.data.message;
+
+      if (errorMessages && Array.isArray(errorMessages)) {
+        errorMessages.forEach((element: string, index: number) => {
+          setTimeout(() => {
+            toast.error(element, {
+              position: "top-right",
+              richColors: true,
+            });
+          }, index * 800);
+        });
+      }
     }
   }
 
