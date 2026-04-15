@@ -66,7 +66,7 @@ export class MailService {
                     </p>
                     <p style="font-size:14px; color:#777; margin-top: 22px;">
                         Thank you,<br/>
-                        <span style="font-weight: bold; margin-top: 8px;">The Team</span>
+                        <span style="font-weight: bold; margin-top: 8px;">TeamHub</span>
                     </p>
                     </td>
                 </tr>

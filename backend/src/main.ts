@@ -6,6 +6,7 @@ import { HttpExceptionFilter } from './comon/exceptions/http-exception.filter';
 import { GlobalResponseInterceptor } from './comon/interceptors/globalSuccessResponse.interceptor';
 
 async function bootstrap() {
+  process.env.TZ = 'Asia/Kolkata';
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.enableCors({
