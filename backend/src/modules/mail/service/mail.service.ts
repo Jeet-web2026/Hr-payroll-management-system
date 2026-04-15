@@ -1,13 +1,9 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { Resend } from 'resend';
 
 @Injectable()
 export class MailService {
-  private resend: Resend;
-  constructor(private readonly mailerService: MailerService) {
-    this.resend = new Resend(process.env.RESEND_API_KEY);
-  }
+  constructor(private readonly mailerService: MailerService) {}
 
   async sendWelcomeEmail(
     to: string,
