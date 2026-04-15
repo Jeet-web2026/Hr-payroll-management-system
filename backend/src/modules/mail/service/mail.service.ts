@@ -1,9 +1,13 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { Resend } from 'resend';
 
 @Injectable()
 export class MailService {
-  constructor(private readonly mailerService: MailerService) {}
+  private resend: Resend;
+  constructor(private readonly mailerService: MailerService) {
+    this.resend = new Resend(process.env.RESEND_API_KEY);
+  }
 
   async sendWelcomeEmail(
     to: string,
@@ -11,11 +15,18 @@ export class MailService {
     otp: number,
     otpExpiry: Date,
   ): Promise<void> {
-    await this.mailerService.sendMail({
+    // await this.mailerService.sendMail({
+    //   to,
+    //   subject: 'Welcome to Our App!',
+    //   html: ``,
+    // });
+    await this.resend.emails.send({
+      from: 'onboarding@resend.dev',
       to,
-      subject: 'Welcome to Our App!',
+      subject: 'Welcome!',
       html: `
-        <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding:20px;">
+      
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding:20px;">
             <tr>
             <td align="center">
                 
@@ -83,6 +94,7 @@ export class MailService {
             </td>
             </tr>
         </table>
+      
       `,
     });
   }
