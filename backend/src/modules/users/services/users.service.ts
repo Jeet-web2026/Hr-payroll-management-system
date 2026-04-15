@@ -10,8 +10,6 @@ import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
-import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
-import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -38,7 +36,7 @@ export class UsersService {
     }
   }
 
-  async createUser(userData: UserDataDto): Promise<UserResponseDto> {
+  async createUser(userData: UserDataDto): Promise<User> {
     try {
       const userExists = await this.userRepository.findOne({
         where: { email: userData.email },
@@ -56,10 +54,11 @@ export class UsersService {
         password: hashedPassword,
         role: UserRole.EMPLOYEE,
         status: UserStatus.INACTIVE,
+        otp: Math.floor(100000 + Math.random() * 900000),
+        otpExpiry: new Date(Date.now() + 10 * 60 * 1000),
       });
 
-      const savedUser = await this.userRepository.save(user);
-      return plainToInstance(UserResponseDto, savedUser);
+      return await this.userRepository.save(user);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

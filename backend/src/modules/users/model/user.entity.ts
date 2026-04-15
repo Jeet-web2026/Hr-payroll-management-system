@@ -76,6 +76,12 @@ export class User {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
+  @Column({ name: 'otp', type: 'int', nullable: true })
+  otp: number;
+
+  @Column({ name: 'otp_expiry', type: 'timestamp', nullable: true })
+  otpExpiry: Date;
+
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 

@@ -8,7 +8,6 @@ export class UserResponseDto {
   @Expose() email: string;
   @Expose() role: string;
   @Expose() status: string;
-  @Expose() createdAt: Date;
 
   constructor(partial: Partial<UserResponseDto>) {
     Object.assign(this, partial);
