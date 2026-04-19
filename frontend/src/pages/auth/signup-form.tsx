@@ -19,6 +19,7 @@ import { Link } from "react-router-dom"
 import { useState } from "react"
 import { toast } from "sonner"
 import apiService from "@/comon/api/apiService"
+import { ResponseHandler } from "@/comon/api/responseHandler"
 
 export function SignupForm({
   className,
@@ -57,30 +58,9 @@ export function SignupForm({
     setIsPending(true)
     try {
       const res = await apiService.post('/auth/signup', formData);
-      toast.success(res.data?.message, { position: "top-right", richColors: true });
-    } catch (error: Array<any> | any) {
-      setIsPending(false);
-      let responseStatus = error.response?.data.success;
-
-      if (responseStatus === false) {
-        let errorMessages = error.response?.data.message;
-
-        if (errorMessages && Array.isArray(errorMessages)) {
-          errorMessages.forEach((element: string, index: number) => {
-            setTimeout(() => {
-              toast.error(element, {
-                position: "top-right",
-                richColors: true,
-              });
-            }, index * 800);
-          });
-        }
-
-        toast.error(error.response?.data.message, {
-          position: "top-right",
-          richColors: true,
-        });
-      }
+      ResponseHandler(res);
+    } catch (error) {
+      ResponseHandler(error);
     } finally {
       setIsPending(false);
     }

@@ -2,8 +2,8 @@ export class WelcomeMailEvent {
   constructor(
     public readonly to: string,
     public readonly name: string,
-    public readonly otp: number,
-    public readonly otpExpiry: Date,
+    public readonly otp: number | null,
+    public readonly otpExpiry: Date | null,
   ) {}
 }
 

@@ -3,6 +3,7 @@ import {
   ConflictException,
   HttpException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { User, UserRole, UserStatus } from '../model/user.entity';
@@ -18,7 +19,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findById(id: number): Promise<User> {
+  async findById(id: string): Promise<User> {
     try {
       return await this.userRepository.findOneOrFail({
         where: { id: String(id) },
@@ -65,6 +66,15 @@ export class UsersService {
       }
       console.log(error);
       throw new BadGatewayException('Failed to create user');
+    }
+  }
+
+  async updateUser(userId: string, userData: Partial<User>): Promise<User> {
+    try {
+      await this.userRepository.update(userId, userData);
+      return await this.findById(userId);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to update user.');
     }
   }
 }

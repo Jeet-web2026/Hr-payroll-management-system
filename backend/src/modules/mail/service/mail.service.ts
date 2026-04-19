@@ -8,8 +8,8 @@ export class MailService {
   async sendWelcomeEmail(
     to: string,
     name: string,
-    otp: number,
-    otpExpiry: Date,
+    otp: number | null,
+    otpExpiry: Date | null,
   ): Promise<void> {
     await this.mailerService.sendMail({
       to,
@@ -42,7 +42,7 @@ export class MailService {
                     <table cellpadding="0" cellspacing="0" style="margin:30px 0;">
                         <tr>
                         <td align="center">
-                            <a href="${process.env.APP_URL}/auth/otp-verification?otp=${otp}" 
+                            <a href="${process.env.APP_URL}/auth/otp-verification?otp=${otp}?email=${to}" 
                             style="
                                 background:#4F46E5;
                                 color:#ffffff;
@@ -59,7 +59,7 @@ export class MailService {
                     </table>
 
                     <p style="font-size:14px; color:#777;">
-                        This OTP is valid until ${otpExpiry.toLocaleTimeString()}.
+                       This OTP is valid until ${otpExpiry ? otpExpiry.toLocaleTimeString() : new Date(Date.now() + 10 * 60 * 1000).toLocaleTimeString()}.
                     </p>
                     <p style="font-size:14px; color:#777;">
                         If you have any query, please contact to the admin.

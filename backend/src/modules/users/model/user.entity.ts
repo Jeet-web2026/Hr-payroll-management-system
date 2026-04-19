@@ -77,10 +77,10 @@ export class User {
   createdAt: Date;
 
   @Column({ name: 'otp', type: 'int', nullable: true })
-  otp: number;
+  otp: number | null;
 
   @Column({ name: 'otp_expiry', type: 'timestamp', nullable: true })
-  otpExpiry: Date;
+  otpExpiry: Date | null;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;

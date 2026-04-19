@@ -2,15 +2,16 @@ import { GuestLayout } from "@/comon/guestLayout"
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom"
 import logo from "@/assets/images/logo.png";
-import { toast } from "sonner";
 import apiService from "@/comon/api/apiService";
+import { ResponseHandler } from "@/comon/api/responseHandler";
 
 const OtpVerification = () => {
     const [searchParam] = useSearchParams();
     const otpFromUrl = searchParam.get('otp');
+    const email = searchParam.get('email');
 
     const [otpInputs, setOtpInputs] = useState<string[]>(Array(6).fill(""));
-    const [submitting, setSubmitting] = useState(false)
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         if (otpFromUrl) {
@@ -32,21 +33,19 @@ const OtpVerification = () => {
     const verificationForm = async (e: any) => {
         e.preventDefault();
         setSubmitting(true)
+        const emailCode = otpInputs.join('');
+        console.log(emailCode)
 
         try {
-            const data = await apiService.post("/otp-verification");
-            console.log(data);
-            toast.success("Verification successful!", {
-                position: "top-right",
-                richColors: true
+            const res = await apiService.post('/auth/email-verification', {
+                emailCode,
+                email
             });
+            ResponseHandler(res);
         } catch (error) {
-            toast.error("Something went wrong!", {
-                position: "top-right",
-                richColors: true
-            });
+            ResponseHandler(error);
         } finally {
-            setSubmitting(false)
+            setSubmitting(false);
         }
     }
 
