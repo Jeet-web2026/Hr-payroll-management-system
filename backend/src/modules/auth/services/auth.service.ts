@@ -22,7 +22,7 @@ export class AuthService {
 
   async signIn(signinDto: SignInDto): Promise<any> {
     try {
-      return this.userService.findByEmail(signinDto.email);
+      return await this.userService.findByEmail(signinDto.email);
     } catch (error) {
       throw new UnauthorizedException('Invalid credentials');
     }
