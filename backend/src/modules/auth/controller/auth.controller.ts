@@ -4,6 +4,7 @@ import {
   Controller,
   HttpCode,
   Post,
+  Res,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
@@ -12,6 +13,7 @@ import { User } from '../../users/model/user.entity';
 import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.dto';
+import * as express from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -32,9 +34,20 @@ export class AuthController {
 
   @Post('email-verification')
   @HttpCode(200)
-  emailVerification(
+  async emailVerification(
     @Body() emailData: EmailVerificationDto,
+    @Res({ passthrough: true }) res: express.Response,
   ): Promise<UserResponseDto> {
-    return this.authService.emailVerification(emailData);
+    const data = await this.authService.emailVerification(emailData);
+
+    res.cookie('refreshToken', data.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    delete data.refreshToken;
+    return data;
   }
 }

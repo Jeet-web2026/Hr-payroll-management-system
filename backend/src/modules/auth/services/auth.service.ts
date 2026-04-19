@@ -11,13 +11,15 @@ import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { plainToInstance } from 'class-transformer';
 import { WelcomeMailEvent } from '../../mail/events/mail.event';
 import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.dto';
-import { UserStatus } from '../../users/model/user.entity';
+import { User, UserStatus } from '../../users/model/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly jwtService: JwtService,
   ) {}
 
   async signIn(signinDto: SignInDto): Promise<any> {
@@ -54,6 +56,7 @@ export class AuthService {
       return {
         ...plainToInstance(UserResponseDto, user),
         message: 'Email already verified login to continue.',
+        refreshToken: await this.getRefreshToken(user),
       };
     }
 
@@ -65,16 +68,44 @@ export class AuthService {
       throw new BadRequestException('OTP expired.');
     }
 
-    const verifiedUser = await this.userService.updateUser(user.id, {
-      isEmailVerified: true,
-      otp: null,
-      otpExpiry: null,
-      status: UserStatus.ACTIVE,
-    });
+    const [verifiedUser, refreshToken] = await Promise.all([
+      this.userService.updateUser(user.id, {
+        isEmailVerified: true,
+        otp: null,
+        otpExpiry: null,
+        status: UserStatus.ACTIVE,
+      }),
+      this.getRefreshToken(user),
+    ]);
 
     return {
       ...plainToInstance(UserResponseDto, verifiedUser),
       message: 'Email verified successfully.',
+      refreshToken,
     };
+  }
+
+  async getAccessToken(user: User): Promise<string> {
+    const payload = {
+      sub: user.id,
+      role: user.role,
+      status: user.status,
+    };
+    return await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: '15m',
+    });
+  }
+
+  async getRefreshToken(user: User): Promise<string> {
+    const payload = {
+      sub: user.id,
+      role: user.role,
+      status: user.status,
+    };
+    return await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: '1d',
+    });
   }
 }

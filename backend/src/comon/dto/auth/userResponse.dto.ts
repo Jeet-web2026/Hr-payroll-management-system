@@ -12,6 +12,8 @@ export class UserResponseDto {
   @Expose()
   message?: string;
 
+  refreshToken?: string;
+
   constructor(partial: Partial<UserResponseDto>) {
     Object.assign(this, partial);
   }
