@@ -57,7 +57,7 @@ export class AuthService {
       };
     }
 
-    if (user.otp !== emailData.emailCode) {
+    if (Number(user.otp) !== Number(emailData.emailCode)) {
       throw new BadRequestException('Invalid OTP.');
     }
 
