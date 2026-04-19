@@ -35,6 +35,7 @@ const OtpVerification = () => {
         setSubmitting(true)
         const emailCode = otpInputs.join('');
         console.log(emailCode)
+        console.log(email)
 
         try {
             const res = await apiService.post('/auth/email-verification', {
