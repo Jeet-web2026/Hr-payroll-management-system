@@ -23,7 +23,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       type: 'postgres',
       url: process.env.DB_URL,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
       ssl: {
         rejectUnauthorized: false,
       },
