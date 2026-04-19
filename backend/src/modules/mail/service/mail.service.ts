@@ -42,7 +42,7 @@ export class MailService {
                     <table cellpadding="0" cellspacing="0" style="margin:30px 0;">
                         <tr>
                         <td align="center">
-                            <a href="${process.env.APP_URL}/auth/otp-verification?otp=${otp}?email=${to}" 
+                            <a href="${process.env.APP_URL}/auth/otp-verification?otp=${otp}&&email=${to}" 
                             style="
                                 background:#4F46E5;
                                 color:#ffffff;
