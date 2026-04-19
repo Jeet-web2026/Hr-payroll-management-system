@@ -6,12 +6,12 @@ export function ResponseHandler(responseData: any) {
     str.charAt(0).toUpperCase() + str.slice(1);
 
   if (data?.success) {
-    toast.success(data.message, { position: "top-right", richColors: true });
+    toast.success(responseData.response?.message, { position: "top-right", richColors: true });
     return;
   }
 
   if (data?.success === false) {
-    const errorMessages = data.message;
+    const errorMessages = responseData.response?.message;
 
     if (Array.isArray(errorMessages)) {
       errorMessages.forEach((element: string, index: number) => {
