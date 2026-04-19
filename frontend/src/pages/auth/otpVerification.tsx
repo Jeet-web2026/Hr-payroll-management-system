@@ -1,6 +1,7 @@
 import { GuestLayout } from "@/comon/guestLayout"
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom"
+import logo from "@/assets/images/logo.png";
 
 const OtpVerification = () => {
     const [searchParam] = useSearchParams();
@@ -28,7 +29,7 @@ const OtpVerification = () => {
     return (
         <GuestLayout>
             <div className="lg:w-[35%] bg-zinc-900 p-10 rounded flex flex-col gap-8">
-                <img src="/src/assets/images/logo.png" alt="logo" className="w-18 mx-auto" />
+                <img src={logo} alt="logo" className="w-18 mx-auto" />
                 <p className="text-center text-xl">Please verify your Email</p>
                 <form action="" method="post" className="flex flex-col gap-5">
                     <div className="flex flex-row gap-2 justify-center items-center">
