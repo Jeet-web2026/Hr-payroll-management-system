@@ -1,5 +1,5 @@
 import { GuestLayout } from "@/comon/guestLayout"
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom"
 import logo from "@/assets/images/logo.png";
 import { toast } from "sonner";
@@ -10,7 +10,7 @@ const OtpVerification = () => {
     const otpFromUrl = searchParam.get('otp');
 
     const [otpInputs, setOtpInputs] = useState<string[]>(Array(6).fill(""));
-    const [submitting, setsubmitting] = useState(false)
+    const [submitting, setSubmitting] = useState(false)
 
     useEffect(() => {
         if (otpFromUrl) {
@@ -31,19 +31,22 @@ const OtpVerification = () => {
 
     const verificationForm = async (e: any) => {
         e.preventDefault();
+        setSubmitting(true)
 
         try {
             const data = await apiService.post("/otp-verification");
             console.log(data);
-            toast.success("Verfication successfull!", {
+            toast.success("Verification successful!", {
                 position: "top-right",
                 richColors: true
             });
         } catch (error) {
-            toast.error("Something Went wrong!", {
+            toast.error("Something went wrong!", {
                 position: "top-right",
                 richColors: true
             });
+        } finally {
+            setSubmitting(false)
         }
     }
 
@@ -66,7 +69,14 @@ const OtpVerification = () => {
                             />
                         ))}
                     </div>
-                    <button type="submit" className="w-full h-12 bg-blue-900 rounded">Verify</button>
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full h-11 bg-blue-900 rounded disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                        {submitting && <i className="ri-loader-line animate-spin" />}
+                        {submitting ? "Verifying..." : "Verify"}
+                    </button>
                 </form>
             </div>
         </GuestLayout>
