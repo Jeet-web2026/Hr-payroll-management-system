@@ -9,6 +9,9 @@ export class UserResponseDto {
   @Expose() role: string;
   @Expose() status: string;
 
+  @Expose()
+  message?: string;
+
   constructor(partial: Partial<UserResponseDto>) {
     Object.assign(this, partial);
   }

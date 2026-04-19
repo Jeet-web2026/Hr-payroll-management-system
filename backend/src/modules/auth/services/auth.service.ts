@@ -26,8 +26,16 @@ export class AuthService {
     const savedUser = await this.userService.createUser(userData);
     this.eventEmitter.emit(
       'mail.welcome',
-      new WelcomeMailEvent(savedUser.email, savedUser.firstName, savedUser.otp, savedUser.otpExpiry),
+      new WelcomeMailEvent(
+        savedUser.email,
+        savedUser.firstName,
+        savedUser.otp,
+        savedUser.otpExpiry,
+      ),
     );
-    return plainToInstance(UserResponseDto, savedUser);
+    return {
+      ...plainToInstance(UserResponseDto, savedUser),
+      message: 'Registration successful, please verify your email address.',
+    };
   }
 }
