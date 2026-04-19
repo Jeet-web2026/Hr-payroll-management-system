@@ -4,10 +4,12 @@ import { onlyJsonValidation } from './comon/middlewares/onlyJsonValidation.middl
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './comon/exceptions/http-exception.filter';
 import { GlobalResponseInterceptor } from './comon/interceptors/globalSuccessResponse.interceptor';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   process.env.TZ = 'Asia/Kolkata';
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   app.setGlobalPrefix('api');
   app.enableCors({
     origin: process.env.CORS_ORIGIN,

@@ -85,6 +85,25 @@ export class AuthService {
     };
   }
 
+  async refreshToken(token: string): Promise<{ accessToken: string }> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+
+      const user = await this.userService.findById(payload.sub);
+
+      if (!user) {
+        throw new UnauthorizedException('User not found.');
+      }
+
+      const accessToken = await this.getAccessToken(user);
+      return { accessToken };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired refresh token.');
+    }
+  }
+
   async getAccessToken(user: User): Promise<string> {
     const payload = {
       sub: user.id,
@@ -104,7 +123,7 @@ export class AuthService {
       status: user.status,
     };
     return await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_ACCESS_SECRET,
+      secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: '1d',
     });
   }

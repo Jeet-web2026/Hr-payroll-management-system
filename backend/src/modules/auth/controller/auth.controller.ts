@@ -4,7 +4,9 @@ import {
   Controller,
   HttpCode,
   Post,
+  Req,
   Res,
+  UnauthorizedException,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
@@ -49,5 +51,19 @@ export class AuthController {
 
     delete data.refreshToken;
     return data;
+  }
+
+  @Post('refresh')
+  @HttpCode(200)
+  async refreshToken(
+    @Req() req: express.Request,
+  ): Promise<{ accessToken: string }> {
+    const token = req.cookies['refreshToken'];
+
+    if (!token) {
+      throw new UnauthorizedException('Refresh token not found.');
+    }
+
+    return this.authService.refreshToken(token);
   }
 }
