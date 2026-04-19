@@ -58,11 +58,11 @@ export class AuthService {
     }
 
     if (user.otp !== emailData.emailCode) {
-      throw new BadRequestException('Invalid or expired OTP.');
+      throw new BadRequestException('Invalid OTP.');
     }
 
     if (!user.otpExpiry || user.otpExpiry < new Date()) {
-      throw new BadRequestException('Invalid or expired OTP.');
+      throw new BadRequestException('OTP expired.');
     }
 
     const verifiedUser = await this.userService.updateUser(user.id, {
