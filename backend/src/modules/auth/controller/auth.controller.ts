@@ -2,11 +2,13 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   HttpCode,
   Post,
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
@@ -16,6 +18,7 @@ import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.dto';
 import * as express from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -66,4 +69,8 @@ export class AuthController {
 
     return this.authService.refreshToken(token);
   }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  googleLogin(): void {}
 }
