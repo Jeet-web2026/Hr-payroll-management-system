@@ -67,6 +67,11 @@ export class User {
   })
   refreshToken: string;
 
+  @Column({
+    nullable: true
+  })
+  ipAddress: string;
+
   @Column({ name: 'is_email_verified', type: 'boolean', default: false })
   isEmailVerified: boolean;
 

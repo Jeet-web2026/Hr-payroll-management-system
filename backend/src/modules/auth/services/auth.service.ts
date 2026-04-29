@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { SignInDto } from '../../../comon/dto/auth/signIn.dto';
@@ -13,6 +14,7 @@ import { WelcomeMailEvent } from '../../mail/events/mail.event';
 import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.dto';
 import { User, UserStatus } from '../../users/model/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,14 +26,27 @@ export class AuthService {
 
   async signIn(signinDto: SignInDto): Promise<any> {
     try {
-      return await this.userService.findByEmail(signinDto.email);
+      const user = await this.userService.findByEmail(signinDto.email);
+
+      if (!user) {
+        return new NotFoundException('Wrong credentials.');
+      }
     } catch (error) {
       throw new UnauthorizedException('Invalid credentials');
     }
   }
 
-  async signUp(userData: UserDataDto): Promise<UserResponseDto> {
-    const savedUser = await this.userService.createUser(userData);
+  async socialLogin(socialAuthDto: SocialAuthDto): Promise<any> {
+    try {
+      const user = await this.userService.findByEmail(socialAuthDto.email);
+
+    } catch (error) {
+      throw new BadRequestException('Something went wrong.');
+    }
+  }
+
+  async signUp(userData: UserDataDto, ip: string): Promise<UserResponseDto> {
+    const savedUser = await this.userService.createUser(userData, ip);
     this.eventEmitter.emit(
       'mail.welcome',
       new WelcomeMailEvent(

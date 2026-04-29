@@ -12,11 +12,20 @@ import { Input } from "@/components/ui/input"
 import { GuestLayout } from "@/comon/guestLayout"
 import logo from "@/assets/images/logo.png"
 import { Link } from "react-router-dom"
+import { SOCIAL_PROVIDERS } from "@/config/socialAuth"
 
 export function SigninForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+  type SocialProvider = keyof typeof SOCIAL_PROVIDERS;
+  function socialLogin(loginType: SocialProvider) {
+    const provider = SOCIAL_PROVIDERS[loginType];
+    window.location.href = provider.url;
+  }
+
+
   return (
     <GuestLayout>
       <div className={cn("flex flex-col gap-6 lg:w-3/5 px-8", className)} {...props}>
@@ -57,7 +66,7 @@ export function SigninForm({
                   Or continue with
                 </FieldSeparator>
                 <Field className="grid grid-cols-3 gap-4">
-                  <Button variant="outline" type="button" className="cursor-pointer">
+                  <Button onClick={() => socialLogin("google")} variant="outline" type="button" className="cursor-pointer">
                     <i className="ri-google-line text-xl"></i>
                     <span className="sr-only">Sign up with Google</span>
                   </Button>

@@ -19,6 +19,7 @@ import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.dto';
 import * as express from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import type { GoogleRequest } from '../../../comon/requests/googleRequest';
 
 @Controller('auth')
 export class AuthController {
@@ -33,8 +34,15 @@ export class AuthController {
   @Post('signup')
   @HttpCode(201)
   @UseInterceptors(ClassSerializerInterceptor)
-  signup(@Body() userData: UserDataDto): Promise<UserResponseDto> {
-    return this.authService.signUp(userData);
+  signup(
+    @Body() userData: UserDataDto,
+    @Req() req: express.Request,
+  ): Promise<UserResponseDto> {
+    const ip =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+      req.socket.remoteAddress ||
+      '0.0.0.0';
+    return this.authService.signUp(userData, ip);
   }
 
   @Post('email-verification')
@@ -72,5 +80,12 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  googleLogin(): void {}
+  async googleLogin() {}
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  googleRedirect(@Req() req: GoogleRequest, @Res() res: express.Response) {
+    const user = req.user as any;
+    return this.authService.socialLogin(user);
+  }
 }

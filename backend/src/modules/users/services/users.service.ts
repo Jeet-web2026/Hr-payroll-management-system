@@ -37,14 +37,14 @@ export class UsersService {
     }
   }
 
-  async createUser(userData: UserDataDto): Promise<User> {
+  async createUser(userData: UserDataDto, ip: string): Promise<User> {
     try {
       const userExists = await this.userRepository.findOne({
         where: { email: userData.email },
       });
 
       if (userExists) {
-        throw new ConflictException('Duplicate entry');
+        throw new ConflictException('Credentials already exsist!');
       }
 
       const hashedPassword = await bcrypt.hash(userData.password, 10);
@@ -57,6 +57,7 @@ export class UsersService {
         status: UserStatus.INACTIVE,
         otp: Math.floor(100000 + Math.random() * 900000),
         otpExpiry: new Date(Date.now() + 10 * 60 * 1000),
+        ipAddress: ip,
       });
 
       return await this.userRepository.save(user);
