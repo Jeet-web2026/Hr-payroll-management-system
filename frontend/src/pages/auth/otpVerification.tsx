@@ -4,8 +4,10 @@ import { useSearchParams } from "react-router-dom"
 import logo from "@/assets/images/logo.png";
 import apiService from "@/comon/api/apiService";
 import { ResponseHandler } from "@/comon/api/responseHandler";
+import { useNavigate } from "react-router-dom";
 
 const OtpVerification = () => {
+    const navigate = useNavigate();
     const [searchParam] = useSearchParams();
     const otpFromUrl = searchParam.get('otp');
     const email = searchParam.get('email');
@@ -40,7 +42,12 @@ const OtpVerification = () => {
                 emailCode,
                 email
             });
-            ResponseHandler(res);
+
+            await ResponseHandler(res);
+
+            if (res?.data?.success) {
+                navigate("/__dashboard");
+            }
         } catch (error) {
             ResponseHandler(error);
         } finally {
