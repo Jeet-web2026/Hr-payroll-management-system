@@ -1,7 +1,7 @@
-let accessToken: string | null = null;
+let teamHubaccessToken: string | null = null;
 
 export const TokenService = {
-  get: () => accessToken,
-  set: (token: string) => (accessToken = token),
-  clear: () => (accessToken = null),
+  get: () => teamHubaccessToken,
+  set: (token: string) => (teamHubaccessToken = token),
+  clear: () => (teamHubaccessToken = null),
 };

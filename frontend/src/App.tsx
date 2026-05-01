@@ -5,15 +5,17 @@ import { Dashboard } from './pages/dashboard'
 import { SigninForm } from './pages/auth/signin-form'
 import { SignupForm } from './pages/auth/signup-form'
 import OtpVerification from './pages/auth/otpVerification'
+import { AuthSuccess } from './pages/auth/authSuccess'
 
 function App() {
-  
+
   return (
     <ThemeProvider>
       <Routes>
         <Route path="/" element={<SigninForm />} />
         <Route path="/auth/signup" element={<SignupForm />} />
-        <Route path="/__dashboard" element={<Dashboard />} />
+        <Route path="/auth/success" element={<AuthSuccess />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path='/auth/otp-verification' element={<OtpVerification />} />
       </Routes>
     </ThemeProvider>

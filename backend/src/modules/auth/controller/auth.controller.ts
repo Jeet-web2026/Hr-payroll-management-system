@@ -110,7 +110,7 @@ export class AuthController {
     });
 
     return res.redirect(
-      `${process.env.APP_URL}/social-success?accessToken=${data.accessToken}`,
+      `${process.env.APP_URL}/auth/success?accessToken=${data.accessToken}`,
     );
   }
 }
