@@ -11,18 +11,61 @@ import {
 import { Input } from "@/components/ui/input"
 import { GuestLayout } from "@/comon/guestLayout"
 import logo from "@/assets/images/logo.png"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { SOCIAL_PROVIDERS } from "@/config/socialAuth"
+import { useState } from "react"
+import { toast } from "sonner"
+import { ResponseHandler } from "@/comon/api/responseHandler"
+import apiService from "@/comon/api/apiService"
+import { TokenService } from "@/comon/api/tokenService"
 
 export function SigninForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navigate = useNavigate();
 
   type SocialProvider = keyof typeof SOCIAL_PROVIDERS;
   function socialLogin(loginType: SocialProvider) {
     const provider = SOCIAL_PROVIDERS[loginType];
     window.location.href = provider.url;
+  }
+
+  const initialFormData = {
+    email: "",
+    password: ""
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
+
+  const [isPending, setIsPending] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const signinFormSubmission = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const { email, password } = formData;
+
+    if (!email || !password) {
+      toast.error("All fields are required", { position: "top-right", richColors: true });
+      return;
+    }
+
+    setIsPending(true)
+    try {
+      const res = await apiService.post('/auth/signin', formData);
+      ResponseHandler(res);
+      TokenService.set(res.data.data.accessToken);
+      navigate("/dashboard");
+    } catch (error) {
+      ResponseHandler(error);
+    } finally {
+      setFormData(initialFormData);
+      setIsPending(false);
+    }
   }
 
 
@@ -31,7 +74,7 @@ export function SigninForm({
       <div className={cn("flex flex-col gap-6 lg:w-3/5 px-8", className)} {...props}>
         <Card className="overflow-hidden p-0">
           <CardContent className="grid p-0 md:grid-cols-2">
-            <form className="p-6 md:p-8">
+            <form className="p-6 md:p-8" onSubmit={signinFormSubmission}>
               <FieldGroup>
                 <div className="flex flex-col items-center gap-2 text-center">
                   <h1 className="text-2xl font-bold">Login your account</h1>
@@ -45,14 +88,16 @@ export function SigninForm({
                     id="email"
                     type="email"
                     placeholder="m@example.com"
-                    required
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                   />
                 </Field>
                 <Field>
                   <Field className="flex flex-col gap-4">
                     <Field>
                       <FieldLabel htmlFor="password">Password</FieldLabel>
-                      <Input id="password" type="password" required />
+                      <Input id="password" type="password" name="password" onChange={handleChange} value={formData.password} />
                     </Field>
                   </Field>
                   <FieldDescription>
@@ -60,7 +105,16 @@ export function SigninForm({
                   </FieldDescription>
                 </Field>
                 <Field>
-                  <Button type="submit">Login Account</Button>
+                  <Button type="submit" disabled={isPending}>
+                    {isPending ? (
+                      <>
+                        <i className="ri-loader-2-line animate-spin text-lg me-1"></i>
+                        Logging in...
+                      </>
+                    ) : (
+                      'Login Account'
+                    )}
+                  </Button>
                 </Field>
                 <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                   Or continue with

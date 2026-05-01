@@ -26,13 +26,15 @@ export function SignupForm({
   ...props
 }: React.ComponentProps<"div">) {
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     firstName: "",
     lastName: "",
     email: "",
     password: "",
     confirmpassword: ""
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const [isPending, setIsPending] = useState(false);
 
@@ -59,6 +61,7 @@ export function SignupForm({
     try {
       const res = await apiService.post('/auth/signup', formData);
       ResponseHandler(res);
+      setFormData(initialFormData);
     } catch (error) {
       ResponseHandler(error);
     } finally {
@@ -83,11 +86,11 @@ export function SignupForm({
                 <Field className="flex flex-col lg:flex-row gap-3">
                   <Field>
                     <FieldLabel htmlFor="first-name">First Name</FieldLabel>
-                    <Input id="first-name" type="text" placeholder="e.g. John" name="firstName" onChange={handleChange} />
+                    <Input id="first-name" type="text" placeholder="e.g. John" name="firstName" value={formData.firstName} onChange={handleChange} />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="last-name">Last Name</FieldLabel>
-                    <Input id="last-name" type="text" placeholder="e.g. Doe" name="lastName" onChange={handleChange} />
+                    <Input id="last-name" type="text" placeholder="e.g. Doe" name="lastName" value={formData.lastName} onChange={handleChange} />
                   </Field>
                 </Field>
                 <Field>
@@ -97,6 +100,7 @@ export function SignupForm({
                     type="email"
                     placeholder="e.g. m@example.com"
                     name="email"
+                    value={formData.email}
                     onChange={handleChange}
                   />
                 </Field>
@@ -104,13 +108,13 @@ export function SignupForm({
                   <Field className="flex flex-col gap-4">
                     <Field>
                       <FieldLabel htmlFor="password">Password</FieldLabel>
-                      <Input id="password" type="password" name="password" onChange={handleChange} />
+                      <Input id="password" type="password" name="password" value={formData.password} onChange={handleChange} />
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="confirm-password">
                         Confirm Password
                       </FieldLabel>
-                      <Input id="confirm-password" type="password" name="confirmpassword" onChange={handleChange} />
+                      <Input id="confirm-password" type="password" name="confirmpassword" value={formData.confirmpassword} onChange={handleChange} />
                     </Field>
                   </Field>
                   <FieldDescription>

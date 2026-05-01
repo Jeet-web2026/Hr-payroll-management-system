@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -58,10 +59,14 @@ export class AuthService {
       ]);
       return {
         ...plainToInstance(UserResponseDto, user),
+        message: 'Login successfull',
         accessToken,
         refreshToken,
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new BadRequestException('Something went wrong!');
     }
   }

@@ -5,6 +5,7 @@ import logo from "@/assets/images/logo.png";
 import apiService from "@/comon/api/apiService";
 import { ResponseHandler } from "@/comon/api/responseHandler";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const OtpVerification = () => {
     const navigate = useNavigate();
@@ -46,7 +47,7 @@ const OtpVerification = () => {
             await ResponseHandler(res);
 
             if (res?.data?.success) {
-                navigate("/__dashboard");
+                navigate("/dashboard");
             }
         } catch (error) {
             ResponseHandler(error);
@@ -74,14 +75,13 @@ const OtpVerification = () => {
                             />
                         ))}
                     </div>
-                    <button
+                    <Button
                         type="submit"
                         disabled={submitting}
-                        className="w-full h-11 bg-blue-900 rounded disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                         {submitting && <i className="ri-loader-line animate-spin" />}
                         {submitting ? "Verifying..." : "Verify"}
-                    </button>
+                    </Button>
                 </form>
             </div>
         </GuestLayout>

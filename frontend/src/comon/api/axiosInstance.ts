@@ -32,7 +32,6 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(error.config);
       } catch {
         TokenService.clear();
-        window.location.href = "/";
       }
     }
     return Promise.reject(error);
