@@ -6,17 +6,35 @@ import { SigninForm } from './pages/auth/signin-form'
 import { SignupForm } from './pages/auth/signup-form'
 import OtpVerification from './pages/auth/otpVerification'
 import { AuthSuccess } from './pages/auth/authSuccess'
+import ProtectedRoute from './comon/providers/protectedRouteProvider'
+import PublicRoute from './comon/providers/publicRouteProvider'
 
 function App() {
 
   return (
     <ThemeProvider>
       <Routes>
-        <Route path="/" element={<SigninForm />} />
-        <Route path="/auth/signup" element={<SignupForm />} />
+        <Route path="/" element={
+          <PublicRoute>
+            <SigninForm />
+          </PublicRoute>
+        } />
+        <Route path="/auth/signup" element={
+          <PublicRoute>
+            <SignupForm />
+          </PublicRoute>
+        } />
         <Route path="/auth/success" element={<AuthSuccess />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path='/auth/otp-verification' element={<OtpVerification />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path='/auth/otp-verification' element={
+          <PublicRoute>
+            <OtpVerification />
+          </PublicRoute>
+        } />
       </Routes>
     </ThemeProvider>
   )

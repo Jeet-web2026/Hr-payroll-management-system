@@ -13,7 +13,7 @@ import { GuestLayout } from "@/comon/guestLayout"
 import logo from "@/assets/images/logo.png"
 import { Link, useNavigate } from "react-router-dom"
 import { SOCIAL_PROVIDERS } from "@/config/socialAuth"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { ResponseHandler } from "@/comon/api/responseHandler"
 import apiService from "@/comon/api/apiService"
@@ -24,6 +24,13 @@ export function SigninForm({
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
+  useEffect(() => {
+    const token = TokenService.get();
+
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, []);
 
   type SocialProvider = keyof typeof SOCIAL_PROVIDERS;
   function socialLogin(loginType: SocialProvider) {
