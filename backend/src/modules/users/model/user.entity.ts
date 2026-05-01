@@ -60,14 +60,6 @@ export class User {
   lastLogin!: Date;
 
   @Column({
-    name: 'refresh_token',
-    type: 'text',
-    nullable: true,
-    select: false,
-  })
-  refreshToken!: string;
-
-  @Column({
     nullable: true
   })
   ipAddress!: string;

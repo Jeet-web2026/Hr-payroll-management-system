@@ -48,6 +48,10 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
+      await this.userService.updateUser(user.id, {
+        lastLogin: new Date(),
+      });
+
       const [accessToken, refreshToken] = await Promise.all([
         this.getAccessToken(user),
         this.getRefreshToken(user),

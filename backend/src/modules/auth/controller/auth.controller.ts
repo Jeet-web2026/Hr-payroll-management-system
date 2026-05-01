@@ -93,12 +93,24 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  googleRedirect(@Req() req: GoogleRequest) {
+  async googleRedirect(
+    @Req() req: GoogleRequest,
+    @Res() res: express.Response,
+  ) {
     const user = req.user as any;
     const ip =
       (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
       req.socket.remoteAddress ||
       '0.0.0.0';
-    return this.authService.socialLogin(user, ip);
+    const data = await this.authService.socialLogin(user, ip);
+    res.cookie('refreshToken', data.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
+    return res.redirect(
+      `${process.env.APP_URL}/social-success?accessToken=${data.accessToken}`,
+    );
   }
 }

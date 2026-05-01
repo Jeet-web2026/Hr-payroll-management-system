@@ -105,7 +105,10 @@ export class UsersService {
           status: UserStatus.ACTIVE,
           otp: null,
           otpExpiry: null,
+          profilePicture: userData.picture,
           ipAddress: ipAddress,
+          lastLogin: new Date(),
+          isEmailVerified: true,
         });
 
         return await this.userRepository.save(user);
