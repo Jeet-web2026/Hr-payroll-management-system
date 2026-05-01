@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
             }
 
             try {
-                const res = await apiService.post("/auth/refresh");
+                const res = await apiService.post("/auth/refresh", {});
                 TokenService.set(res.data.data.accessToken);
             } catch {
                 navigate("/");
