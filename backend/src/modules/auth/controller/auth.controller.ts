@@ -34,8 +34,8 @@ export class AuthController {
 
     res.cookie('refreshToken', userData.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -66,8 +66,8 @@ export class AuthController {
 
     res.cookie('refreshToken', data.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000,
     });
     return data;
@@ -105,8 +105,8 @@ export class AuthController {
     const data = await this.authService.socialLogin(user, ip);
     res.cookie('refreshToken', data.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000,
     });
 

@@ -9,8 +9,6 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   process.env.TZ = 'Asia/Kolkata';
   const app = await NestFactory.create(AppModule);
-  const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.set('trust proxy', 1);
   app.use(cookieParser());
   app.setGlobalPrefix('api');
   app.enableCors({
