@@ -2,14 +2,14 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class SocialAuthDto{
     @IsNotEmpty()
-    email: string;
+    email!: string;
 
     @IsOptional()
-    firstName: string;
+    firstName!: string;
 
     @IsOptional()
-    lastName: string;
+    lastName!: string;
 
     @IsOptional()
-    picture: string;
+    picture!: string;
 }

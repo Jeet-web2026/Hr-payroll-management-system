@@ -15,6 +15,7 @@ import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.
 import { User, UserStatus } from '../../users/model/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -24,22 +25,59 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(signinDto: SignInDto): Promise<any> {
+  async signIn(signinDto: SignInDto): Promise<UserResponseDto> {
     try {
       const user = await this.userService.findByEmail(signinDto.email);
 
       if (!user) {
-        return new NotFoundException('Wrong credentials.');
+        throw new NotFoundException('Wrong credentials.');
       }
+
+      if (!user.isEmailVerified) {
+        throw new UnauthorizedException(
+          'Please verify your email address to login.',
+        );
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        signinDto.password,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const [accessToken, refreshToken] = await Promise.all([
+        this.getAccessToken(user),
+        this.getRefreshToken(user),
+      ]);
+      return {
+        ...plainToInstance(UserResponseDto, user),
+        accessToken,
+        refreshToken,
+      };
     } catch (error) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new BadRequestException('Something went wrong!');
     }
   }
 
-  async socialLogin(socialAuthDto: SocialAuthDto): Promise<any> {
+  async socialLogin(
+    socialAuthDto: SocialAuthDto,
+    ip: string,
+  ): Promise<UserResponseDto> {
     try {
-      const user = await this.userService.findByEmail(socialAuthDto.email);
+      const user = await this.userService.socialLogin(socialAuthDto, ip);
 
+      const [accessToken, refreshToken] = await Promise.all([
+        this.getAccessToken(user),
+        this.getRefreshToken(user),
+      ]);
+      return {
+        ...plainToInstance(UserResponseDto, user),
+        accessToken,
+        refreshToken,
+      };
     } catch (error) {
       throw new BadRequestException('Something went wrong.');
     }
@@ -72,6 +110,7 @@ export class AuthService {
         ...plainToInstance(UserResponseDto, user),
         message: 'Email already verified login to continue.',
         refreshToken: await this.getRefreshToken(user),
+        accessToken: await this.getAccessToken(user),
       };
     }
 
@@ -83,20 +122,23 @@ export class AuthService {
       throw new BadRequestException('OTP expired.');
     }
 
-    const [verifiedUser, refreshToken] = await Promise.all([
-      this.userService.updateUser(user.id, {
-        isEmailVerified: true,
-        otp: null,
-        otpExpiry: null,
-        status: UserStatus.ACTIVE,
-      }),
+    const verifiedUser = this.userService.updateUser(user.id, {
+      isEmailVerified: true,
+      otp: null,
+      otpExpiry: null,
+      status: UserStatus.ACTIVE,
+    });
+
+    const [refreshToken, accessToken] = await Promise.all([
       this.getRefreshToken(user),
+      this.getAccessToken(user),
     ]);
 
     return {
       ...plainToInstance(UserResponseDto, verifiedUser),
       message: 'Email verified successfully.',
       refreshToken,
+      accessToken,
     };
   }
 

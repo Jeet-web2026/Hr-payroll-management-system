@@ -2,9 +2,9 @@ import { IsEmail, IsNotEmpty } from "class-validator";
 
 export class EmailVerificationDto{
     @IsNotEmpty()
-    emailCode: number;
+    emailCode!: number;
 
     @IsNotEmpty()
     @IsEmail()
-    email: string;
+    email!: string;
 }

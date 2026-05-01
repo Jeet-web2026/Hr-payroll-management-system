@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { SignInDto } from '../../../comon/dto/auth/signIn.dto';
-import { User } from '../../users/model/user.entity';
 import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.dto';
@@ -27,8 +26,20 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(200)
-  signin(@Body() signinDto: SignInDto): Promise<User> {
-    return this.authService.signIn(signinDto);
+  async signin(
+    @Body() signinDto: SignInDto,
+    @Res({ passthrough: true }) res: express.Response,
+  ): Promise<UserResponseDto> {
+    const userData = await this.authService.signIn(signinDto);
+
+    res.cookie('refreshToken', userData.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    return userData;
   }
 
   @Post('signup')
@@ -59,8 +70,6 @@ export class AuthController {
       sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000,
     });
-
-    delete data.refreshToken;
     return data;
   }
 
@@ -75,17 +84,21 @@ export class AuthController {
       throw new UnauthorizedException('Refresh token not found.');
     }
 
-    return this.authService.refreshToken(token);
+    return await this.authService.refreshToken(token);
   }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleLogin() {}
+  googleLogin() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  googleRedirect(@Req() req: GoogleRequest, @Res() res: express.Response) {
+  googleRedirect(@Req() req: GoogleRequest) {
     const user = req.user as any;
-    return this.authService.socialLogin(user);
+    const ip =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+      req.socket.remoteAddress ||
+      '0.0.0.0';
+    return this.authService.socialLogin(user, ip);
   }
 }

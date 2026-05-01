@@ -11,6 +11,7 @@ import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
+import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 
 @Injectable()
 export class UsersService {
@@ -65,7 +66,6 @@ export class UsersService {
       if (error instanceof HttpException) {
         throw error;
       }
-      console.log(error);
       throw new BadGatewayException('Failed to create user');
     }
   }
@@ -73,9 +73,60 @@ export class UsersService {
   async updateUser(userId: string, userData: Partial<User>): Promise<User> {
     try {
       await this.userRepository.update(userId, userData);
-      return await this.findById(userId);
+
+      return this.userRepository.findOneOrFail({
+        where: { id: userId },
+      });
     } catch (error) {
       throw new InternalServerErrorException('Failed to update user.');
     }
+  }
+
+  async socialLogin(userData: SocialAuthDto, ipAddress: string): Promise<User> {
+    try {
+      let user = await this.userRepository.findOne({
+        where: { email: userData.email },
+      });
+
+      if (!user) {
+        const generatedPassword = this.getFormattedTimestamp();
+
+        const hashedPassword = await bcrypt.hash(
+          userData.email + generatedPassword,
+          10,
+        );
+
+        user = this.userRepository.create({
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          password: hashedPassword,
+          role: UserRole.EMPLOYEE,
+          status: UserStatus.ACTIVE,
+          otp: null,
+          otpExpiry: null,
+          ipAddress: ipAddress,
+        });
+
+        return await this.userRepository.save(user);
+      }
+
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to login user.');
+    }
+  }
+
+  getFormattedTimestamp() {
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    return `${day}${month}${year}${hours}${minutes}`;
   }
 }
