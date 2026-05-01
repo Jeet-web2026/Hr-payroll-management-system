@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
                 const res = await apiService.post("/auth/refresh");
                 TokenService.set(res.data.data.accessToken);
             } catch {
-                navigate("/auth/signin");
+                navigate("/");
             } finally {
                 setLoading(false);
             }
