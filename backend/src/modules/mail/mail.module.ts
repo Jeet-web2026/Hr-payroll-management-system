@@ -10,7 +10,8 @@ import { MailService } from './service/mail.service';
         transport: {
           host: process.env.MAIL_HOST,
           port: Number(process.env.MAIL_PORT),
-          secure: process.env.NODE_ENV === 'production',
+          family: 4,
+          secure: false,
           auth: {
             user: process.env.MAIL_USER,
             pass: process.env.MAIL_PASS,
