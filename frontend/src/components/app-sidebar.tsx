@@ -1,6 +1,5 @@
 import * as React from "react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -13,10 +12,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
+import { LayoutDashboardIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, CommandIcon, MailIcon, CalendarClock, IdCardLanyard, ChartAreaIcon, ClipboardSignatureIcon, CalendarX, ScanSearchIcon } from "lucide-react"
 import apiService from "@/comon/api/apiService"
 import { toast } from "sonner"
 import { Skeleton } from "./ui/skeleton"
+import logo from "@/assets/images/logo.png"
+import { Link } from "react-router-dom"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
@@ -69,93 +70,68 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ),
       },
       {
-        title: "Lifecycle",
+        title: "Inbox",
         url: "#",
         icon: (
-          <ListIcon
+          <MailIcon
           />
         ),
       },
       {
-        title: "Analytics",
+        title: "Calendar",
         url: "#",
         icon: (
-          <ChartBarIcon
+          <CalendarClock
           />
         ),
       },
       {
-        title: "Projects",
+        title: "Employees",
         url: "#",
         icon: (
-          <FolderIcon
+          <IdCardLanyard
           />
         ),
       },
       {
-        title: "Team",
+        title: "Attendance",
         url: "#",
         icon: (
           <UsersIcon
           />
         ),
       },
-    ],
-    navClouds: [
       {
-        title: "Capture",
+        title: "Performance",
+        url: "#",
         icon: (
-          <CameraIcon
+          <ChartAreaIcon
           />
         ),
-        isActive: true,
-        url: "#",
-        items: [
-          {
-            title: "Active Proposals",
-            url: "#",
-          },
-          {
-            title: "Archived",
-            url: "#",
-          },
-        ],
       },
       {
-        title: "Proposal",
+        title: "Payroll",
+        url: "#",
         icon: (
-          <FileTextIcon
+          <ClipboardSignatureIcon
           />
         ),
-        url: "#",
-        items: [
-          {
-            title: "Active Proposals",
-            url: "#",
-          },
-          {
-            title: "Archived",
-            url: "#",
-          },
-        ],
       },
       {
-        title: "Prompts",
+        title: "Leave Management",
+        url: "#",
         icon: (
-          <FileTextIcon
+          <CalendarX
           />
         ),
+      },
+      {
+        title: "Recruitment",
         url: "#",
-        items: [
-          {
-            title: "Active Proposals",
-            url: "#",
-          },
-          {
-            title: "Archived",
-            url: "#",
-          },
-        ],
+        icon: (
+          <ScanSearchIcon
+          />
+        ),
       },
     ],
     navSecondary: [
@@ -184,32 +160,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ),
       },
     ],
-    documents: [
-      {
-        name: "Data Library",
-        url: "#",
-        icon: (
-          <DatabaseIcon
-          />
-        ),
-      },
-      {
-        name: "Reports",
-        url: "#",
-        icon: (
-          <FileChartColumnIcon
-          />
-        ),
-      },
-      {
-        name: "Word Assistant",
-        url: "#",
-        icon: (
-          <FileIcon
-          />
-        ),
-      },
-    ],
   }
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -220,17 +170,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <a href="#">
-                <CommandIcon className="size-5!" />
-                <span className="text-base font-semibold">Acme Inc.</span>
-              </a>
+              <Link to="/dashboard">
+                <img src={logo} alt="TeamHub" className="w-7 h-7" />
+                <span className="text-base font-semibold">TeamHub</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
