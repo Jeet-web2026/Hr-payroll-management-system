@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Edit, ScanEye, Trash2Icon } from "lucide-react"
+import { BadgeAlert, BadgeCheckIcon, Edit, ScanEye, Trash2Icon } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export const Dashboard = () => {
@@ -21,6 +21,7 @@ export const Dashboard = () => {
         loginStatus?: string;
         designation?: string;
         experience?: number;
+        isEmailVerified?: boolean;
     };
 
     const [userData, setUserData] = useState<User | null>(null);
@@ -99,7 +100,10 @@ export const Dashboard = () => {
                                                                     {user.loginStatus === 'online' ? <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-500"></span> : <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500"></span>}
                                                                 </TableCell>
                                                                 <TableCell className="border">{user.firstName} {user.lastName}</TableCell>
-                                                                <TableCell className="border">{user.email}</TableCell>
+                                                                <TableCell className="border flex flex-row gap-1.5 items-center">
+                                                                    {user.isEmailVerified ? <BadgeCheckIcon size={15} className="text-blue-400" /> : <BadgeAlert className="text-red-400" size={15} />}
+                                                                    {user.email}
+                                                                </TableCell>
                                                                 <TableCell className="border capitalize">{user.role}</TableCell>
                                                                 <TableCell className="border">{user.designation ? user.designation : "Not assigned"}</TableCell>
                                                                 <TableCell className="border">{user.experience !== undefined ? user.experience : "Not specified"}</TableCell>
