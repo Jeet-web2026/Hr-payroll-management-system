@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Between, LessThan, Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
+import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
 
 @Injectable()
 export class UsersService {
@@ -237,6 +238,29 @@ export class UsersService {
       employeeGrowthRate,
       newJoineesRate,
       newJoiningRate,
+    };
+  }
+
+  async allUsers(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResponse<User>> {
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.userRepository.findAndCount({
+      skip,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      data,
+      meta: {
+        total,
+        currentPage: page,
+        nextPage: skip + limit < total ? page + 1 : null,
+        lastPage: Math.ceil(total / limit),
+        limit,
+      },
     };
   }
 }

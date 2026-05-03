@@ -5,7 +5,7 @@ import { UsersService } from '../../users/services/users.service';
 export class DashboardService {
   constructor(private userService: UsersService) {}
 
-  async getDashboardData(user: any) {
+  getDashboardData(user: any) {
     return this.userService.statictics(user.id);
   }
 }

@@ -19,6 +19,7 @@ export class GlobalResponseInterceptor implements NestInterceptor {
           statusCode: context.switchToHttp().getResponse().statusCode,
           message: message ?? 'Request successful',
           data: rest?.data !== undefined ? rest.data : rest,
+          meta: rest?.meta ?? null,
           path: request.url,
           method: request.method,
           timestamp: new Date().toISOString(),
