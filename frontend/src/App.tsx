@@ -8,6 +8,7 @@ import OtpVerification from './pages/auth/otpVerification'
 import { AuthSuccess } from './pages/auth/authSuccess'
 import ProtectedRoute from './comon/providers/protectedRouteProvider'
 import PublicRoute from './comon/providers/publicRouteProvider'
+import { MyInfo } from './pages/myInfo'
 
 function App() {
 
@@ -28,6 +29,11 @@ function App() {
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/account" element={
+          <ProtectedRoute>
+            <MyInfo />
           </ProtectedRoute>
         } />
         <Route path='/auth/otp-verification' element={
