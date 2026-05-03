@@ -1,12 +1,12 @@
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
-import data from "@/app/dashboard/data.json"
 import { DashboardLayout } from "@/comon/dashboardLayout"
 import { useEffect, useState } from "react"
 import apiService from "@/comon/api/apiService"
 import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Table, TableBody, TableHead, TableHeader } from "@/components/ui/table"
+import { Card } from "@/components/ui/card"
 
 export const Dashboard = () => {
     type User = {
@@ -53,7 +53,22 @@ export const Dashboard = () => {
                                 <div className="px-4 lg:px-6">
                                     <ChartAreaInteractive />
                                 </div>
-                                {userData?.role?.toLowerCase() === "hr" && <DataTable data={data} />}
+                                {userData?.role?.toLowerCase() === "hr" && <>
+                                    <div className="px-5">
+                                        <Card className="px-5 overflow-hidden">
+                                            <Table className="">
+                                                <TableHeader className="border rounded-lg">
+                                                    <TableHead>Name</TableHead>
+                                                    <TableHead>Role</TableHead>
+                                                    <TableHead>Status</TableHead>
+                                                    <TableHead>Designation</TableHead>
+                                                    <TableHead>Action</TableHead>
+                                                </TableHeader>
+                                                <TableBody></TableBody>
+                                            </Table>
+                                        </Card>
+                                    </div>
+                                </>}
                             </>
                         )}
                     </div>

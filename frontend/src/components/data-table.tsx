@@ -174,6 +174,21 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
+    accessorKey: "designation",
+    header: "Designation",
+    cell: ({ row }) => (
+      <Badge variant="outline" className="px-1.5 text-muted-foreground">
+        {row.original.status === "Done" ? (
+          <CircleCheckIcon className="fill-green-500 dark:fill-green-400" />
+        ) : (
+          <LoaderIcon
+          />
+        )}
+        {row.original.status}
+      </Badge>
+    ),
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
@@ -189,8 +204,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    accessorKey: "target",
-    header: () => <div className="w-full text-right">Target</div>,
+    accessorKey: "org-experience",
+    header: () => <div className="w-full text-right">Experience</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -428,9 +443,9 @@ export function DataTable({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         </TableHead>
                       )
                     })}
