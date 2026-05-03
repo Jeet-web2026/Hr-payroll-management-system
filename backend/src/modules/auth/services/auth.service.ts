@@ -13,7 +13,7 @@ import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { plainToInstance } from 'class-transformer';
 import { WelcomeMailEvent } from '../../mail/events/mail.event';
 import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.dto';
-import { User, UserStatus } from '../../users/model/user.entity';
+import { LoginStatus, User, UserStatus } from '../../users/model/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 import bcrypt from 'bcryptjs';
@@ -51,6 +51,7 @@ export class AuthService {
 
       await this.userService.updateUser(user.id, {
         lastLogin: new Date(),
+        loginStatus: LoginStatus.ONLINE,
       });
 
       const [accessToken, refreshToken] = await Promise.all([
@@ -136,6 +137,7 @@ export class AuthService {
       otp: null,
       otpExpiry: null,
       status: UserStatus.ACTIVE,
+      loginStatus: LoginStatus.ONLINE,
     });
 
     const [refreshToken, accessToken] = await Promise.all([

@@ -6,10 +6,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { User, UserRole, UserStatus } from '../model/user.entity';
+import { LoginStatus, User, UserRole, UserStatus } from '../model/user.entity';
 import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, LessThan, Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 
@@ -109,6 +109,7 @@ export class UsersService {
           ipAddress: ipAddress,
           lastLogin: new Date(),
           isEmailVerified: true,
+          loginStatus: LoginStatus.ONLINE,
         });
 
         return await this.userRepository.save(user);
@@ -131,5 +132,87 @@ export class UsersService {
     const minutes = String(now.getMinutes()).padStart(2, '0');
 
     return `${day}${month}${year}${hours}${minutes}`;
+  }
+
+  async statictics(id: string): Promise<{
+    totalEmployees: number;
+    newJoinees: number;
+    activeEmployees: number;
+    joiningRate: number;
+    employeeGrowthRate: number;
+    newJoineesRate: number;
+  }> {
+    const user = await this.findById(id);
+
+    const totalEmployees =
+      user.role === UserRole.HR
+        ? await this.userRepository.count({
+            where: { role: UserRole.EMPLOYEE },
+          })
+        : 0;
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const newJoinees =
+      user.role === UserRole.HR
+        ? await this.userRepository.count({
+            where: {
+              role: UserRole.EMPLOYEE,
+              status: UserStatus.ACTIVE,
+              createdAt: Between(startOfMonth, endOfMonth),
+            },
+          })
+        : 0;
+    const activeEmployees =
+      user.role === UserRole.HR
+        ? await this.userRepository.count({
+            where: { role: UserRole.EMPLOYEE, status: UserStatus.ACTIVE },
+          })
+        : 0;
+
+    const joiningRate =
+      user.role === UserRole.HR
+        ? totalEmployees > 0
+          ? (newJoinees / totalEmployees) * 100
+          : 0
+        : 0;
+
+    const totalEmployeesCurrent = await this.userRepository.count({
+      where: {
+        role: UserRole.EMPLOYEE,
+        status: UserStatus.ACTIVE,
+      },
+    });
+
+    const totalEmployeesPrevious = await this.userRepository.count({
+      where: {
+        role: UserRole.EMPLOYEE,
+        status: UserStatus.ACTIVE,
+        createdAt: LessThan(startOfMonth),
+      },
+    });
+
+    const employeeGrowthRate =
+      user.role === UserRole.HR && totalEmployeesPrevious > 0
+        ? ((totalEmployeesCurrent - totalEmployeesPrevious) /
+            totalEmployeesPrevious) *
+          100
+        : 0;
+
+    const newJoineesRate =
+      user.role === UserRole.HR
+        ? newJoinees > 0 && totalEmployees > 0
+          ? (newJoinees / totalEmployees) * 100
+          : 0
+        : 0;
+
+    return {
+      totalEmployees,
+      newJoinees,
+      activeEmployees,
+      joiningRate,
+      employeeGrowthRate,
+      newJoineesRate,
+    };
   }
 }

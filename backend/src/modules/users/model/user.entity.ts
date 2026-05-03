@@ -21,6 +21,11 @@ export enum UserStatus {
   SUSPENDED = 'suspended',
 }
 
+export enum LoginStatus {
+  ONLINE = 'online',
+  OFFLINE = 'offline',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -60,7 +65,7 @@ export class User {
   lastLogin!: Date;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   ipAddress!: string;
 
@@ -69,6 +74,13 @@ export class User {
 
   @Column({ name: 'profile_picture', type: 'text', nullable: true })
   profilePicture!: string;
+
+  @Column({
+    type: 'enum',
+    enum: LoginStatus,
+    nullable: true,
+  })
+  loginStatus!: LoginStatus;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
