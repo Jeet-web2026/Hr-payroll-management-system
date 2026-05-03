@@ -56,7 +56,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, []);
   const data = {
     user: {
-      name: user ? user.firstName + " " + user.lastName : "",
+      name: user
+        ? [user.firstName, user.lastName].filter(Boolean).join(" ")
+        : "",
       email: user ? user.email : "",
       avatar: user ? user.profilePicture : '',
     },
