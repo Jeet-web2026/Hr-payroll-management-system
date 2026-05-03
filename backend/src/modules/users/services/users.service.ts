@@ -141,6 +141,7 @@ export class UsersService {
     joiningRate: number;
     employeeGrowthRate: number;
     newJoineesRate: number;
+    newJoiningRate: number;
   }> {
     const user = await this.findById(id);
 
@@ -153,6 +154,17 @@ export class UsersService {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const previousMonthStart = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      1,
+    );
+    const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+    const daysPassed = Math.ceil(
+      (now.getTime() - startOfMonth.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    const expectedJoinees = (daysPassed / 2) * 5;
     const newJoinees =
       user.role === UserRole.HR
         ? await this.userRepository.count({
@@ -199,11 +211,22 @@ export class UsersService {
           100
         : 0;
 
+    const prevMonthJoinees = await this.userRepository.count({
+      where: {
+        role: UserRole.EMPLOYEE,
+        status: UserStatus.ACTIVE,
+        createdAt: Between(previousMonthStart, previousMonthEnd),
+      },
+    });
+
     const newJoineesRate =
-      user.role === UserRole.HR
-        ? newJoinees > 0 && totalEmployees > 0
-          ? (newJoinees / totalEmployees) * 100
-          : 0
+      user.role === UserRole.HR && prevMonthJoinees > 0
+        ? ((newJoinees - prevMonthJoinees) / prevMonthJoinees) * 100
+        : 0;
+
+    const newJoiningRate =
+      user.role === UserRole.HR && expectedJoinees > 0
+        ? ((newJoinees - expectedJoinees) / expectedJoinees) * 100
         : 0;
 
     return {
@@ -213,6 +236,7 @@ export class UsersService {
       joiningRate,
       employeeGrowthRate,
       newJoineesRate,
+      newJoiningRate,
     };
   }
 }

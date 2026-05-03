@@ -25,6 +25,7 @@ export function SectionCards() {
     joiningRate: 0,
     employeeGrowthRate: 0,
     newJoineesRate: 0,
+    newJoiningRate: 0,
   });
 
   const fetchDashboardData = async () => {
@@ -62,8 +63,7 @@ export function SectionCards() {
               </CardTitle>
               <CardAction>
                 <Badge variant="outline">
-                  <TrendingUpIcon
-                  />
+                  {data.employeeGrowthRate > 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
                   {data.employeeGrowthRate > 0 ? `+${data.employeeGrowthRate}%` : `${data.employeeGrowthRate}%`}
                 </Badge>
               </CardAction>
@@ -86,8 +86,7 @@ export function SectionCards() {
               </CardTitle>
               <CardAction>
                 <Badge variant="outline">
-                  <TrendingDownIcon
-                  />
+                  {data.newJoineesRate > 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
                   {data.newJoineesRate > 0 ? `+${data.newJoineesRate}%` : `${data.newJoineesRate}%`}
                 </Badge>
               </CardAction>
@@ -108,13 +107,6 @@ export function SectionCards() {
               <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                 {data.activeEmployees}
               </CardTitle>
-              <CardAction>
-                <Badge variant="outline">
-                  <TrendingUpIcon
-                  />
-                  +12.5%
-                </Badge>
-              </CardAction>
             </CardHeader>
             <CardFooter className="flex-col items-start gap-1.5 text-sm">
               <div className="line-clamp-1 flex gap-2 font-medium">
@@ -132,9 +124,8 @@ export function SectionCards() {
               </CardTitle>
               <CardAction>
                 <Badge variant="outline">
-                  <TrendingUpIcon
-                  />
-                  +4.5%
+                  {data.newJoiningRate > 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                  {data.newJoiningRate > 0 ? `+${data.newJoiningRate.toFixed(2)}%` : `${data.newJoiningRate.toFixed(2)}%`}
                 </Badge>
               </CardAction>
             </CardHeader>
