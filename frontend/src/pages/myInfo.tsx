@@ -1,10 +1,12 @@
 import apiService from "@/comon/api/apiService"
 import { ResponseHandler } from "@/comon/api/responseHandler"
 import { DashboardLayout } from "@/comon/dashboardLayout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Info } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export const MyInfo = () => {
@@ -16,6 +18,7 @@ export const MyInfo = () => {
         phone: "",
         role: "",
         status: "",
+        profilePicture: "",
     });
 
     const fetchUserData = async () => {
@@ -38,25 +41,29 @@ export const MyInfo = () => {
     return (
         <DashboardLayout>
             {isPending ? (
-                <Skeleton className="w-full h-50 rounded-md m-2" />
+                <Skeleton className="h-full rounded-md m-2" />
             ) : (
                 <Card className="m-3 p-3 pb-5">
                     <CardHeader>
                         <div className="flex flex-row justify-between items-center mb-4">
                             <CardTitle className="text-2xl">Account Details</CardTitle>
-                            <p className={`border px-3 py-2 rounded-md ${User.status === 'active'
+                            <CardTitle className={`border px-3 py-2 rounded-md ${User.status === 'active'
                                 ? 'border-green-800 bg-green-950'
                                 : User.status === 'inactive'
                                     ? 'border-red-600 bg-red-700'
                                     : 'border-yellow-600 bg-yellow-700'
                                 } capitalize`}
-                            >{User.role}</p>
+                            >{User.role}</CardTitle>
                         </div>
                         <hr />
                     </CardHeader>
                     <CardContent className="mt-3">
                         <form>
                             <div className="flex flex-col gap-6">
+                                <div className="flex lg:flex-row flex-col lg:items-center gap-5 lg:gap-3">
+                                    {User.profilePicture ? <img src={User.profilePicture} alt="Profile" className="w-15 rounded-full" /> : <div className="w-15 rounded-full">Not found</div>}
+                                    <Input type="file" className="lg:w-50" accept=".png,.jpg,.jpeg" />
+                                </div>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     <div className="grid gap-3">
                                         <Label htmlFor="firstName">First Name</Label>
@@ -95,6 +102,28 @@ export const MyInfo = () => {
                                         />
                                     </div>
                                 </div>
+                                <CardDescription>
+                                    <Info className="inline me-1" />
+                                    You can update your profile picture, email and phone number here. For security reasons, you cannot change your role and status. Please contact support if you want to change your role or status.
+                                </CardDescription>
+                                <CardTitle>Update Credentials</CardTitle>
+                                <hr />
+                                <Input
+                                    id="currentPassword"
+                                    type="password"
+                                    placeholder="Current Password"
+                                />
+                                <Input
+                                    id="newPassword"
+                                    type="password"
+                                    placeholder="New Password"
+                                />
+                                <Input
+                                    id="confirmPassword"
+                                    type="password"
+                                    placeholder="Confirm New Password"
+                                />
+                                <Button className="w-25 py-3"><i className="ri-save-line text-base"></i>Save</Button>
                             </div>
                         </form>
                     </CardContent>
