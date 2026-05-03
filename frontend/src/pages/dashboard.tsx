@@ -7,7 +7,6 @@ import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { BadgeAlert, BadgeCheckIcon, Edit, ScanEye, Trash2Icon } from "lucide-react"
 import { Link } from "react-router-dom"
 
