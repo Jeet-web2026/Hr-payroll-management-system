@@ -48,12 +48,12 @@ export const Dashboard = () => {
                             </>
                         }
 
-                        {!isLoading && userData?.role?.toLowerCase() === "hr" && (
+                        {!isLoading && (
                             <>
                                 <div className="px-4 lg:px-6">
                                     <ChartAreaInteractive />
                                 </div>
-                                <DataTable data={data} />
+                                {userData?.role?.toLowerCase() === "hr" && <DataTable data={data} />}
                             </>
                         )}
                     </div>
