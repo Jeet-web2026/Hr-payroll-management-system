@@ -114,4 +114,32 @@ export class AuthController {
       `${process.env.APP_URL}/auth/success?accessToken=${data.accessToken}`,
     );
   }
+
+   @Get('linkedin')
+  @UseGuards(AuthGuard('linkedin'))
+  linkedInLogin() {}
+
+    @Get('linkedin/callback')
+  @UseGuards(AuthGuard('linkedin'))
+  async linkedinRedirect(
+    @Req() req: express.Request,
+    @Res() res: express.Response,
+  ) {
+    const user = req.user as any;
+    const ip =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+      req.socket.remoteAddress ||
+      '0.0.0.0';
+    const data = await this.authService.socialLogin(user, ip);
+    res.cookie('refreshToken', data.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    return res.redirect(
+      `${process.env.APP_URL}/auth/success?accessToken=${data.accessToken}`,
+    );
+  }
 }

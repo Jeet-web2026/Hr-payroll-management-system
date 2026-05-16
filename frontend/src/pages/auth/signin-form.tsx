@@ -131,7 +131,7 @@ export function SigninForm({
                     <i className="ri-google-line text-xl"></i>
                     <span className="sr-only">Sign up with Google</span>
                   </Button>
-                  <Button variant="outline" type="button" className="cursor-pointer">
+                  <Button onClick={() => socialLogin("linkedin")} variant="outline" type="button" className="cursor-pointer">
                     <i className="ri-linkedin-line text-xl"></i>
                     <span className="sr-only">Sign up with linkedin</span>
                   </Button>
