@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-facebook';
+import { Request } from 'express';
 
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(
@@ -19,21 +20,19 @@ export class FacebookStrategy extends PassportStrategy(
   }
 
   async validate(
+    req: Request,
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done: Function,
   ) {
     const { name, emails, photos } = profile;
 
-    const user = {
+    return {
       email: emails?.[0]?.value,
       firstName: name?.givenName,
       lastName: name?.familyName,
       picture: photos?.[0]?.value,
       accessToken,
     };
-
-    done(null, user);
   }
 }
