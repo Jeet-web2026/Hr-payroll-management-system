@@ -39,7 +39,7 @@ export const MyInfo = () => {
     }, []);
 
     return (
-        <DashboardLayout>
+        <DashboardLayout sideHeader="Account Management">
             {isPending ? (
                 <Skeleton className="h-full rounded-md m-2" />
             ) : (

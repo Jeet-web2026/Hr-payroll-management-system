@@ -6,7 +6,7 @@ import { Check, X } from "lucide-react"
 
 export const Inbox = () => {
     return (
-        <DashboardLayout>
+        <DashboardLayout sideHeader="Inbox Management">
             <div className="p-5">
                 <Card className="p-5">
                     <Table>

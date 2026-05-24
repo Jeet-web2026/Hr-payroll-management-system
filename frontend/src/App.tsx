@@ -11,6 +11,7 @@ import PublicRoute from './comon/providers/publicRouteProvider'
 import { MyInfo } from './pages/myInfo'
 import { Inbox } from './pages/others/inbox'
 import { Calender } from './pages/management/calender'
+import { PermissionManagement } from './pages/management/permission-management'
 
 function App() {
 
@@ -51,6 +52,11 @@ function App() {
         <Route path="/calender" element={
           <ProtectedRoute>
             <Calender />
+          </ProtectedRoute>
+        } />
+        <Route path="/manage-permissions" element={
+          <ProtectedRoute>
+            <PermissionManagement />
           </ProtectedRoute>
         } />
       </Routes>

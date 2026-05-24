@@ -4,7 +4,12 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 
-export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+type DashboardLayoutProps = {
+    children: React.ReactNode;
+    sideHeader: string;
+};
+
+export const DashboardLayout = ({ children, sideHeader }: DashboardLayoutProps) => {
     return (
         <AuthLayout>
             <SidebarProvider
@@ -17,7 +22,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
             >
                 <AppSidebar variant="inset" />
                 <SidebarInset>
-                    <SiteHeader />
+                    <SiteHeader sideHeader={sideHeader} />
                     {children}
                 </SidebarInset>
             </SidebarProvider>
