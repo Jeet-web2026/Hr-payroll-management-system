@@ -9,6 +9,7 @@ import { HealthModule } from './modules/health/health.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailModule } from './modules/mail/mail.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RequestModule } from './modules/request/request.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       },
     }),
     MailModule,
-    EventEmitterModule.forRoot()
+    EventEmitterModule.forRoot(),
+    RequestModule
   ],
   controllers: [AppController],
   providers: [AppService],
