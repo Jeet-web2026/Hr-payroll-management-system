@@ -126,11 +126,16 @@ export class AuthController {
     @Res() res: express.Response,
   ) {
     const user = req.user as any;
+    const profile = {
+      ...user.profile,
+      firstName: user.profile.given_name,
+      lastName: user.profile.family_name,
+    };
     const ip =
       (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
       req.socket.remoteAddress ||
       '0.0.0.0';
-    const data = await this.authService.socialLogin(user.profile, ip);
+    const data = await this.authService.socialLogin(profile, ip);
     res.cookie('refreshToken', data.refreshToken, {
       httpOnly: true,
       secure: true,

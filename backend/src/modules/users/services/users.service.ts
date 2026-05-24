@@ -116,6 +116,14 @@ export class UsersService {
         return await this.userRepository.save(user);
       }
 
+      if (user) {
+        await this.userRepository.update(user.id, {
+          lastLogin: new Date(),
+          ipAddress,
+          loginStatus: LoginStatus.ONLINE,
+        });
+      }
+
       return user;
     } catch (error) {
       throw new InternalServerErrorException('Failed to login user.');
