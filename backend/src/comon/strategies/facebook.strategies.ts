@@ -14,6 +14,7 @@ export class FacebookStrategy extends PassportStrategy(
       callbackURL: process.env.FACEBOOK_CALLBACK_URL!,
       profileFields: ['id', 'emails', 'name', 'picture.type(large)'],
       scope: ['email'],
+      passReqToCallback: true,
     });
   }
 
