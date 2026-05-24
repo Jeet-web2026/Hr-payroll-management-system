@@ -37,6 +37,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 
   const [user, setUser] = React.useState<User | null>(null);
+  const Hr = user?.role === "hr";
   const [pending, setPending] = React.useState(false);
   React.useEffect(() => {
     const fetchUser = async () => {
@@ -73,7 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Inbox",
-        url: "#",
+        url: "/inbox",
         icon: (
           <MailIcon
           />
@@ -81,28 +82,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Calendar",
-        url: "#",
+        url: "/calender",
         icon: (
           <CalendarClock
           />
         ),
       },
-      {
-        title: "Employees",
-        url: "#",
-        icon: (
-          <IdCardLanyard
-          />
-        ),
-      },
-      {
-        title: "Attendance",
-        url: "#",
-        icon: (
-          <UsersIcon
-          />
-        ),
-      },
+      ...(Hr
+        ? [
+          {
+            title: "Employees",
+            url: "#",
+            icon: <IdCardLanyard />,
+          },
+        ]
+        : []),
+      ...(Hr
+        ? [
+          {
+            title: "Attendance",
+            url: "#",
+            icon: (
+              <UsersIcon
+              />
+            ),
+          },
+        ]
+        : []),
       {
         title: "Performance",
         url: "#",
@@ -111,14 +117,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           />
         ),
       },
-      {
-        title: "Payroll",
-        url: "#",
-        icon: (
-          <ClipboardSignatureIcon
-          />
-        ),
-      },
+      ...(Hr
+        ? [
+          {
+            title: "Payroll",
+            url: "#",
+            icon: (
+              <ClipboardSignatureIcon
+              />
+            ),
+          },
+        ]
+        : []),
       {
         title: "Leave Management",
         url: "#",
@@ -127,14 +137,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           />
         ),
       },
-      {
-        title: "Recruitment",
-        url: "#",
-        icon: (
-          <ScanSearchIcon
-          />
-        ),
-      },
+      ...(Hr
+        ? [
+          {
+            title: "Recruitment",
+            url: "#",
+            icon: (
+              <ScanSearchIcon
+              />
+            ),
+          },
+        ]
+        : []),
     ],
     navSecondary: [
       {
@@ -181,7 +195,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={data.navMain} role={user?.role} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

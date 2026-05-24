@@ -9,6 +9,8 @@ import { AuthSuccess } from './pages/auth/authSuccess'
 import ProtectedRoute from './comon/providers/protectedRouteProvider'
 import PublicRoute from './comon/providers/publicRouteProvider'
 import { MyInfo } from './pages/myInfo'
+import { Inbox } from './pages/others/inbox'
+import { Calender } from './pages/management/calender'
 
 function App() {
 
@@ -26,11 +28,6 @@ function App() {
           </PublicRoute>
         } />
         <Route path="/auth/success" element={<AuthSuccess />} />
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
         <Route path="/account" element={
           <ProtectedRoute>
             <MyInfo />
@@ -40,6 +37,21 @@ function App() {
           <PublicRoute>
             <OtpVerification />
           </PublicRoute>
+        } />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/inbox" element={
+          <ProtectedRoute>
+            <Inbox />
+          </ProtectedRoute>
+        } />
+        <Route path="/calender" element={
+          <ProtectedRoute>
+            <Calender />
+          </ProtectedRoute>
         } />
       </Routes>
     </ThemeProvider>
