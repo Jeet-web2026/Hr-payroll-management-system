@@ -130,7 +130,7 @@ export class AuthController {
       (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
       req.socket.remoteAddress ||
       '0.0.0.0';
-    const data = await this.authService.socialLogin(user, ip);
+    const data = await this.authService.socialLogin(user.profile, ip);
     res.cookie('refreshToken', data.refreshToken, {
       httpOnly: true,
       secure: true,
@@ -146,7 +146,13 @@ export class AuthController {
   @Post('logout')
   @HttpCode(200)
   @UseGuards(AuthGuard('jwt'))
-  async logout(@Res({ passthrough: true }) res: express.Response) {
+  async logout(
+    @Req() req: express.Request,
+    @Res({ passthrough: true }) res: express.Response,
+  ) {
+    const user = req.user as any;
+    await this.authService.logout(user.id);
+
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,

@@ -195,4 +195,11 @@ export class AuthService {
       expiresIn: '1d',
     });
   }
+
+  async logout(userId: string): Promise<void> {
+    await this.userService.updateUser(userId, {
+      loginStatus: LoginStatus.OFFLINE,
+    });
+    return;
+  }
 }

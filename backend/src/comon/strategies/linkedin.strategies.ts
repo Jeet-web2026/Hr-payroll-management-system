@@ -1,11 +1,11 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-oauth2';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Strategy } from 'passport-oauth2';
 
 @Injectable()
 export class LinkedinStrategy extends PassportStrategy(Strategy, 'linkedin') {
-  constructor(private configService: ConfigService) {
+  constructor(configService: ConfigService) {
     super({
       authorizationURL: 'https://www.linkedin.com/oauth/v2/authorization',
 
@@ -21,9 +21,20 @@ export class LinkedinStrategy extends PassportStrategy(Strategy, 'linkedin') {
     });
   }
 
-  async validate(accessToken: string) {
+  async validate(accessToken: string): Promise<any> {
+    const axios = (await import('axios')).default;
+
+    const response = await axios.get('https://api.linkedin.com/v2/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const profile = response.data;
+
     return {
       accessToken,
+      profile,
     };
   }
 }
