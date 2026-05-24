@@ -135,7 +135,7 @@ export function SigninForm({
                     <i className="ri-linkedin-line text-xl"></i>
                     <span className="sr-only">Sign up with linkedin</span>
                   </Button>
-                  <Button variant="outline" type="button" className="cursor-pointer">
+                  <Button onClick={() => socialLogin("facebook")} variant="outline" type="button" className="cursor-pointer">
                     <i className="ri-facebook-line text-xl"></i>
                     <span className="sr-only">Sign up with facebook</span>
                   </Button>

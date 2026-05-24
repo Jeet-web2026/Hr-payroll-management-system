@@ -8,10 +8,11 @@ import { ConfigService } from '@nestjs/config';
 import { GoogleStrategy } from '../../comon/strategies/google.strategies';
 import type { StringValue } from 'ms';
 import { LinkedinStrategy } from '../../comon/strategies/linkedin.strategies';
+import { FacebookStrategy } from '../../comon/strategies/facebook.strategies';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, LinkedinStrategy],
+  providers: [AuthService, GoogleStrategy, LinkedinStrategy, FacebookStrategy],
   imports: [
     UsersModule,
     PassportModule.register({ defaultStrategy: 'google' }),
