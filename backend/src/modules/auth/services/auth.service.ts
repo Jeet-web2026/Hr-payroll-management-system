@@ -168,7 +168,7 @@ export class AuthService {
       const accessToken = await this.getAccessToken(user);
       return { accessToken };
     } catch (error) {
-      throw new UnauthorizedException('Invalid or expired refresh token.');
+      throw new UnauthorizedException('Login expired. Please login again.');
     }
   }
 

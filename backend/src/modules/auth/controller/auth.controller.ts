@@ -81,7 +81,7 @@ export class AuthController {
     const token = req.cookies['refreshToken'];
 
     if (!token) {
-      throw new UnauthorizedException('Refresh token not found.');
+      throw new UnauthorizedException('Login expired. Please login again.');
     }
 
     return await this.authService.refreshToken(token);
@@ -115,11 +115,11 @@ export class AuthController {
     );
   }
 
-   @Get('linkedin')
+  @Get('linkedin')
   @UseGuards(AuthGuard('linkedin'))
   linkedInLogin() {}
 
-    @Get('linkedin/callback')
+  @Get('linkedin/callback')
   @UseGuards(AuthGuard('linkedin'))
   async linkedinRedirect(
     @Req() req: express.Request,
@@ -141,5 +141,17 @@ export class AuthController {
     return res.redirect(
       `${process.env.APP_URL}/auth/success?accessToken=${data.accessToken}`,
     );
+  }
+
+  @Post('logout')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
+  async logout(@Res({ passthrough: true }) res: express.Response) {
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+    return { message: 'Logged out successfully' };
   }
 }
