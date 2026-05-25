@@ -47,7 +47,18 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User> {
     try {
-      return await this.userRepository.findOneOrFail({ where: { email } });
+      const cacheKey = `user:${email}`;
+      const cachedUser = await this.cacheManager.get<User>(cacheKey);
+      if (cachedUser) {
+        return cachedUser;
+      }
+      const user = await this.userRepository.findOneOrFail({
+        where: { email },
+      });
+
+      await this.cacheManager.set(cacheKey, user, 1000 * 60 * 5);
+
+      return user;
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
     }
