@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   HttpException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -17,6 +18,8 @@ import { LoginStatus, User, UserStatus } from '../../users/model/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 import bcrypt from 'bcryptjs';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +27,8 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly eventEmitter: EventEmitter2,
     private readonly jwtService: JwtService,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
   ) {}
 
   async signIn(signinDto: SignInDto): Promise<UserResponseDto> {
@@ -200,6 +205,8 @@ export class AuthService {
     await this.userService.updateUser(userId, {
       loginStatus: LoginStatus.OFFLINE,
     });
+
+    await this.cacheManager.del(`user:${userId}`);
     return;
   }
 }
