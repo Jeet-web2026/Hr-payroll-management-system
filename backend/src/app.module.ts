@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailModule } from './modules/mail/mail.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RequestModule } from './modules/request/request.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { RequestModule } from './modules/request/request.module';
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env'
+      envFilePath: '.env',
     }),
     HealthModule,
     TypeOrmModule.forRoot({
@@ -32,7 +33,11 @@ import { RequestModule } from './modules/request/request.module';
     }),
     MailModule,
     EventEmitterModule.forRoot(),
-    RequestModule
+    RequestModule,
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 1000 * 60 * 5,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

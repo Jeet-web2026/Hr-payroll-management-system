@@ -2,6 +2,7 @@ import {
   BadGatewayException,
   ConflictException,
   HttpException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -13,19 +14,32 @@ import { Between, LessThan, Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
   ) {}
 
   async findById(id: string): Promise<User> {
     try {
-      return await this.userRepository.findOneOrFail({
+      const cacheKey = `user:${id}`;
+      const cachedUser = await this.cacheManager.get<User>(cacheKey);
+      if (cachedUser) {
+        return cachedUser;
+      }
+      const user = await this.userRepository.findOneOrFail({
         where: { id: String(id) },
       });
+
+      await this.cacheManager.set(cacheKey, user, 1000 * 60 * 5);
+
+      return user;
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
     }
