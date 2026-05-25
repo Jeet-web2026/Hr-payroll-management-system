@@ -206,7 +206,7 @@ export class AuthService {
       loginStatus: LoginStatus.OFFLINE,
     });
 
-    await this.cacheManager.del(`user:${userId}`);
+    await this.cacheManager.clear();
     return;
   }
 }
