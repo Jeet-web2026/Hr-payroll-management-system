@@ -11,6 +11,9 @@ import { MailModule } from './modules/mail/mail.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RequestModule } from './modules/request/request.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { PermissionmanagementModule } from './modules/permissionmanagement/permissionmanagement.module';
+import { PermissionmanagementService } from './modules/permissionmanagement/service/permissionmanagement.service';
+import { PermissionmanagementcontrollerController } from './modules/permissionmanagement/controller/permissionmanagementcontroller.controller';
 
 @Module({
   imports: [
@@ -38,8 +41,9 @@ import { CacheModule } from '@nestjs/cache-manager';
       isGlobal: true,
       ttl: 1000 * 60 * 5,
     }),
+    PermissionmanagementModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, PermissionmanagementcontrollerController],
+  providers: [AppService, PermissionmanagementService],
 })
 export class AppModule {}
