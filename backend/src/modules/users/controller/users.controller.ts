@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Query,
@@ -10,7 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../../comon/decorators/get-user.decorator';
 import type { JwtUser } from '../../../comon/decorators/get-user.decorator';
 import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
-import { User } from '../model/user.entity';
+import { User, UserRole } from '../model/user.entity';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
@@ -31,7 +32,8 @@ export class UsersController {
   allUsers(
     @Query('page') page: number,
     @Query('limit') limit: number,
+    @Body('role') role: UserRole,
   ): Promise<PaginatedResponse<User>> {
-    return this.usersService.allUsers(page, limit);
+    return this.usersService.allUsers(page, limit, role);
   }
 }

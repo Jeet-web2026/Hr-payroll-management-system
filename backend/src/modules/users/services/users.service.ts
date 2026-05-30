@@ -252,9 +252,14 @@ export class UsersService {
   async allUsers(
     page: number,
     limit: number,
+    role: UserRole,
   ): Promise<PaginatedResponse<User>> {
     const skip = (page - 1) * limit;
     const [data, total] = await this.userRepository.findAndCount({
+      where: {
+        role: role,
+        status: UserStatus.ACTIVE,
+      },
       skip,
       take: limit,
       order: { createdAt: 'DESC' },
