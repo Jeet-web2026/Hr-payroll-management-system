@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Query,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { User, UserRole } from '../model/user.entity';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import * as express from 'express';
 
 @Controller('user')
 export class UsersController {
@@ -29,11 +31,14 @@ export class UsersController {
 
   @Get('all')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(25)
   allUsers(
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Body('role') role: UserRole,
+    @Req() req: express.Request,
   ): Promise<PaginatedResponse<User>> {
-    return this.usersService.allUsers(page, limit, role);
+    const user = req.user as any;
+    return this.usersService.allUsers(page, limit, user.id);
   }
 }

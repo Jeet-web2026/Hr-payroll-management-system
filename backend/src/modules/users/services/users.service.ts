@@ -252,12 +252,32 @@ export class UsersService {
   async allUsers(
     page: number,
     limit: number,
-    role: UserRole,
+    userId: string,
   ): Promise<PaginatedResponse<User>> {
     const skip = (page - 1) * limit;
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: {
+        role: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const currentUserRole = user?.role;
+    const roleMap: Record<UserRole, UserRole> = {
+      [UserRole.ADMIN]: UserRole.COMPANY,
+      [UserRole.COMPANY]: UserRole.HR,
+      [UserRole.HR]: UserRole.EMPLOYEE,
+      [UserRole.EMPLOYEE]: UserRole.EMPLOYEE,
+    };
+
+    const setRole = roleMap[currentUserRole];
     const [data, total] = await this.userRepository.findAndCount({
       where: {
-        role: role,
+        role: setRole,
         status: UserStatus.ACTIVE,
       },
       skip,
