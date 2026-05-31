@@ -20,9 +20,17 @@ export const PermissionManagement = () => {
     experience?: number;
     isEmailVerified?: boolean;
   };
+
+  type Meta = {
+    currentPage?: number;
+    lastPage?: number;
+    limit?: number;
+    nextPage?: number;
+    total?: number;
+  };
   const [data, setData] = useState<User[]>([]);
   const [loading, isLoading] = useState(false);
-  const [meta, setMeta] = useState(null);
+  const [meta, setMeta] = useState<Meta | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -31,6 +39,7 @@ export const PermissionManagement = () => {
         const users = await apiService.get('/user/all?page=1&limit=10', {});
         setData(users.data?.data);
         setMeta(users.data?.meta);
+        console.log(users.data?.meta);
       } catch (error) {
         toast.error("Failed to fetch user data", { position: "top-right", richColors: true });
       } finally {
@@ -127,6 +136,11 @@ export const PermissionManagement = () => {
                     )}
                   </TableBody>
                 </Table>
+                <div className="flex flex-row justify-between items-center mt-4">
+                  {meta && <span className="text-sm text-muted-foreground">
+                    Showing {meta?.total} of {meta?.total} entries
+                  </span>}
+                </div>
               </CardContent>
             </Card>
           </>
