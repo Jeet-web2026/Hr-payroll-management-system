@@ -12,6 +12,7 @@ import { MyInfo } from './pages/myInfo'
 import { Inbox } from './pages/others/inbox'
 import { Calender } from './pages/management/calender'
 import { PermissionManagement } from './pages/management/permission-management'
+import { Userview } from './pages/user/view'
 
 function App() {
 
@@ -57,6 +58,11 @@ function App() {
         <Route path="/manage-permissions" element={
           <ProtectedRoute>
             <PermissionManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/user/view/:userId" element={
+          <ProtectedRoute>
+            <Userview />
           </ProtectedRoute>
         } />
       </Routes>

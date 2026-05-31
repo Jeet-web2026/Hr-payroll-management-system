@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Query,
   Req,
   UseGuards,
@@ -40,5 +41,13 @@ export class UsersController {
   ): Promise<PaginatedResponse<User>> {
     const user = req.user as any;
     return this.usersService.allUsers(page, limit, user.id);
+  }
+
+  @Get('/:userId')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(25)
+  view(@Param('userId') userId: string) {
+    return this.usersService.findById(userId);
   }
 }
