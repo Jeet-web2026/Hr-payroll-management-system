@@ -54,7 +54,7 @@ export const PermissionManagement = () => {
       <div className="p-5">
         {loading &&
           <>
-            <div className="p-5 flex flex-col gap-6">
+            <div className="flex flex-col gap-6">
               <Skeleton className="h-140 w-full rounded-md" />
             </div>
           </>
