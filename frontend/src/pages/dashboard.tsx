@@ -7,7 +7,7 @@ import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card } from "@/components/ui/card"
-import { BadgeAlert, BadgeCheckIcon, Edit, ScanEye, Trash2Icon } from "lucide-react"
+import { BadgeAlert, BadgeCheckIcon, Edit, ScanEye } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export const Dashboard = () => {
@@ -76,7 +76,7 @@ export const Dashboard = () => {
                                 <div className="px-4 lg:px-6">
                                     <ChartAreaInteractive />
                                 </div>
-                                {userData?.role?.toLowerCase() === "hr" && <>
+                                {userData && <>
                                     <div className="px-5">
                                         <Card className="px-5 overflow-hidden">
                                             <Table>
@@ -113,16 +113,13 @@ export const Dashboard = () => {
                                                                     <Link to={`/user/view/${user.id}`} className="cursor-pointer rounded border p-2 border-green-700 bg-green-950">
                                                                         <ScanEye size={16} />
                                                                     </Link>
-                                                                    <Link to={`/user/delete/${user.id}`} className="cursor-pointer rounded border p-2 border-red-700 bg-red-950">
-                                                                        <Trash2Icon size={16} />
-                                                                    </Link>
                                                                 </TableCell>
                                                             </TableRow>
                                                         ))
                                                     ) : (
                                                         <TableRow className="border">
                                                             <TableCell colSpan={6} className="text-center">
-                                                                No data found!
+                                                                Data feching, please wait!
                                                             </TableCell>
                                                         </TableRow>
                                                     )}
