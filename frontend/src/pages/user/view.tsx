@@ -49,8 +49,8 @@ export const Userview = () => {
         <>
             {loading && (
                 <div className="p-5 flex flex-col lg:flex-row gap-6">
-                    <Skeleton className="h-162 w-1/4 rounded-md" />
-                    <Skeleton className="h-162 w-3/4 rounded-md" />
+                    <Skeleton className="h-162 lg:w-1/4 w-full rounded-md" />
+                    <Skeleton className="h-162 lg:w-3/4 w-full rounded-md" />
                 </div>
             )}
             {!loading && (
