@@ -23,6 +23,8 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('me')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(50 * 10 * 1000)
   @UseGuards(AuthGuard('jwt'))
   getProfile(@GetUser() user: JwtUser): Promise<UserResponseDto> {
     return this.usersService.findById(user.id);

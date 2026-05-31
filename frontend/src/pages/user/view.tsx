@@ -1,6 +1,6 @@
 import apiService from "@/comon/api/apiService";
 import { DashboardLayout } from "@/comon/dashboardLayout"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
@@ -17,6 +17,11 @@ export const Userview = () => {
         designation?: string;
         experience?: number;
         isEmailVerified?: boolean;
+        createdAt?: Date;
+        lastLogin?: Date;
+        phone?: number;
+        profilePicture?: string;
+        status?: string;
     };
 
 
@@ -30,8 +35,7 @@ export const Userview = () => {
             try {
                 setLoading(true);
                 const data = await apiService.get(`user/${userId}`, {});
-                setData(data.data);
-                console.log(data);
+                setData(data.data.data);
             } catch (error) {
                 toast.error("Failed to fetch user data", { position: "top-right", richColors: true });
             } finally {
@@ -44,7 +48,7 @@ export const Userview = () => {
     return (
         <>
             {loading && (
-                <div className="p-5 flex flex-row gap-6">
+                <div className="p-5 flex flex-col lg:flex-row gap-6">
                     <Skeleton className="h-162 w-1/4 rounded-md" />
                     <Skeleton className="h-162 w-3/4 rounded-md" />
                 </div>
@@ -53,11 +57,13 @@ export const Userview = () => {
                 <DashboardLayout sideHeader="View User">
                     <div className="p-5">
                         <Card>
-                            {data && (
+                            <CardContent>
+                                {data && (
                                 <>
-                                
+                                    <img src={data.profilePicture} alt={data.firstName} className="h-30 w-30 rounded" />
                                 </>
                             )}
+                            </CardContent>
                         </Card>
                     </div>
                 </DashboardLayout>
