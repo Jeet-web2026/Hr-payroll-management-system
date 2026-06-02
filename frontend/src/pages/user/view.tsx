@@ -85,8 +85,8 @@ export const Userview = () => {
 
                                                         <span
                                                             className={`px-3 py-1 rounded-full text-sm capitalize flex flex-row items-center gap-1  ${data.status === "active"
-                                                                    ? "bg-green-100 text-green-700"
-                                                                    : "bg-red-100 text-red-700"
+                                                                ? "bg-green-100 text-green-700"
+                                                                : "bg-red-100 text-red-700"
                                                                 }`}
                                                         >
                                                             {data.status
@@ -97,11 +97,11 @@ export const Userview = () => {
 
                                                         <span
                                                             className={`px-2 py-1 rounded-full text-sm flex flex-row items-center gap-1 ${data.isEmailVerified
-                                                                    ? "bg-emerald-100 text-emerald-700"
-                                                                    : "bg-yellow-100 text-yellow-700"
+                                                                ? "bg-emerald-100 text-emerald-700"
+                                                                : "bg-yellow-100 text-yellow-700"
                                                                 }`}
                                                         >
-                                                             {data.isEmailVerified
+                                                            {data.isEmailVerified
                                                                 ? <CheckIcon className="w-5 h-5 bg-green-800 rounded-full p-1 text-white" />
                                                                 : <FileExclamationPointIcon className="w-5 h-5 bg-yellow-800 rounded-full p-1 text-white" />}
                                                             {data.isEmailVerified
@@ -124,9 +124,76 @@ export const Userview = () => {
                                                     </p>
                                                 </div>
                                             </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                                                <div className="p-4 bg-zinc-800 rounded-xl">
+                                                    <p className="text-sm text-gray-500">Date of Birth</p>
+                                                    <p className="font-medium">{data.email}</p>
+                                                </div>
+
+                                                <div className="p-4 bg-zinc-800 rounded-xl">
+                                                    <p className="text-sm text-gray-500">Address</p>
+                                                    <p className="font-medium">
+                                                        {data.experience}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </>
                                 )}
+                                <div className="px-6">
+                                    <hr className="my-2" />
+                                    <h3 className="text-lg font-semibold mb-4">
+                                        Employment Information
+                                    </h3>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <div className="p-4 bg-zinc-800 rounded-xl">
+                                            <p className="text-sm text-gray-500">Company Name</p>
+                                            <p className="font-medium">
+                                                
+                                            </p>
+                                        </div>
+
+                                        <div className="p-4 bg-zinc-800 rounded-xl">
+                                            <p className="text-sm text-gray-500">Designation</p>
+                                            <p className="font-medium">
+                                                
+                                            </p>
+                                        </div>
+
+                                        <div className="p-4 bg-zinc-800 rounded-xl">
+                                            <p className="text-sm text-gray-500">Role</p>
+                                            <p className="font-medium">
+                                                
+                                            </p>
+                                        </div>
+
+                                        <div className="p-4 bg-zinc-800 rounded-xl">
+                                            <p className="text-sm text-gray-500">Joining Date</p>
+                                            <p className="font-medium">
+                                               
+                                            </p>
+                                        </div>
+
+                                        <div className="p-4 bg-zinc-800 rounded-xl">
+                                            <p className="text-sm text-gray-500">
+                                                Last Organisation
+                                            </p>
+                                            <p className="font-medium">
+                                               
+                                            </p>
+                                        </div>
+
+                                        <div className="p-4 bg-zinc-800 rounded-xl">
+                                            <p className="text-sm text-gray-500">
+                                                Total Experience
+                                            </p>
+                                            <p className="font-medium">
+                                                
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </div>
