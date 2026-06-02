@@ -1,6 +1,6 @@
 import apiService from "@/comon/api/apiService";
 import { DashboardLayout } from "@/comon/dashboardLayout"
-import { Card, CardContent, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckIcon, FileExclamationPointIcon } from "lucide-react";
 import { useEffect, useState } from "react";
