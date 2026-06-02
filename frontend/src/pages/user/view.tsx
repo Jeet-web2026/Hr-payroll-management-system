@@ -62,7 +62,7 @@ export const Userview = () => {
                                 {data && (
                                     <>
                                         <div className="bg-gradient-to-r from-blue-950 to-indigo-700 h-32"></div>
-                                        <div className="px-6 pb-6">
+                                        <div className="px-6">
                                             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 -mt-16">
                                                 <img
                                                     src={data.profilePicture}
@@ -140,8 +140,7 @@ export const Userview = () => {
                                         </div>
                                     </>
                                 )}
-                                <div className="px-6">
-                                    <hr className="my-2" />
+                                <div className="border-t mt-8 pt-8 px-6">
                                     <h3 className="text-lg font-semibold mb-4">
                                         Employment Information
                                     </h3>
@@ -150,28 +149,28 @@ export const Userview = () => {
                                         <div className="p-4 bg-zinc-800 rounded-xl">
                                             <p className="text-sm text-gray-500">Company Name</p>
                                             <p className="font-medium">
-                                                
+
                                             </p>
                                         </div>
 
                                         <div className="p-4 bg-zinc-800 rounded-xl">
                                             <p className="text-sm text-gray-500">Designation</p>
                                             <p className="font-medium">
-                                                
+
                                             </p>
                                         </div>
 
                                         <div className="p-4 bg-zinc-800 rounded-xl">
                                             <p className="text-sm text-gray-500">Role</p>
                                             <p className="font-medium">
-                                                
+
                                             </p>
                                         </div>
 
                                         <div className="p-4 bg-zinc-800 rounded-xl">
                                             <p className="text-sm text-gray-500">Joining Date</p>
                                             <p className="font-medium">
-                                               
+
                                             </p>
                                         </div>
 
@@ -180,7 +179,7 @@ export const Userview = () => {
                                                 Last Organisation
                                             </p>
                                             <p className="font-medium">
-                                               
+
                                             </p>
                                         </div>
 
@@ -189,9 +188,147 @@ export const Userview = () => {
                                                 Total Experience
                                             </p>
                                             <p className="font-medium">
-                                                
+
                                             </p>
                                         </div>
+                                    </div>
+                                </div>
+                                <div className="border-t mt-8 pt-8 px-6">
+                                    <h3 className="text-xl font-semibold mb-5">
+                                        Personal Documents
+                                    </h3>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-red-100 rounded-lg">
+                                                    📄
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">Aadhar Card</p>
+                                                    <p className="text-sm text-gray-500">
+                                                        PDF Document
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-red-100 rounded-lg">
+                                                    📄
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">PAN Card</p>
+                                                    <p className="text-sm text-gray-500">
+                                                        PDF Document
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-red-100 rounded-lg">
+                                                    📄
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">Voter ID</p>
+                                                    <p className="text-sm text-gray-500">
+                                                        PDF Document
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-blue-100 rounded-lg">
+                                                    🎓
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">
+                                                        Latest Qualification
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Degree Certificate
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-green-100 rounded-lg">
+                                                    📋
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">
+                                                        Release Letter
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Previous Employer
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-purple-100 rounded-lg">
+                                                    🏢
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">
+                                                        Offer Letter #1
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Previous Organisation
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-purple-100 rounded-lg">
+                                                    🏢
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">
+                                                        Offer Letter #2
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Previous Organisation
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-purple-100 rounded-lg">
+                                                    🏢
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">
+                                                        Offer Letter #3
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Previous Organisation
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </CardContent>
