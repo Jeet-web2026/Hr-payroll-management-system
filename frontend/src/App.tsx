@@ -14,11 +14,13 @@ import { Calender } from './pages/management/calender'
 import { PermissionManagement } from './pages/management/permission-management'
 import { Userview } from './pages/user/view'
 import { EditUser } from './pages/user/edit'
+import { Toaster } from './components/ui/sonner'
 
 function App() {
 
   return (
     <ThemeProvider>
+      <Toaster richColors position="top-right" />
       <Routes>
         <Route path="/" element={
           <PublicRoute>

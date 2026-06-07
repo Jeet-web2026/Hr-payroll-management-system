@@ -1,12 +1,13 @@
 import apiService from "@/comon/api/apiService"
 import { DashboardLayout } from "@/comon/dashboardLayout"
 import type { UserDatatype } from "@/comon/types/userDatatype"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { BadgeAlert, BadgeCheckIcon, Edit, ScanEye, Trash2Icon } from "lucide-react"
+import { BadgeAlert, BadgeCheckIcon, CirclePower, Edit, ScanEye } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
@@ -82,6 +83,7 @@ export const PermissionManagement = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="border text-base">
+                      <TableHead className="border-r">Status</TableHead>
                       <TableHead className="border-r">Name</TableHead>
                       <TableHead className="border-r">Email</TableHead>
                       <TableHead className="border-r">Role</TableHead>
@@ -94,7 +96,10 @@ export const PermissionManagement = () => {
                     {data.length > 0 ? (
                       data.map((user) => (
                         <TableRow key={user.id} className="border">
-                          <TableCell className="border">
+                          <TableCell className={`border capitalize`}>
+                            <Badge className={`${user.status && user.status === 'active' ? `bg-green-700 text-white` : `bg-zinc-700 text-white`}`}>{user.status}</Badge>
+                          </TableCell>
+                          <TableCell className="border capitalize">
                             {user.firstName} {user.lastName}
                           </TableCell>
 
@@ -136,12 +141,12 @@ export const PermissionManagement = () => {
                               <Dialog>
                                 {user.status === "active" ? (
                                   <DialogTrigger className="rounded border border-red-700 bg-red-950 p-2">
-                                    <Trash2Icon size={16} />
+                                    <CirclePower size={16} />
                                   </DialogTrigger>
                                 ) : (
                                   <>
                                     <Button className="rounded border border-red-700 bg-red-950 p-2 py-4 text-muted-foreground cursor-not-allowed" title="User is already suspended">
-                                      <Trash2Icon size={16} />
+                                      <CirclePower size={16} />
                                     </Button>
                                   </>
                                 )}

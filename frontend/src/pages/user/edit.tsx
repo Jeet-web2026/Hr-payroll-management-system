@@ -45,6 +45,22 @@ export function EditUser() {
         }
     };
 
+    const activateAccount = async (userId: any) => {
+        setLoading(true);
+        try {
+            const response = await apiService.patch(`/user/update/${userId}`, {
+                "status": "active"
+            });
+            setUserData(response.data?.data);
+            fetchUserData();
+            toast.success("User updated successfully!");
+        } catch (error) {
+            toast.error("Failed to update user data. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchUserData();
     }, []);
@@ -61,7 +77,7 @@ export function EditUser() {
                                         <div className="flex flex-col items-center">
                                             <Avatar className="h-28 w-28">
                                                 <AvatarImage src={userData.profilePicture} />
-                                                <AvatarFallback> {userData.firstName?.[0] ?? userData.firstName?.[0]}{userData.lastName?.[0] ?? userData.lastName?.[0]} </AvatarFallback>
+                                                <AvatarFallback className="uppercase"> {userData.firstName?.[0] ?? userData.firstName?.[0]}{userData.lastName?.[0] ?? userData.lastName?.[0]} </AvatarFallback>
                                             </Avatar>
 
                                             <h2 className="mt-4 text-xl font-semibold">
@@ -119,7 +135,7 @@ export function EditUser() {
                                             </Button>
                                             {userData.status === 'suspended' ? (
                                                 <>
-                                                    <Button className="w-full">
+                                                    <Button onClick={() => activateAccount(userData.id)} className="w-full">
                                                         Activate Account
                                                     </Button>
                                                 </>
