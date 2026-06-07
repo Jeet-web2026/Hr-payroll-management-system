@@ -140,7 +140,7 @@ export const PermissionManagement = () => {
 
                               <Dialog>
                                 {user.status === "active" ? (
-                                  <DialogTrigger className="rounded border border-red-700 bg-red-950 p-2">
+                                  <DialogTrigger className="rounded border border-red-700 bg-red-950 p-2 cursor-pointer">
                                     <CirclePower size={16} />
                                   </DialogTrigger>
                                 ) : (
