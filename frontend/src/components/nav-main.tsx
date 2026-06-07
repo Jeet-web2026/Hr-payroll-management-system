@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -5,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { CirclePlusIcon } from "lucide-react"
+import { Bell, CirclePlusIcon } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export function NavMain({
@@ -34,6 +35,14 @@ export function NavMain({
                   <span>Manage Permissions</span>
                 </Link>
               </SidebarMenuButton>
+              <Button
+                size="icon"
+                className="size-8 group-data-[collapsible=icon]:opacity-0"
+                variant="outline"
+              >
+                <Bell />
+                <span className="sr-only">Theme</span>
+              </Button>
             </SidebarMenuItem>
           </SidebarMenu>
         ] : []}

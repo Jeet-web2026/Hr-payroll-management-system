@@ -25,6 +25,7 @@ export class UsersService {
     try {
       return await this.userRepository.findOneOrFail({
         where: { id: String(id) },
+        withDeleted: true,
       });
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
@@ -253,6 +254,7 @@ export class UsersService {
     page: number,
     limit: number,
     userId: string,
+    activity: string,
   ): Promise<PaginatedResponse<User>> {
     const skip = (page - 1) * limit;
     const user = await this.userRepository.findOne({
@@ -275,15 +277,27 @@ export class UsersService {
     };
 
     const setRole = roleMap[currentUserRole];
-    const [data, total] = await this.userRepository.findAndCount({
-      where: {
+    const query = this.userRepository
+      .createQueryBuilder('user')
+      .where('user.role = :role', {
         role: setRole,
+      });
+
+    if (activity !== 'permission-management') {
+      query.andWhere('user.status = :status', {
         status: UserStatus.ACTIVE,
-      },
-      skip,
-      take: limit,
-      order: { createdAt: 'DESC' },
-    });
+      });
+    } else {
+      query.withDeleted();
+    }
+
+    console.log(skip, limit);
+
+    const [data, total] = await query
+      .orderBy('user.createdAt', 'DESC')
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
 
     return {
       data,

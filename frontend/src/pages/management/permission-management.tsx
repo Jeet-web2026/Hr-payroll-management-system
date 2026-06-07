@@ -1,5 +1,6 @@
 import apiService from "@/comon/api/apiService"
 import { DashboardLayout } from "@/comon/dashboardLayout"
+import type { UserDatatype } from "@/comon/types/userDatatype"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -11,18 +12,6 @@ import { Link } from "react-router-dom"
 import { toast } from "sonner"
 
 export const PermissionManagement = () => {
-  type User = {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    role?: string;
-    id?: string;
-    loginStatus?: string;
-    designation?: string;
-    experience?: number;
-    isEmailVerified?: boolean;
-  };
-
   type Meta = {
     currentPage?: number;
     lastPage?: number;
@@ -30,14 +19,16 @@ export const PermissionManagement = () => {
     nextPage?: number;
     total?: number;
   };
-  const [data, setData] = useState<User[]>([]);
+  const [data, setData] = useState<UserDatatype[]>([]);
   const [loading, isLoading] = useState(false);
   const [meta, setMeta] = useState<Meta | null>(null);
+  let page = 1;
+  let limit = 10;
 
   const fetchUsers = async () => {
     try {
       isLoading(true)
-      const users = await apiService.get('/user/all?page=1&limit=10', {});
+      const users = await apiService.get(`/user/all?page=${page}&limit=${limit}&activity=permission-management`, {});
       setData(users.data?.data);
       setMeta(users.data?.meta);
     } catch (error) {
@@ -143,9 +134,17 @@ export const PermissionManagement = () => {
                               </Link>
 
                               <Dialog>
-                                <DialogTrigger className="rounded border border-red-700 bg-red-950 p-2">
-                                  <Trash2Icon size={16} />
-                                </DialogTrigger>
+                                {user.status === "active" ? (
+                                  <DialogTrigger className="rounded border border-red-700 bg-red-950 p-2">
+                                    <Trash2Icon size={16} />
+                                  </DialogTrigger>
+                                ) : (
+                                  <>
+                                    <Button className="rounded border border-red-700 bg-red-950 p-2 py-4 text-muted-foreground cursor-not-allowed" title="User is already suspended">
+                                      <Trash2Icon size={16} />
+                                    </Button>
+                                  </>
+                                )}
                                 <DialogContent>
                                   <DialogHeader>
                                     <DialogTitle>Suspend User Account</DialogTitle>

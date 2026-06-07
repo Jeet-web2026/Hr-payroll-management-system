@@ -107,9 +107,6 @@ export const Dashboard = () => {
                                                                 <TableCell className="border">{user.designation ? user.designation : "Not assigned"}</TableCell>
                                                                 <TableCell className="border">{user.experience !== undefined ? user.experience : "Not specified"}</TableCell>
                                                                 <TableCell className="border flex items-center justify-center gap-2">
-                                                                    <Link to={`/user/edit/${user.id}`} className="cursor-pointer rounded border p-2 border-blue-700 bg-blue-950">
-                                                                        <Edit size={16} />
-                                                                    </Link>
                                                                     <Link to={`/user/view/${user.id}`} className="cursor-pointer rounded border p-2 border-green-700 bg-green-950">
                                                                         <ScanEye size={16} />
                                                                     </Link>

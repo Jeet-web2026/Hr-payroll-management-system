@@ -3,6 +3,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Query,
   Req,
   UseGuards,
@@ -29,17 +30,18 @@ export class UsersController {
   @Get('all')
   @UseGuards(AuthGuard('jwt'))
   allUsers(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('activity') activity: string,
     @Req() req: express.Request,
   ): Promise<PaginatedResponse<User>> {
     const user = req.user as any;
-    return this.usersService.allUsers(page, limit, user.id);
+    return this.usersService.allUsers(page, limit, user.id, activity);
   }
 
   @Get('/:userId')
   @UseGuards(AuthGuard('jwt'))
-  view(@Param('userId') userId: string) {
+  view(@Param('userId') userId: string, @Query('activity') activity: string): Promise<User> {
     return this.usersService.findById(userId);
   }
 

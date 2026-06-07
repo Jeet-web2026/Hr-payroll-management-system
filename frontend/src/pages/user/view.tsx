@@ -1,5 +1,6 @@
 import apiService from "@/comon/api/apiService";
 import { DashboardLayout } from "@/comon/dashboardLayout"
+import type { UserDatatype } from "@/comon/types/userDatatype";
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckIcon, FileExclamationPointIcon } from "lucide-react";
@@ -8,26 +9,8 @@ import { useParams } from "react-router-dom"
 import { toast } from "sonner";
 
 export const Userview = () => {
-    type User = {
-        firstName?: string;
-        lastName?: string;
-        email?: string;
-        role?: string;
-        id?: string;
-        loginStatus?: string;
-        designation?: string;
-        experience?: number;
-        isEmailVerified?: boolean;
-        createdAt?: Date;
-        lastLogin?: Date;
-        phone?: number;
-        profilePicture?: string;
-        status?: string;
-    };
-
-
     const { userId } = useParams();
-    const [data, setData] = useState<User | null>(null);
+    const [data, setData] = useState<UserDatatype | null>(null);
     const [loading, setLoading] = useState(false);
 
 
