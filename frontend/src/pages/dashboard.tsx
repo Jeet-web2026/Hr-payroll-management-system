@@ -7,7 +7,7 @@ import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card } from "@/components/ui/card"
-import { BadgeAlert, BadgeCheckIcon, Edit, ScanEye } from "lucide-react"
+import { BadgeAlert, BadgeCheckIcon, ScanEye } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export const Dashboard = () => {
