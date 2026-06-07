@@ -9,6 +9,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { UserEmployment } from './userEmplyment.entity';
+import { UserDetails } from './userDetails.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -103,4 +104,9 @@ export class User {
     cascade: true,
   })
   employment!: UserEmployment;
+
+  @OneToOne(() => UserDetails, (details) => details.user, {
+    cascade: true,
+  })
+  details!: UserDetails;
 }

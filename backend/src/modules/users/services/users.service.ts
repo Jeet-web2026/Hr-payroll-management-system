@@ -25,9 +25,7 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOneOrFail({
         where: { id },
-        relations: {
-          employment: true,
-        },
+        relations: ['employment', 'details'],
         withDeleted: true,
       });
 
@@ -39,7 +37,10 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User> {
     try {
-      return await this.userRepository.findOneOrFail({ where: { email } });
+      return await this.userRepository.findOneOrFail({
+        where: { email },
+        relations: ['employment', 'details'],
+      });
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
     }
@@ -93,6 +94,7 @@ export class UsersService {
     try {
       let user = await this.userRepository.findOne({
         where: { email: userData.email },
+        relations: ['employment', 'details'],
       });
 
       if (!user) {
@@ -286,7 +288,9 @@ export class UsersService {
       .createQueryBuilder('user')
       .where('user.role = :role', {
         role: setRole,
-      });
+      })
+      .leftJoinAndSelect('user.employment', 'employment')
+      .leftJoinAndSelect('user.details', 'details');
 
     if (activity !== 'permission-management') {
       query.andWhere('user.status = :status', {
