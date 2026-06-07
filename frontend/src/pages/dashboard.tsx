@@ -9,22 +9,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card } from "@/components/ui/card"
 import { BadgeAlert, BadgeCheckIcon, ScanEye } from "lucide-react"
 import { Link } from "react-router-dom"
+import type { UserDatatype } from "@/comon/types/userDatatype"
 
 export const Dashboard = () => {
-    type User = {
-        firstName?: string;
-        lastName?: string;
-        email?: string;
-        role?: string;
-        id?: string;
-        loginStatus?: string;
-        designation?: string;
-        experience?: number;
-        isEmailVerified?: boolean;
-    };
-
-    const [userData, setUserData] = useState<User | null>(null);
-    const [allUsersData, setAllUsersData] = useState<User[]>([]);
+    const [userData, setUserData] = useState<UserDatatype | null>(null);
+    const [allUsersData, setAllUsersData] = useState<UserDatatype[]>([]);
     const [allUsersmetaData, setAllUsersmetaData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
     const fetchUser = async () => {
