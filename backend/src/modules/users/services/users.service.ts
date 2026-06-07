@@ -78,16 +78,23 @@ export class UsersService {
     }
   }
 
-  async updateUser(userId: string, userData: Partial<User>): Promise<User> {
-    try {
-      await this.userRepository.update(userId, userData);
+  async updateUser(
+    userId: string,
+    updateUserDto: Partial<User>,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      withDeleted: true,
+      relations: ['employment', 'details'],
+    });
 
-      return this.userRepository.findOneOrFail({
-        where: { id: userId },
-      });
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to update user.');
+    if (!user) {
+      throw new NotFoundException('User does not exist.');
     }
+
+    Object.assign(user, updateUserDto);
+
+    return await this.userRepository.save(user);
   }
 
   async socialLogin(userData: SocialAuthDto, ipAddress: string): Promise<User> {

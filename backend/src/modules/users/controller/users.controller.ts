@@ -1,9 +1,12 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   Param,
   ParseIntPipe,
+  Patch,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -52,6 +55,33 @@ export class UsersController {
     return plainToInstance(
       UserResponseDto,
       this.usersService.findById(userId),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+  }
+
+  @Put('/update/:userId')
+  @UseGuards(AuthGuard('jwt'))
+  update(
+    @Param('userId') userId: string,
+    @Body() userData: Partial<User>,
+  ): UserResponseDto {
+    return plainToInstance(
+      UserResponseDto,
+      this.usersService.updateUser(userId, userData),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+  }
+
+  @Patch('/update/:userId')
+  @UseGuards(AuthGuard('jwt'))
+  edit(@Param('userId') userId: string, @Body() userData: Partial<User>) {
+    return plainToInstance(
+      UserResponseDto,
+      this.usersService.updateUser(userId, userData),
       {
         excludeExtraneousValues: true,
       },
