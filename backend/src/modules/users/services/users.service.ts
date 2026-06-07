@@ -28,6 +28,7 @@ export class UsersService {
         relations: {
           employment: true,
         },
+        withDeleted: true,
       });
 
       return user;
