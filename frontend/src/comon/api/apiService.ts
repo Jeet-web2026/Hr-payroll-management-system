@@ -17,8 +17,8 @@ const apiService = {
     return axiosInstance.patch(url, data, config);
   },
 
-  delete: (url: string, config = {}) => {
-    return axiosInstance.delete(url, config);
+  delete: (url: string, data = {}, config = {}) => {
+    return axiosInstance.delete(url, { data, ...config });
   },
 };
 

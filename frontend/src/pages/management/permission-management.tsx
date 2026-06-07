@@ -1,6 +1,8 @@
 import apiService from "@/comon/api/apiService"
 import { DashboardLayout } from "@/comon/dashboardLayout"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { BadgeAlert, BadgeCheckIcon, Edit, ScanEye, Trash2Icon } from "lucide-react"
@@ -32,21 +34,44 @@ export const PermissionManagement = () => {
   const [loading, isLoading] = useState(false);
   const [meta, setMeta] = useState<Meta | null>(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        isLoading(true)
-        const users = await apiService.get('/user/all?page=1&limit=10', {});
-        setData(users.data?.data);
-        setMeta(users.data?.meta);
-        console.log(users.data?.meta);
-      } catch (error) {
-        toast.error("Failed to fetch user data", { position: "top-right", richColors: true });
-      } finally {
-        isLoading(false);
-      }
-    };
+  const fetchUsers = async () => {
+    try {
+      isLoading(true)
+      const users = await apiService.get('/user/all?page=1&limit=10', {});
+      setData(users.data?.data);
+      setMeta(users.data?.meta);
+    } catch (error) {
+      toast.error("Failed to fetch user data", { position: "top-right", richColors: true });
+    } finally {
+      isLoading(false);
+    }
+  };
 
+  const suspendUser = async (userId: any) => {
+    try {
+      await apiService.delete(`/user/delete/${userId}`, {});
+      await fetchUsers();
+
+      setTimeout(() => {
+        toast.success("User suspended successfully", {
+          position: "top-right",
+          richColors: true,
+        });
+      }, 500);
+
+    } catch (error) {
+      toast.error("Failed to suspend user", {
+        position: "top-right",
+        richColors: true,
+      });
+    }
+  };
+
+  function permanentDelete() {
+
+  }
+
+  useEffect(() => {
     fetchUsers();
   }, []);
   return (
@@ -117,12 +142,32 @@ export const PermissionManagement = () => {
                                 <ScanEye size={16} />
                               </Link>
 
-                              <Link
-                                to={`/user/delete/${user.id}`}
-                                className="rounded border border-red-700 bg-red-950 p-2"
-                              >
-                                <Trash2Icon size={16} />
-                              </Link>
+                              <Dialog>
+                                <DialogTrigger className="rounded border border-red-700 bg-red-950 p-2">
+                                  <Trash2Icon size={16} />
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Suspend User Account</DialogTitle>
+                                    <hr className="my-2" />
+                                    <DialogDescription className="mb-3">
+                                      You are about to suspend this user account.
+                                      The user will no longer be able to log in, access the system, or perform any actions until the account is reactivated.
+
+                                      Existing records, activities, and associated data will remain intact and can be restored at any time by reactivating the account.
+                                    </DialogDescription>
+                                  </DialogHeader>
+
+                                  <DialogFooter>
+                                    <Button variant="secondary" onClick={permanentDelete}>
+                                      Delete Permanently
+                                    </Button>
+                                    <Button variant="destructive" onClick={() => suspendUser(user.id)}>
+                                      Suspend User
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
                             </div>
                           </TableCell>
                         </TableRow>

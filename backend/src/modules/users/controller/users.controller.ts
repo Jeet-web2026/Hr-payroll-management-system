@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Query,
@@ -49,5 +50,14 @@ export class UsersController {
   @CacheTTL(25)
   view(@Param('userId') userId: string) {
     return this.usersService.findById(userId);
+  }
+
+  @Delete('/delete/:userId')
+  @UseGuards(AuthGuard('jwt'))
+  delete(
+    @Param('userId') userId: string,
+    @Query('permanentDelete') isPermanentdelete: string,
+  ) {
+    return this.usersService.delete(userId, isPermanentdelete);
   }
 }

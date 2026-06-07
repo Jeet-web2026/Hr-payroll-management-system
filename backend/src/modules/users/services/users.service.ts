@@ -194,7 +194,7 @@ export class UsersService {
     const joiningRate =
       user.role === UserRole.HR
         ? totalEmployees > 0
-          ? (newJoinees / totalEmployees) * 100
+          ? Math.round((newJoinees / totalEmployees) * 100)
           : 0
         : 0;
 
@@ -235,7 +235,7 @@ export class UsersService {
 
     const newJoiningRate =
       user.role === UserRole.HR && expectedJoinees > 0
-        ? ((newJoinees - expectedJoinees) / expectedJoinees) * 100
+        ? Math.round(((newJoinees - expectedJoinees) / expectedJoinees) * 100)
         : 0;
 
     return {
@@ -294,6 +294,29 @@ export class UsersService {
         lastPage: Math.ceil(total / limit),
         limit,
       },
+    };
+  }
+
+  async delete(userId: string, isPermanentDelete: string) {
+    if (isPermanentDelete === 'true') {
+      await this.userRepository.delete(userId);
+
+      return {
+        message: 'User permanently deleted successfully',
+      };
+    }
+
+    const result = await this.userRepository.update(userId, {
+      status: UserStatus.SUSPENDED,
+      deletedAt: new Date(),
+    });
+
+    if (result.affected === 0) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      message: 'User deleted successfully',
     };
   }
 }

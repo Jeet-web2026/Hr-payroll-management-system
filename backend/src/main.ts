@@ -17,7 +17,7 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   });
-  app.use(onlyJsonValidation);
+  app.use(onlyJsonValidation);  
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new GlobalResponseInterceptor());
   app.useGlobalPipes(
@@ -27,7 +27,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
   await app.listen(String(process.env.PORT));
 }
 bootstrap();
