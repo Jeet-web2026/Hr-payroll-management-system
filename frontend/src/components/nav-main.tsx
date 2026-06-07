@@ -5,7 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { CirclePlusIcon, MoonIcon } from "lucide-react"
+import { CirclePlusIcon } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export function NavMain({
