@@ -61,7 +61,7 @@ export function EditUser() {
                                         <div className="flex flex-col items-center">
                                             <Avatar className="h-28 w-28">
                                                 <AvatarImage src={userData.profilePicture} />
-                                                <AvatarFallback>JN</AvatarFallback>
+                                                <AvatarFallback> {userData.firstName?.[0] ?? userData.firstName?.[0]}{userData.lastName?.[0] ?? userData.lastName?.[0]} </AvatarFallback>
                                             </Avatar>
 
                                             <h2 className="mt-4 text-xl font-semibold">
@@ -117,6 +117,15 @@ export function EditUser() {
                                             >
                                                 Reset Password
                                             </Button>
+                                            {userData.status === 'suspended' ? (
+                                                <>
+                                                    <Button className="w-full">
+                                                        Activate Account
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <></>
+                                            )}
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -151,22 +160,22 @@ export function EditUser() {
 
                                                     <div>
                                                         <Label className="mb-3">First Name</Label>
-                                                        <Input className="h-9.5" />
+                                                        <Input className="h-9.5" value={userData.firstName} />
                                                     </div>
 
                                                     <div>
                                                         <Label className="mb-3">Last Name</Label>
-                                                        <Input className="h-9.5" />
+                                                        <Input className="h-9.5" value={userData.lastName} />
                                                     </div>
 
                                                     <div>
                                                         <Label className="mb-3">Email</Label>
-                                                        <Input className="h-9.5" />
+                                                        <Input className="h-9.5" value={userData.email} disabled />
                                                     </div>
 
                                                     <div>
                                                         <Label className="mb-3">Phone</Label>
-                                                        <Input className="h-9.5" />
+                                                        <Input className="h-9.5" value={userData.phone} disabled />
                                                     </div>
 
                                                     <div>

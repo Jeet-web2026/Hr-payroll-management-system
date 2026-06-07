@@ -6,7 +6,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { LoginStatus, User, UserRole, UserStatus } from '../model/user.entity';
+import { LoginStatus, User, UserRole, UserStatus } from '../models/user.entity';
 import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, LessThan, Repository } from 'typeorm';
@@ -23,10 +23,14 @@ export class UsersService {
 
   async findById(id: string): Promise<User> {
     try {
-      return await this.userRepository.findOneOrFail({
-        where: { id: String(id) },
-        withDeleted: true,
+      const user = await this.userRepository.findOneOrFail({
+        where: { id },
+        relations: {
+          employment: true,
+        },
       });
+
+      return user;
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
     }

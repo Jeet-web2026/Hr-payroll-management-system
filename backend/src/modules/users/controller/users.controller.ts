@@ -13,9 +13,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../../comon/decorators/get-user.decorator';
 import type { JwtUser } from '../../../comon/decorators/get-user.decorator';
 import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
-import { User } from '../model/user.entity';
+import { User } from '../models/user.entity';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
 import * as express from 'express';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('user')
 export class UsersController {
@@ -23,8 +24,11 @@ export class UsersController {
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  getProfile(@GetUser() user: JwtUser): Promise<UserResponseDto> {
-    return this.usersService.findById(user.id);
+  getProfile(@GetUser() user: JwtUser): UserResponseDto {
+    const userData = this.usersService.findById(user.id);
+    return plainToInstance(UserResponseDto, userData, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Get('all')
@@ -41,8 +45,17 @@ export class UsersController {
 
   @Get('/:userId')
   @UseGuards(AuthGuard('jwt'))
-  view(@Param('userId') userId: string, @Query('activity') activity: string): Promise<User> {
-    return this.usersService.findById(userId);
+  view(
+    @Param('userId') userId: string,
+    @Query('activity') activity: string,
+  ): UserResponseDto {
+    return plainToInstance(
+      UserResponseDto,
+      this.usersService.findById(userId),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   @Delete('/delete/:userId')

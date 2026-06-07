@@ -6,7 +6,9 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   Index,
+  OneToOne,
 } from 'typeorm';
+import { UserEmployment } from './userEmplyment.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -96,4 +98,9 @@ export class User {
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt!: Date;
+
+  @OneToOne(() => UserEmployment, (employment) => employment.user, {
+    cascade: true,
+  })
+  employment!: UserEmployment;
 }

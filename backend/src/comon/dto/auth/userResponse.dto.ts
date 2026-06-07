@@ -8,6 +8,11 @@ export class UserResponseDto {
   @Expose() email!: string;
   @Expose() role!: string;
   @Expose() status!: string;
+  @Expose() loginStatus!: string;
+  @Expose() isEmailVerified!: boolean;
+  @Expose() lastLogin!: Date;
+  @Expose() phone!: number;
+  @Expose() profilePicture!: string;
 
   @Expose()
   message?: string;

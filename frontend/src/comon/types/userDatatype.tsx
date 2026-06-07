@@ -8,7 +8,6 @@ export type UserDatatype = {
     designation?: string;
     experience?: number;
     isEmailVerified?: boolean;
-    createdAt?: Date;
     lastLogin?: Date;
     phone?: number;
     profilePicture?: string;

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../../users/services/users.service';
 import * as express from 'express';
-import { UserRole } from '../../users/model/user.entity';
+import { UserRole } from '../../users/models/user.entity';
 import { Repository } from 'typeorm';
 import { Request } from '../model/request.model';
 import { InjectRepository } from '@nestjs/typeorm';

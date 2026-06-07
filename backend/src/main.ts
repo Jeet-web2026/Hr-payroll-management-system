@@ -1,7 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { onlyJsonValidation } from './comon/middlewares/onlyJsonValidation.middleware';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './comon/exceptions/http-exception.filter';
 import { GlobalResponseInterceptor } from './comon/interceptors/globalSuccessResponse.interceptor';
 import cookieParser from 'cookie-parser';
@@ -17,9 +17,12 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   });
-  app.use(onlyJsonValidation);  
+  app.use(onlyJsonValidation);
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalInterceptors(new GlobalResponseInterceptor());
+  app.useGlobalInterceptors(
+    new GlobalResponseInterceptor(),
+    new ClassSerializerInterceptor(app.get(Reflector)),
+  );
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
