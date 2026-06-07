@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -7,7 +6,6 @@ import {
   Query,
   Req,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -16,7 +14,6 @@ import type { JwtUser } from '../../../comon/decorators/get-user.decorator';
 import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { User } from '../model/user.entity';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import * as express from 'express';
 
 @Controller('user')
@@ -24,8 +21,6 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('me')
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(50 * 10 * 1000)
   @UseGuards(AuthGuard('jwt'))
   getProfile(@GetUser() user: JwtUser): Promise<UserResponseDto> {
     return this.usersService.findById(user.id);
@@ -33,8 +28,6 @@ export class UsersController {
 
   @Get('all')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(25)
   allUsers(
     @Query('page') page: number,
     @Query('limit') limit: number,
@@ -46,8 +39,6 @@ export class UsersController {
 
   @Get('/:userId')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(25)
   view(@Param('userId') userId: string) {
     return this.usersService.findById(userId);
   }
