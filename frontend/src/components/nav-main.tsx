@@ -35,14 +35,6 @@ export function NavMain({
                   <span>Manage Permissions</span>
                 </Link>
               </SidebarMenuButton>
-              <Button
-                size="icon"
-                className="size-8 group-data-[collapsible=icon]:opacity-0"
-                variant="outline"
-              >
-                <MoonIcon />
-                <span className="sr-only">Theme</span>
-              </Button>
             </SidebarMenuItem>
           </SidebarMenu>
         ] : []}

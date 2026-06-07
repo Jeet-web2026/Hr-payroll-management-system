@@ -13,6 +13,7 @@ import { Inbox } from './pages/others/inbox'
 import { Calender } from './pages/management/calender'
 import { PermissionManagement } from './pages/management/permission-management'
 import { Userview } from './pages/user/view'
+import { EditUser } from './pages/user/edit'
 
 function App() {
 
@@ -63,6 +64,11 @@ function App() {
         <Route path="/user/view/:userId" element={
           <ProtectedRoute>
             <Userview />
+          </ProtectedRoute>
+        } />
+        <Route path="/user/edit/:userId" element={
+          <ProtectedRoute>
+            <EditUser />
           </ProtectedRoute>
         } />
       </Routes>

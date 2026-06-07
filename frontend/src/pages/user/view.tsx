@@ -48,14 +48,13 @@ export const Userview = () => {
     }, []);
     return (
         <>
-            {loading && (
-                <div className="p-5 flex flex-col lg:flex-row gap-6">
-                    <Skeleton className="h-162 lg:w-1/4 w-full rounded-md" />
-                    <Skeleton className="h-162 lg:w-3/4 w-full rounded-md" />
-                </div>
-            )}
-            {!loading && (
-                <DashboardLayout sideHeader="View User">
+            <DashboardLayout sideHeader="View User">
+                {loading && (
+                    <div className="p-5 flex flex-col lg:flex-row gap-6">
+                        <Skeleton className="min-h-screen w-full rounded-md" />
+                    </div>
+                )}
+                {!loading && (
                     <div className="p-5">
                         <Card className="w-full max-w-full mx-auto shadow-lg border-0 rounded-2xl overflow-hidden pt-0">
                             <CardContent className="p-0">
@@ -334,8 +333,8 @@ export const Userview = () => {
                             </CardContent>
                         </Card>
                     </div>
-                </DashboardLayout>
-            )}
+                )}
+            </DashboardLayout>
         </>
     )
 }
