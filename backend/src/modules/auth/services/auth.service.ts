@@ -14,12 +14,18 @@ import { UserResponseDto } from '../../../comon/dto/auth/userResponse.dto';
 import { plainToInstance } from 'class-transformer';
 import { WelcomeMailEvent } from '../../mail/events/mail.event';
 import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.dto';
-import { LoginStatus, User, UserStatus } from '../../users/models/user.entity';
+import {
+  LoginStatus,
+  User,
+  UserRole,
+  UserStatus,
+} from '../../users/models/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 import bcrypt from 'bcryptjs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { UserPermission } from '../../../comon/interfaces/userPermission.interface';
 
 @Injectable()
 export class AuthService {
@@ -63,9 +69,13 @@ export class AuthService {
         this.getAccessToken(user),
         this.getRefreshToken(user),
       ]);
+
+      const permissions = await this.usersPermissionManagement(user.id);
+
       return {
         ...plainToInstance(UserResponseDto, user),
         message: 'Login successfull',
+        usersPermissionManagement: permissions,
         accessToken,
         refreshToken,
       };
@@ -208,5 +218,84 @@ export class AuthService {
 
     await this.cacheManager.clear();
     return;
+  }
+
+  async usersPermissionManagement(userId: string): Promise<UserPermission> {
+    const user = await this.userService.findById(userId);
+
+    switch (user.role) {
+      case UserRole.ADMIN:
+        return this.adminUserPermissionManagement();
+
+      case UserRole.HR:
+        return this.hrPermissionManagement();
+
+      case UserRole.COMPANY:
+        return this.companyPermissionManagement();
+
+      case UserRole.EMPLOYEE:
+        return this.employeePermissionManagement();
+
+      default:
+        return {};
+    }
+  }
+
+  private adminUserPermissionManagement(): UserPermission {
+    return {
+      manageUser: true,
+      notifications: true,
+      holidayManagement: true,
+      employeeManagement: true,
+      attendanceManagement: true,
+      payrollManagement: true,
+      leaveManagement: true,
+      recruitmentManagement: true,
+      dashboard: {
+        totalEmployeeCount: true,
+        newJoineesCount: true,
+        activeEmployeeCount: true,
+        joiningRateCount: true,
+        totalGrowth: {
+          type: 'full',
+        },
+      },
+    };
+  }
+
+  private hrPermissionManagement(): UserPermission {
+    return {
+      notifications: true,
+      employeeManagement: true,
+      attendanceManagement: true,
+      leaveManagement: true,
+      recruitmentManagement: true,
+      dashboard: {
+        totalEmployeeCount: true,
+        newJoineesCount: true,
+        activeEmployeeCount: true,
+      },
+    };
+  }
+
+  private companyPermissionManagement(): UserPermission {
+    return {
+      notifications: true,
+      employeeManagement: true,
+      payrollManagement: true,
+      attendanceManagement: true,
+      dashboard: {
+        totalEmployeeCount: true,
+        activeEmployeeCount: true,
+      },
+    };
+  }
+
+  private employeePermissionManagement(): UserPermission {
+    return {
+      notifications: true,
+      leaveManagement: true,
+      attendanceManagement: true,
+    };
   }
 }

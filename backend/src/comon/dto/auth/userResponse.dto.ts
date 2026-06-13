@@ -42,9 +42,32 @@ export class UserResponseDto {
   @Expose()
   message?: string;
 
+  @Expose()
   refreshToken?: string;
+
   @Expose()
   accessToken?: string;
+
+  @Expose()
+  usersPermissionManagement?: {
+    manageUser?: boolean;
+    notifications?: boolean;
+    dashboard?: {
+      totalEmployeeCount?: boolean;
+      newJoineesCount?: boolean;
+      activeEmployeeCount?: boolean;
+      joiningRateCount?: boolean;
+      totalGrowth?: {
+        type?: string;
+      };
+    };
+    holidayManagement?: boolean;
+    employeeManagement?: boolean;
+    attendanceManagement?: boolean;
+    payrollManagement?: boolean;
+    leaveManagement?: boolean;
+    recrumentManagement?: boolean;
+  };
 
   constructor(partial: Partial<UserResponseDto>) {
     Object.assign(this, partial);
