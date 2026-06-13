@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { GuestLayout } from "@/comon/guestLayout"
 import logo from "@/assets/images/logo.png"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { SOCIAL_PROVIDERS } from "@/config/socialAuth"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
