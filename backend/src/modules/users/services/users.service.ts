@@ -13,6 +13,7 @@ import { Between, LessThan, Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
+import { UserPermission } from '../../../comon/interfaces/userPermission.interface';
 
 @Injectable()
 export class UsersService {
@@ -21,26 +22,36 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findById(id: string): Promise<User> {
+  async findById(id: string) {
     try {
       const user = await this.userRepository.findOneOrFail({
         where: { id },
         relations: ['employment', 'details'],
         withDeleted: true,
       });
+      const userPermissions = await this.usersPermissionManagement(user);
 
-      return user;
+      return {
+        ...user,
+        usersPermissionManagement: userPermissions,
+      };
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
     }
   }
 
-  async findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string) {
     try {
-      return await this.userRepository.findOneOrFail({
+      const user = await this.userRepository.findOneOrFail({
         where: { email },
         relations: ['employment', 'details'],
       });
+
+      const userPermissions = await this.usersPermissionManagement(user);
+      return {
+        ...user,
+        usersPermissionManagement: userPermissions,
+      };
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
     }
@@ -347,6 +358,90 @@ export class UsersService {
 
     return {
       message: 'User deleted successfully',
+    };
+  }
+
+  async usersPermissionManagement(user: User): Promise<UserPermission> {
+    switch (user.role) {
+      case UserRole.ADMIN:
+        return this.adminUserPermissionManagement();
+
+      case UserRole.HR:
+        return this.hrPermissionManagement();
+
+      case UserRole.COMPANY:
+        return this.companyPermissionManagement();
+
+      case UserRole.EMPLOYEE:
+        return this.employeePermissionManagement();
+
+      default:
+        return {};
+    }
+  }
+
+  private adminUserPermissionManagement(): UserPermission {
+    return {
+      manageUser: true,
+      notifications: true,
+      holidayManagement: false,
+      employeeManagement: false,
+      attendanceManagement: false,
+      payrollManagement: false,
+      leaveManagement: false,
+      recruitmentManagement: false,
+      dashboard: {
+        totalEmployeeCount: true,
+        newJoineesCount: true,
+        activeEmployeeCount: true,
+        joiningRateCount: true,
+        totalGrowth: {
+          type: 'company_basis',
+        },
+      },
+    };
+  }
+
+  private hrPermissionManagement(): UserPermission {
+    return {
+      manageUser: true,
+      notifications: true,
+      holidayManagement: false,
+      employeeManagement: false,
+      attendanceManagement: false,
+      payrollManagement: false,
+      leaveManagement: false,
+      recruitmentManagement: false,
+      dashboard: {
+        totalEmployeeCount: true,
+        newJoineesCount: true,
+        activeEmployeeCount: true,
+        joiningRateCount: true,
+        totalGrowth: {
+          type: 'company_basis',
+        },
+      },
+    };
+  }
+
+  private companyPermissionManagement(): UserPermission {
+    return {
+      notifications: true,
+      employeeManagement: true,
+      payrollManagement: true,
+      attendanceManagement: true,
+      dashboard: {
+        totalEmployeeCount: true,
+        activeEmployeeCount: true,
+      },
+    };
+  }
+
+  private employeePermissionManagement(): UserPermission {
+    return {
+      notifications: true,
+      leaveManagement: true,
+      attendanceManagement: true,
     };
   }
 }
