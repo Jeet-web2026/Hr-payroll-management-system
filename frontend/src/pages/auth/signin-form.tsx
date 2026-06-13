@@ -140,9 +140,6 @@ export function SigninForm({
                     <span className="sr-only">Sign up with facebook</span>
                   </Button>
                 </Field>
-                <FieldDescription className="text-center">
-                  Dont have an account? <Link to="/auth/signup">Sign up</Link>
-                </FieldDescription>
               </FieldGroup>
             </form>
             <div className="relative hidden bg-muted md:block">

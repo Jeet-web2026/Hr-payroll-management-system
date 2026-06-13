@@ -3,7 +3,6 @@ import './App.css'
 import { ThemeProvider } from './components/themes/theme-provider'
 import { Dashboard } from './pages/dashboard'
 import { SigninForm } from './pages/auth/signin-form'
-import { SignupForm } from './pages/auth/signup-form'
 import OtpVerification from './pages/auth/otpVerification'
 import { AuthSuccess } from './pages/auth/authSuccess'
 import ProtectedRoute from './comon/providers/protectedRouteProvider'
@@ -15,6 +14,7 @@ import { PermissionManagement } from './pages/management/permission-management'
 import { Userview } from './pages/user/view'
 import { EditUser } from './pages/user/edit'
 import { Toaster } from './components/ui/sonner'
+import NotFound from './pages/others/not-found'
 
 function App() {
 
@@ -25,11 +25,6 @@ function App() {
         <Route path="/" element={
           <PublicRoute>
             <SigninForm />
-          </PublicRoute>
-        } />
-        <Route path="/auth/signup" element={
-          <PublicRoute>
-            <SignupForm />
           </PublicRoute>
         } />
         <Route path="/auth/success" element={<AuthSuccess />} />
@@ -72,6 +67,13 @@ function App() {
           <ProtectedRoute>
             <EditUser />
           </ProtectedRoute>
+        } />
+
+        {/* Fall back */}
+        <Route path="*" element={
+          <PublicRoute>
+            <NotFound />
+          </PublicRoute>
         } />
       </Routes>
     </ThemeProvider>
