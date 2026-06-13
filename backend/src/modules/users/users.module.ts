@@ -6,9 +6,19 @@ import { UsersController } from './controller/users.controller';
 import { JwtStrategy } from '../../comon/strategies/jwt.strategies';
 import { UserEmployment } from './models/userEmplyment.entity';
 import { UserDetails } from './models/userDetails.entity';
+import { UserPermissionManagement } from './models/userPermissionManagement.entity';
+import { UserPermissions } from './models/userPermissions.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserEmployment, UserDetails])],
+  imports: [
+    TypeOrmModule.forFeature([
+      User,
+      UserEmployment,
+      UserDetails,
+      UserPermissionManagement,
+      UserPermissions,
+    ]),
+  ],
   providers: [UsersService, JwtStrategy],
   exports: [UsersService, UsersModule],
   controllers: [UsersController],

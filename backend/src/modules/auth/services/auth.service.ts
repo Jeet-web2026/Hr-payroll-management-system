@@ -245,19 +245,19 @@ export class AuthService {
     return {
       manageUser: true,
       notifications: true,
-      holidayManagement: true,
-      employeeManagement: true,
-      attendanceManagement: true,
-      payrollManagement: true,
-      leaveManagement: true,
-      recruitmentManagement: true,
+      holidayManagement: false,
+      employeeManagement: false,
+      attendanceManagement: false,
+      payrollManagement: false,
+      leaveManagement: false,
+      recruitmentManagement: false,
       dashboard: {
         totalEmployeeCount: true,
         newJoineesCount: true,
         activeEmployeeCount: true,
         joiningRateCount: true,
         totalGrowth: {
-          type: 'full',
+          type: 'company_basis',
         },
       },
     };
@@ -265,15 +265,22 @@ export class AuthService {
 
   private hrPermissionManagement(): UserPermission {
     return {
+      manageUser: true,
       notifications: true,
-      employeeManagement: true,
-      attendanceManagement: true,
-      leaveManagement: true,
-      recruitmentManagement: true,
+      holidayManagement: false,
+      employeeManagement: false,
+      attendanceManagement: false,
+      payrollManagement: false,
+      leaveManagement: false,
+      recruitmentManagement: false,
       dashboard: {
         totalEmployeeCount: true,
         newJoineesCount: true,
         activeEmployeeCount: true,
+        joiningRateCount: true,
+        totalGrowth: {
+          type: 'company_basis',
+        },
       },
     };
   }
