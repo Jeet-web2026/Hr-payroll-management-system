@@ -59,8 +59,23 @@ export const PermissionManagement = () => {
     }
   };
 
-  function permanentDelete() {
+  const permanentDelete = async (userId: any) => {
+    try {
+      await apiService.delete(`/user/delete/${userId}?permanentDelete=true`, {});
+      await fetchUsers();
 
+      setTimeout(() => {
+        toast.success("User deleted successfully", {
+          position: "top-right",
+          richColors: true,
+        });
+      }, 500);
+    } catch (error) {
+      toast.error("Failed to delete user", {
+        position: "top-right",
+        richColors: true,
+      });
+    }
   }
 
   useEffect(() => {
@@ -163,7 +178,7 @@ export const PermissionManagement = () => {
                                   </DialogHeader>
 
                                   <DialogFooter>
-                                    <Button variant="secondary" onClick={permanentDelete}>
+                                    <Button variant="secondary" onClick={() => permanentDelete(user.id)}>
                                       Delete Permanently
                                     </Button>
                                     <Button variant="destructive" onClick={() => suspendUser(user.id)}>

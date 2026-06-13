@@ -65,7 +65,7 @@ export const Dashboard = () => {
                                 <div className="px-4 lg:px-6">
                                     <ChartAreaInteractive />
                                 </div>
-                                {userData && <>
+                                {userData && userData.role === 'hr' && <>
                                     <div className="px-5">
                                         <Card className="px-5 overflow-hidden">
                                             <Table>
