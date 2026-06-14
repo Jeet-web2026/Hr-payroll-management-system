@@ -95,6 +95,7 @@ export const PermissionManagement = () => {
           <>
             <Card>
               <CardContent>
+                <Link to="">Add user</Link>
                 <Table>
                   <TableHeader>
                     <TableRow className="border text-base">
