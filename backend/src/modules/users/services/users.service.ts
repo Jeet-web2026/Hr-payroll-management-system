@@ -2,6 +2,7 @@ import {
   BadGatewayException,
   ConflictException,
   HttpException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -14,16 +15,27 @@ import bcrypt from 'bcryptjs';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
 import { UserPermission } from '../../../comon/interfaces/userPermission.interface';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
-  async findById(id: string) {
+  async findById(id: string): Promise<User> {
     try {
+      const cacheKey = `user:${id}`;
+      const cachedUser =
+        await this.cacheManager.get<User>(cacheKey);
+
+      if (cachedUser) {
+        return cachedUser;
+      }
       const user = await this.userRepository.findOneOrFail({
         where: { id },
         relations: ['employment', 'details'],
@@ -31,10 +43,14 @@ export class UsersService {
       });
       const userPermissions = await this.usersPermissionManagement(user);
 
-      return {
+      const response = {
         ...user,
         usersPermissionManagement: userPermissions,
       };
+
+      await this.cacheManager.set(cacheKey, response);
+
+      return response;
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
     }
