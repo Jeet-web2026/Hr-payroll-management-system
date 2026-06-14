@@ -23,7 +23,6 @@ import type { UserDatatype, UserPermission } from "@/comon/types/userDatatype"
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const [user, setUser] = React.useState<UserDatatype | null>(null);
-  const Hr = user?.role === "hr";
   const [pending, setPending] = React.useState(false);
   const [permissionData, setPermissionData] = React.useState<UserPermission | null>(null);
   React.useEffect(() => {
