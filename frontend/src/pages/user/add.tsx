@@ -12,6 +12,8 @@ import {
 import { DashboardLayout } from "@/comon/dashboardLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { useCurrentUser } from "@/hooks/userData";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Field } from "@/components/ui/field";
 
 export function AddUser() {
     const { data: currentUser } = useCurrentUser();
@@ -44,14 +46,26 @@ export function AddUser() {
                         <CardContent>
                             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                                 <div className="space-y-2">
-                                    <Label>First Name</Label>
-                                    <Input placeholder="John" />
+                                    <Label>
+                                        {createUserType && createUserType === 'Employee' && (
+                                            `First`
+                                        )} Name</Label>
+                                    <Input placeholder="John" name="first-name" />
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label>Last Name</Label>
-                                    <Input placeholder="Doe" />
-                                </div>
+                                {createUserType && createUserType === 'Employee' && (
+                                    <div className="space-y-2">
+                                        <Label>Last Name</Label>
+                                        <Input placeholder="Doe" name="last-name" />
+                                    </div>
+                                )}
+
+                                {createUserType && createUserType === 'Company' && (
+                                    <div className="space-y-2 lg:col-span-2">
+                                        <Label>UAN Number</Label>
+                                        <Input type="text" />
+                                    </div>
+                                )}
 
                                 <div className="space-y-2">
                                     <Label>Email</Label>
@@ -64,23 +78,31 @@ export function AddUser() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Date of Birth</Label>
+                                    <Label>
+                                        {createUserType && createUserType === 'Employee' ? (
+                                            `Date of Birth`
+                                        ) : (
+                                            `Established At`
+                                        )}
+                                    </Label>
                                     <Input type="date" />
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label>Gender</Label>
-                                    <Select>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select gender" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="male">Male</SelectItem>
-                                            <SelectItem value="female">Female</SelectItem>
-                                            <SelectItem value="other">Other</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                {createUserType && createUserType === 'Employee' && (
+                                    <div className="space-y-2">
+                                        <Label>Gender</Label>
+                                        <Select>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select gender" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="male">Male</SelectItem>
+                                                <SelectItem value="female">Female</SelectItem>
+                                                <SelectItem value="other">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
 
                                 <div className="space-y-2 md:col-span-2 lg:col-span-3">
                                     <Label>Address</Label>
@@ -93,81 +115,83 @@ export function AddUser() {
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Employment Information</CardTitle>
-                            <CardDescription>
-                                Define employee job details.
-                            </CardDescription>
-                        </CardHeader>
+                    {createUserType && createUserType === 'Employee' && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Employment Information</CardTitle>
+                                <CardDescription>
+                                    Define employee job details.
+                                </CardDescription>
+                            </CardHeader>
 
-                        <CardContent>
-                            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                                <div className="space-y-2">
-                                    <Label>Employee ID</Label>
-                                    <Input placeholder="EMP-001" />
-                                </div>
+                            <CardContent>
+                                <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                                    <div className="space-y-2">
+                                        <Label>Employee ID</Label>
+                                        <Input placeholder="EMP-001" />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Designation</Label>
-                                    <Input placeholder="Software Engineer" />
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label>Designation</Label>
+                                        <Input placeholder="Software Engineer" />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Department</Label>
-                                    <Input placeholder="Engineering" />
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label>Department</Label>
+                                        <Input placeholder="Engineering" />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Joining Date</Label>
-                                    <Input type="date" />
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label>Joining Date</Label>
+                                        <Input type="date" />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Contract Start Date</Label>
-                                    <Input type="date" />
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label>Contract Start Date</Label>
+                                        <Input type="date" />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Contract End Date</Label>
-                                    <Input type="date" />
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label>Contract End Date</Label>
+                                        <Input type="date" />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Employment Type</Label>
-                                    <Select>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="full-time">
-                                                Full Time
-                                            </SelectItem>
-                                            <SelectItem value="part-time">
-                                                Part Time
-                                            </SelectItem>
-                                            <SelectItem value="intern">
-                                                Intern
-                                            </SelectItem>
-                                            <SelectItem value="contract">
-                                                Contract
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label>Employment Type</Label>
+                                        <Select>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="full-time">
+                                                    Full Time
+                                                </SelectItem>
+                                                <SelectItem value="part-time">
+                                                    Part Time
+                                                </SelectItem>
+                                                <SelectItem value="intern">
+                                                    Intern
+                                                </SelectItem>
+                                                <SelectItem value="contract">
+                                                    Contract
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Salary</Label>
-                                    <Input placeholder="50000" />
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label>Salary</Label>
+                                        <Input placeholder="50000" />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label>Work Location</Label>
-                                    <Input placeholder="Mumbai Office" />
+                                    <div className="space-y-2">
+                                        <Label>Work Location</Label>
+                                        <Input placeholder="Mumbai Office" />
+                                    </div>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                    )}
                     <Card>
                         <CardHeader>
                             <CardTitle>Role & Access</CardTitle>
@@ -185,10 +209,18 @@ export function AddUser() {
                                             <SelectValue placeholder="Select role" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="admin">Admin</SelectItem>
-                                            <SelectItem value="hr">HR</SelectItem>
-                                            <SelectItem value="manager">Manager</SelectItem>
-                                            <SelectItem value="employee">Employee</SelectItem>
+                                            {createUserType && createUserType === 'Company' ? (
+                                                <>
+                                                    <SelectItem value="admin">Admin</SelectItem>
+                                                    <SelectItem value="company">Company</SelectItem>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <SelectItem value="hr">HR</SelectItem>
+                                                    <SelectItem value="manager">Manager</SelectItem>
+                                                    <SelectItem value="employee">Employee</SelectItem>
+                                                </>
+                                            )}
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -214,6 +246,14 @@ export function AddUser() {
                                         placeholder="Temporary password"
                                         className="w-full"
                                     />
+                                </div>
+
+                                <div className="space-y-2 lg:grid-cols-3">
+                                    <h3 className="mb-3">Manage Permissions</h3>
+                                    <Field orientation="horizontal">
+                                        <Checkbox id="terms-checkbox" name="terms-checkbox" />
+                                        <Label htmlFor="terms-checkbox">Hello world</Label>
+                                    </Field>
                                 </div>
                             </div>
                         </CardContent>
