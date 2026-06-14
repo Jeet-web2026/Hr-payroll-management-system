@@ -34,6 +34,11 @@ export class UsersController {
     });
   }
 
+  @Get('/permissions')
+  permissions() {
+    return this.usersService.allPermissions();
+  }
+
   @Get('all')
   @UseGuards(AuthGuard('jwt'))
   allUsers(

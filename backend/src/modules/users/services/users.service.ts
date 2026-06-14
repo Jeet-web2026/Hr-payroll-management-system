@@ -17,12 +17,15 @@ import { PaginatedResponse } from '../../../comon/interfaces/paginatedDatarespon
 import { UserPermission } from '../../../comon/interfaces/userPermission.interface';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { UserPermissions } from '../models/userPermissions.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(UserPermissions)
+    private readonly userPermissionMangementrepository: Repository<UserPermissions>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
   ) {}
@@ -30,8 +33,7 @@ export class UsersService {
   async findById(id: string): Promise<User> {
     try {
       const cacheKey = `user:${id}`;
-      const cachedUser =
-        await this.cacheManager.get<User>(cacheKey);
+      const cachedUser = await this.cacheManager.get<User>(cacheKey);
 
       if (cachedUser) {
         return cachedUser;
@@ -391,6 +393,10 @@ export class UsersService {
       default:
         return {};
     }
+  }
+
+  async allPermissions() {
+    return this.userPermissionMangementrepository.find();
   }
 
   private adminUserPermissionManagement(): UserPermission {

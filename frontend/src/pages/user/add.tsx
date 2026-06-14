@@ -14,9 +14,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCurrentUser } from "@/hooks/userData";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import apiService from "@/comon/api/apiService";
 
 export function AddUser() {
     const { data: currentUser } = useCurrentUser();
+    const [permissionData, setPermissionData] = useState<any[]>([]);
     let createUserType = '';
 
     if (currentUser?.role === 'admin') {
@@ -24,6 +28,22 @@ export function AddUser() {
     } else {
         createUserType = 'Employee';
     }
+
+    const fetchAllpermissions = async () => {
+        try {
+            const response = await apiService.get('/user/permissions');
+
+            setPermissionData(
+                Object.values(response.data?.data || {})
+            );
+        } catch (error) {
+            toast.error("Failed to fetch permission data. Please try again.");
+        }
+    };
+
+    useEffect(() => {
+        fetchAllpermissions();
+    }, []);
 
     return (
         <DashboardLayout sideHeader={`Add ${createUserType}`}>
@@ -247,13 +267,21 @@ export function AddUser() {
                                         className="w-full"
                                     />
                                 </div>
-
-                                <div className="space-y-2 lg:grid-cols-3">
+                                <div className="space-y-2 mb-5 mt-3">
                                     <h3 className="mb-3">Manage Permissions</h3>
-                                    <Field orientation="horizontal">
-                                        <Checkbox id="terms-checkbox" name="terms-checkbox" />
-                                        <Label htmlFor="terms-checkbox">Hello world</Label>
-                                    </Field>
+                                    <div className="flex flex-col lg:flex-row gap-6 mt-8 lg:mt-0">
+                                        {permissionData.map((permission) => (
+                                            <Field key={permission.id} orientation="horizontal" className="capitalize text-nowrap">
+                                                <Checkbox
+                                                    id={permission.id}
+                                                    name={permission.permissionvalue}
+                                                />
+                                                <Label htmlFor={permission.id}>
+                                                    {permission.permissionvalue}
+                                                </Label>
+                                            </Field>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
