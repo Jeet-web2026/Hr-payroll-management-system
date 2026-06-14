@@ -37,8 +37,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         position: "top-right",
         richColors: true,
       });
-
-      console.error(error);
     }
   }, [isError, error]);
   const data = {
