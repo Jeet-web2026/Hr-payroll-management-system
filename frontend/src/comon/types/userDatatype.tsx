@@ -34,3 +34,23 @@ export type UserDatatype = {
         address?: string;
     };
 };
+
+export type UserPermission = {
+    manageUser?: boolean;
+    notifications?: boolean;
+    holidayManagement?: boolean;
+    employeeManagement?: boolean;
+    attendanceManagement?: boolean;
+    payrollManagement?: boolean;
+    leaveManagement?: boolean;
+    recruitmentManagement?: boolean;
+    dashboard?: {
+        totalEmployeeCount?: boolean;
+        newJoineesCount?: boolean;
+        activeEmployeeCount?: boolean;
+        joiningRateCount?: boolean;
+        totalGrowth?: {
+            type?: string;
+        }
+    }
+};

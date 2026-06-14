@@ -18,27 +18,14 @@ import { toast } from "sonner"
 import { Skeleton } from "./ui/skeleton"
 import logo from "@/assets/images/logo.png"
 import { Link } from "react-router-dom"
+import type { UserDatatype, UserPermission } from "@/comon/types/userDatatype"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-  type User = {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    ipAddress: string;
-    isEmailVerified: boolean;
-    lastLogin: string;
-    phone: string;
-    profilePicture: string;
-    role: string;
-    status: string;
-  }
-
-
-  const [user, setUser] = React.useState<User | null>(null);
+  const [user, setUser] = React.useState<UserDatatype | null>(null);
   const Hr = user?.role === "hr";
   const [pending, setPending] = React.useState(false);
+  const [permissionData, setPermissionData] = React.useState<UserPermission | null>(null);
   React.useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -46,6 +33,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         const res = await apiService.get('/user/me');
         setUser(res.data.data);
+        setPermissionData(res.data?.data?.usersPermissionManagement);
+        console.log(permissionData);
       } catch (error) {
         toast.error("Failed to fetch user", { position: "top-right", richColors: true });
       } finally {
@@ -72,23 +61,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           />
         ),
       },
-      {
-        title: "Inbox",
-        url: "/inbox",
-        icon: (
-          <MailIcon
-          />
-        ),
-      },
-      {
-        title: "Calendar",
-        url: "/calender",
-        icon: (
-          <CalendarClock
-          />
-        ),
-      },
-      ...(Hr
+      ...(permissionData && permissionData.holidayManagement
+        ? [
+          {
+            title: "Inbox",
+            url: "/inbox",
+            icon: (
+              <MailIcon
+              />
+            ),
+          },
+          {
+            title: "Calendar",
+            url: "/calender",
+            icon: (
+              <CalendarClock
+              />
+            ),
+          },
+        ]
+        : []),
+      ...(permissionData && permissionData.employeeManagement
         ? [
           {
             title: "Employees",
@@ -97,7 +90,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         ]
         : []),
-      ...(Hr
+      ...(permissionData && permissionData.attendanceManagement
         ? [
           {
             title: "Attendance",
@@ -117,7 +110,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           />
         ),
       },
-      ...(Hr
+      ...(permissionData && permissionData.payrollManagement
         ? [
           {
             title: "Payroll",
@@ -129,15 +122,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         ]
         : []),
-      {
-        title: "Leave Management",
-        url: "#",
-        icon: (
-          <CalendarX
-          />
-        ),
-      },
-      ...(Hr
+      ...(permissionData && permissionData.leaveManagement
+        ? [
+          {
+            title: "Leave Management",
+            url: "#",
+            icon: (
+              <CalendarX
+              />
+            ),
+          },
+        ]
+        : []),
+      ...(permissionData && permissionData.recruitmentManagement
         ? [
           {
             title: "Recruitment",
@@ -195,7 +192,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} role={user?.role} />
+        <NavMain items={data.navMain} permissions={permissionData} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

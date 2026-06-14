@@ -46,12 +46,7 @@ export class UsersService {
         where: { email },
         relations: ['employment', 'details'],
       });
-
-      const userPermissions = await this.usersPermissionManagement(user);
-      return {
-        ...user,
-        usersPermissionManagement: userPermissions,
-      };
+      return user;
     } catch (error) {
       throw new NotFoundException(`User not exsists`);
     }
@@ -108,7 +103,7 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
-  async socialLogin(userData: SocialAuthDto, ipAddress: string): Promise<User> {
+  async socialLogin(userData: SocialAuthDto, ipAddress: string) {
     try {
       let user = await this.userRepository.findOne({
         where: { email: userData.email },
@@ -133,21 +128,23 @@ export class UsersService {
           otp: null,
           otpExpiry: null,
           profilePicture: userData.picture,
-          ipAddress: ipAddress,
+          ipAddress,
           lastLogin: new Date(),
           isEmailVerified: true,
           loginStatus: LoginStatus.ONLINE,
         });
 
-        return await this.userRepository.save(user);
-      }
-
-      if (user) {
+        user = await this.userRepository.save(user);
+      } else {
         await this.userRepository.update(user.id, {
           lastLogin: new Date(),
           ipAddress,
           loginStatus: LoginStatus.ONLINE,
         });
+
+        user.lastLogin = new Date();
+        user.ipAddress = ipAddress;
+        user.loginStatus = LoginStatus.ONLINE;
       }
 
       return user;
@@ -406,11 +403,11 @@ export class UsersService {
     return {
       manageUser: true,
       notifications: true,
-      holidayManagement: false,
-      employeeManagement: false,
-      attendanceManagement: false,
-      payrollManagement: false,
-      leaveManagement: false,
+      holidayManagement: true,
+      employeeManagement: true,
+      attendanceManagement: true,
+      payrollManagement: true,
+      leaveManagement: true,
       recruitmentManagement: false,
       dashboard: {
         totalEmployeeCount: true,
@@ -418,7 +415,7 @@ export class UsersService {
         activeEmployeeCount: true,
         joiningRateCount: true,
         totalGrowth: {
-          type: 'company_basis',
+          type: 'User_basis',
         },
       },
     };
