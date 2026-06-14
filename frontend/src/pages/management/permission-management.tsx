@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useCurrentUser } from "@/hooks/userData"
 import { BadgeAlert, BadgeCheckIcon, CirclePower, Edit, PlusCircleIcon, ScanEye } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
@@ -25,7 +26,11 @@ export const PermissionManagement = () => {
   const [meta, setMeta] = useState<Meta | null>(null);
   let page = 1;
   let limit = 10;
-
+  const { data: currentUser } = useCurrentUser();
+  const canAddUser =
+    currentUser?.role === 'hr'
+      ? currentUser?.usersPermissionManagement?.employeeManagement
+      : currentUser?.usersPermissionManagement?.manageUser;
   const fetchUsers = async () => {
     try {
       isLoading(true)
@@ -95,10 +100,12 @@ export const PermissionManagement = () => {
           <>
             <Card>
               <CardContent>
-                <Link to="" className="border px-2 rounded float-end mb-3 bg-green-700 py-2 flex flex-row items-center gap-2">
-                  <PlusCircleIcon className="size-4" />
-                  Add user
-                </Link>
+                {canAddUser && (
+                  <Link to="/user/add" className="border px-2 rounded float-end mb-3 bg-green-700 py-2 flex flex-row items-center gap-2">
+                    <PlusCircleIcon className="size-4" />
+                    Add user
+                  </Link>
+                )}
                 <Table>
                   <TableHeader>
                     <TableRow className="border text-base">

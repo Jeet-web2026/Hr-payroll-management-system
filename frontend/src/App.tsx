@@ -15,6 +15,7 @@ import { Userview } from './pages/user/view'
 import { EditUser } from './pages/user/edit'
 import { Toaster } from './components/ui/sonner'
 import NotFound from './pages/others/not-found'
+import { AddUser } from './pages/user/add'
 
 function App() {
 
@@ -66,6 +67,11 @@ function App() {
         <Route path="/user/edit/:userId" element={
           <ProtectedRoute>
             <EditUser />
+          </ProtectedRoute>
+        } />
+        <Route path="/user/add" element={
+          <ProtectedRoute>
+            <AddUser />
           </ProtectedRoute>
         } />
 
