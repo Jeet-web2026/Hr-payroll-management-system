@@ -45,8 +45,9 @@ export function AddUser() {
     };
 
     const usercreationFormSubmit = async (event: any) => {
+        event.preventDefault();
+        
         try {
-            event.preventDefault();
         } catch (error) {
             toast.error("Failed to create user.");
         }
