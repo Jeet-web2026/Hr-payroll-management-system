@@ -1,7 +1,11 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { onlyJsonValidation } from './comon/middlewares/onlyJsonValidation.middleware';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import { HttpExceptionFilter } from './comon/exceptions/http-exception.filter';
 import { GlobalResponseInterceptor } from './comon/interceptors/globalSuccessResponse.interceptor';
 import cookieParser from 'cookie-parser';
@@ -30,6 +34,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
   await app.listen(String(process.env.PORT));
 }
 bootstrap();

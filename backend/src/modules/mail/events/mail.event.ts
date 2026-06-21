@@ -13,3 +13,10 @@ export class ResetPasswordMailEvent {
     public readonly token: string,
   ) {}
 }
+
+export class UsercreatedEvent {
+  constructor(
+    public readonly to: string,
+    public readonly data: any,
+  ) {}
+}

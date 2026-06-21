@@ -27,6 +27,13 @@ export class UserDetails {
   })
   address!: string;
 
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
+  companyUanNumber?: string;
+
   @OneToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn()
   user!: User;

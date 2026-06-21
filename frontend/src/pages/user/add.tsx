@@ -17,6 +17,7 @@ import { Field } from "@/components/ui/field";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import apiService from "@/comon/api/apiService";
+import { Link } from "react-router-dom";
 
 export function AddUser() {
     const { data: currentUser } = useCurrentUser();
@@ -25,6 +26,8 @@ export function AddUser() {
 
     if (currentUser?.role === 'admin') {
         createUserType = 'Company';
+    } else if (currentUser?.role === 'company') {
+        createUserType = 'Human Resource';
     } else {
         createUserType = 'Employee';
     }
@@ -41,6 +44,14 @@ export function AddUser() {
         }
     };
 
+    const usercreationFormSubmit = async (event: any) => {
+        try {
+            event.preventDefault();
+        } catch (error) {
+            toast.error("Failed to create user.");
+        }
+    }
+
     useEffect(() => {
         fetchAllpermissions();
     }, []);
@@ -54,7 +65,7 @@ export function AddUser() {
                     </p>
                 </div>
 
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={usercreationFormSubmit}>
                     <Card>
                         <CardHeader>
                             <CardTitle>Personal Information</CardTitle>
@@ -288,11 +299,13 @@ export function AddUser() {
                     </Card>
 
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                        <Button variant="outline">
-                            Cancel
-                        </Button>
+                        <Link to="/manage-permissions">
+                            <Button variant="outline" className="cursor-pointer">
+                                Cancel
+                            </Button>
+                        </Link>
 
-                        <Button type="submit">
+                        <Button type="submit" className="cursor-pointer">
                             Create User
                         </Button>
                     </div>

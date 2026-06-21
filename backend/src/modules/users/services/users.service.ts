@@ -18,6 +18,9 @@ import { UserPermission } from '../../../comon/interfaces/userPermission.interfa
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { UserPermissions } from '../models/userPermissions.entity';
+import { AddUserFromAdmin } from '../../../comon/dto/admin/add-user.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UsercreatedEvent } from '../../mail/events/mail.event';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +31,7 @@ export class UsersService {
     private readonly userPermissionMangementrepository: Repository<UserPermissions>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    private readonly eventService: EventEmitter2,
   ) {}
 
   async findById(id: string): Promise<User> {
@@ -397,6 +401,47 @@ export class UsersService {
 
   async allPermissions() {
     return this.userPermissionMangementrepository.find();
+  }
+
+  async addUser(body: AddUserFromAdmin) {
+    const isUserExsist = await this.userRepository.findOne({
+      where: { email: body.email },
+    });
+
+    if (isUserExsist) {
+      return new ConflictException('User already exsist!');
+    }
+
+    const [firstName, lastName] = body.name.trim().split(' ');
+    const hashedPassword = await bcrypt.hash(body.password, 8);
+
+    const newlyCreatedUser = this.userRepository.create({
+      firstName,
+      lastName,
+      phone: body.contactNumber,
+      email: body.email,
+      password: hashedPassword,
+      role: body.role,
+      status: body.status,
+      isEmailVerified: true,
+      details: {
+        address: body.address,
+        dob: body.establishedAt,
+        companyUanNumber: body.uanNumber,
+      },
+    });
+
+    this.eventService.emit(
+      'user.created',
+      new UsercreatedEvent(newlyCreatedUser.email, {
+        body: `Congratulations! You are registered to our organisation as a ${newlyCreatedUser.role}.`,
+        name: newlyCreatedUser.firstName + newlyCreatedUser.lastName,
+        loginId: newlyCreatedUser.email,
+        password: body.password,
+      }),
+    );
+
+    return await this.userRepository.save(newlyCreatedUser);
   }
 
   private adminUserPermissionManagement(): UserPermission {
