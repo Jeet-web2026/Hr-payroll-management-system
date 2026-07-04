@@ -206,7 +206,11 @@ export class AuthService {
     });
   }
 
-  async logout(userId: string): Promise<void> {
+  async logout(userId: string, token: string): Promise<void> {
+    const payload = this.jwtService.decode(token) as any;
+    const expiresIn = payload.exp - Math.floor(Date.now() / 1000);
+    await this.cacheManager.set(`blacklist:${token}`, true, expiresIn * 1000);
+
     await this.userService.updateUser(userId, {
       loginStatus: LoginStatus.OFFLINE,
     });

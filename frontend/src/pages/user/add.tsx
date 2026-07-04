@@ -22,6 +22,57 @@ import { Link } from "react-router-dom";
 export function AddUser() {
     const { data: currentUser } = useCurrentUser();
     const [permissionData, setPermissionData] = useState<any[]>([]);
+    const permissions = permissionData.reduce((acc, permission) => {
+        acc[permission.permissionvalue] = false;
+        return acc;
+    }, {} as Record<string, boolean>);
+    const initialFormData = {
+        "first-name": "",
+        "last-name": "",
+        "uan-number": "",
+        "email": "",
+        "phone-number": "",
+        "dob": "",
+        "gender": "",
+        "address": "",
+        "employee-id": "",
+        'designation': "",
+        'department': "",
+        'joining-date': "",
+        'contract-start-date': "",
+        'contract-end-date': "",
+        'employment-type': "",
+        'salary': "",
+        'work-location': "",
+        'role': "",
+        'status': "",
+        'password': "",
+        ...permissions
+    };
+    const [formData, setFromdata] = useState(initialFormData);
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target;
+
+        setFromdata((prev: any) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const handleSelectChange = (name: string, value: string) => {
+        setFromdata((prev: any) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const handleCheckboxChange = (name: string, checked: boolean) => {
+        setFromdata((prev: any) => ({
+            ...prev,
+            [name]: checked,
+        }));
+    };
+
     let createUserType = '';
 
     if (currentUser?.role === 'admin') {
@@ -46,9 +97,12 @@ export function AddUser() {
 
     const usercreationFormSubmit = async (event: any) => {
         event.preventDefault();
-        
+
         try {
+            const response = await apiService.post('/v2/user/add', formData);
+            console.log('User created successfully:', response);
         } catch (error) {
+            console.log(error);
             toast.error("Failed to create user.");
         }
     }
@@ -82,31 +136,31 @@ export function AddUser() {
                                         {createUserType && createUserType === 'Employee' && (
                                             `First`
                                         )} Name</Label>
-                                    <Input placeholder="John" name="first-name" />
+                                    <Input placeholder="John" value={formData['first-name']} name="first-name" onChange={handleChange} />
                                 </div>
 
                                 {createUserType && createUserType === 'Employee' && (
                                     <div className="space-y-2">
                                         <Label>Last Name</Label>
-                                        <Input placeholder="Doe" name="last-name" />
+                                        <Input placeholder="Doe" value={formData['last-name']} name="last-name" onChange={handleChange} />
                                     </div>
                                 )}
 
                                 {createUserType && createUserType === 'Company' && (
                                     <div className="space-y-2 lg:col-span-2">
                                         <Label>UAN Number</Label>
-                                        <Input type="text" />
+                                        <Input type="text" value={formData['uan-number']} name="uan-number" onChange={handleChange} />
                                     </div>
                                 )}
 
                                 <div className="space-y-2">
                                     <Label>Email</Label>
-                                    <Input type="email" placeholder="john@example.com" />
+                                    <Input type="email" placeholder="john@example.com" value={formData['email']} name="email" onChange={handleChange} />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label>Phone Number</Label>
-                                    <Input placeholder="+91 9876543210" />
+                                    <Input placeholder="+91 9876543210" value={formData['phone-number']} name="phone-number" onChange={handleChange} />
                                 </div>
 
                                 <div className="space-y-2">
@@ -117,13 +171,13 @@ export function AddUser() {
                                             `Established At`
                                         )}
                                     </Label>
-                                    <Input type="date" />
+                                    <Input type="date" name="dob" value={formData['dob']} onChange={handleChange} />
                                 </div>
 
                                 {createUserType && createUserType === 'Employee' && (
                                     <div className="space-y-2">
                                         <Label>Gender</Label>
-                                        <Select>
+                                        <Select value={formData["gender"]} name="gender" onValueChange={(value) => handleSelectChange("gender", value)}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Select gender" />
                                             </SelectTrigger>
@@ -141,6 +195,9 @@ export function AddUser() {
                                     <Textarea
                                         placeholder="Enter full address..."
                                         className="min-h-[100px]"
+                                        name="address"
+                                        value={formData['address']}
+                                        onChange={handleChange}
                                     />
                                 </div>
                             </div>
@@ -160,37 +217,37 @@ export function AddUser() {
                                 <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                                     <div className="space-y-2">
                                         <Label>Employee ID</Label>
-                                        <Input placeholder="EMP-001" />
+                                        <Input placeholder="EMP-001" value={formData['employee-id']} name="employee-id" onChange={handleChange} />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Designation</Label>
-                                        <Input placeholder="Software Engineer" />
+                                        <Input placeholder="Software Engineer" value={formData['designation']} name="designation" onChange={handleChange} />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Department</Label>
-                                        <Input placeholder="Engineering" />
+                                        <Input placeholder="Engineering" value={formData['department']} name="department" onChange={handleChange} />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Joining Date</Label>
-                                        <Input type="date" />
+                                        <Input type="date" value={formData['joining-date']} name="joining-date" onChange={handleChange} />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Contract Start Date</Label>
-                                        <Input type="date" />
+                                        <Input type="date" value={formData['contract-start-date']} name="contract-start-date" onChange={handleChange} />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Contract End Date</Label>
-                                        <Input type="date" />
+                                        <Input type="date" value={formData['contract-end-date']} name="contract-end-date" onChange={handleChange} />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Employment Type</Label>
-                                        <Select>
+                                        <Select value={formData['employment-type']} onValueChange={(value) => handleSelectChange("employment-type", value)}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Select type" />
                                             </SelectTrigger>
@@ -213,12 +270,12 @@ export function AddUser() {
 
                                     <div className="space-y-2">
                                         <Label>Salary</Label>
-                                        <Input placeholder="50000" />
+                                        <Input placeholder="50000" value={formData['salary']} name="salary" onChange={handleChange} />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Work Location</Label>
-                                        <Input placeholder="Mumbai Office" />
+                                        <Input placeholder="Mumbai Office" value={formData['work-location']} name="work-location" onChange={handleChange} />
                                     </div>
                                 </div>
                             </CardContent>
@@ -236,7 +293,7 @@ export function AddUser() {
                             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                                 <div className="space-y-2">
                                     <Label>Role</Label>
-                                    <Select>
+                                    <Select value={formData['role']} onValueChange={(value) => handleSelectChange("role", value)}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Select role" />
                                         </SelectTrigger>
@@ -259,7 +316,7 @@ export function AddUser() {
 
                                 <div className="space-y-2">
                                     <Label>Status</Label>
-                                    <Select>
+                                    <Select value={formData['status']} onValueChange={(value) => handleSelectChange("status", value)}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Select status" />
                                         </SelectTrigger>
@@ -277,6 +334,9 @@ export function AddUser() {
                                         type="password"
                                         placeholder="Temporary password"
                                         className="w-full"
+                                        name="password"
+                                        value={formData['password']}
+                                        onChange={handleChange}
                                     />
                                 </div>
                                 <div className="space-y-2 mb-5 mt-3">
@@ -287,6 +347,13 @@ export function AddUser() {
                                                 <Checkbox
                                                     id={permission.id}
                                                     name={permission.permissionvalue}
+                                                    checked={!!formData[permission.permissionvalue]}
+                                                    onCheckedChange={(checked) =>
+                                                        handleCheckboxChange(
+                                                            permission.permissionvalue,
+                                                            checked === true
+                                                        )
+                                                    }
                                                 />
                                                 <Label htmlFor={permission.id}>
                                                     {permission.permissionvalue}
