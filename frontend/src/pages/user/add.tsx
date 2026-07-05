@@ -22,6 +22,7 @@ import { Link } from "react-router-dom";
 export function AddUser() {
     const { data: currentUser } = useCurrentUser();
     const [permissionData, setPermissionData] = useState<any[]>([]);
+    const [errors, setErrors] = useState<Record<string, string[]>>({});
     const permissions = permissionData.reduce((acc, permission) => {
         acc[permission.permissionvalue] = false;
         return acc;
@@ -99,11 +100,13 @@ export function AddUser() {
         event.preventDefault();
 
         try {
-            const response = await apiService.post('/v2/user/add', formData);
-            console.log('User created successfully:', response);
-        } catch (error) {
-            console.log(error);
-            toast.error("Failed to create user.");
+            const response = await apiService.post("/v2/user/add", formData);
+
+            console.log(response);
+            toast.success("User created successfully");
+        } catch (error: any) {
+            setErrors(error.response.data.errors);
+            console.log(error.response.data.errors);
         }
     }
 
@@ -137,12 +140,22 @@ export function AddUser() {
                                             `First`
                                         )} Name</Label>
                                     <Input placeholder="John" value={formData['first-name']} name="first-name" onChange={handleChange} />
+                                    {errors.name && (
+                                        <p className="text-xs text-red-400 capitalize">
+                                            {errors.name.join(", ")}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {createUserType && createUserType === 'Employee' && (
                                     <div className="space-y-2">
                                         <Label>Last Name</Label>
                                         <Input placeholder="Doe" value={formData['last-name']} name="last-name" onChange={handleChange} />
+                                        {errors.name && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors.name.join(", ")}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -150,17 +163,32 @@ export function AddUser() {
                                     <div className="space-y-2 lg:col-span-2">
                                         <Label>UAN Number</Label>
                                         <Input type="text" value={formData['uan-number']} name="uan-number" onChange={handleChange} />
+                                        {errors['uan-number'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['uan-number'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
                                 <div className="space-y-2">
                                     <Label>Email</Label>
                                     <Input type="email" placeholder="john@example.com" value={formData['email']} name="email" onChange={handleChange} />
+                                    {errors['email'] && (
+                                        <p className="text-xs text-red-400 capitalize">
+                                            {errors['email'].join(", ")}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label>Phone Number</Label>
                                     <Input placeholder="+91 9876543210" value={formData['phone-number']} name="phone-number" onChange={handleChange} />
+                                    {errors['contactNumber'] && (
+                                        <p className="text-xs text-red-400 capitalize">
+                                            {errors['contactNumber'].join(", ")}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -172,6 +200,11 @@ export function AddUser() {
                                         )}
                                     </Label>
                                     <Input type="date" name="dob" value={formData['dob']} onChange={handleChange} />
+                                    {errors['establishedAt'] && (
+                                        <p className="text-xs text-red-400 capitalize">
+                                            {errors['establishedAt'].join(", ")}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {createUserType && createUserType === 'Employee' && (
@@ -187,6 +220,11 @@ export function AddUser() {
                                                 <SelectItem value="other">Other</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        {errors['gender'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['gender'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -199,6 +237,11 @@ export function AddUser() {
                                         value={formData['address']}
                                         onChange={handleChange}
                                     />
+                                    {errors['address'] && (
+                                        <p className="text-xs text-red-400 capitalize">
+                                            {errors['address'].join(", ")}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </CardContent>

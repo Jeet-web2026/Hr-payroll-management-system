@@ -2,6 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { onlyJsonValidation } from './comon/middlewares/onlyJsonValidation.middleware';
 import {
+  BadRequestException,
   ClassSerializerInterceptor,
   ValidationPipe,
   VersioningType,
@@ -32,6 +33,21 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (validationErrors) => {
+        const errors: Record<string, string[]> = {};
+
+        validationErrors.forEach((error) => {
+          if (error.constraints) {
+            errors[error.property] = Object.values(error.constraints);
+          }
+        });
+
+        return new BadRequestException({
+          statusCode: 400,
+          message: 'Validation failed',
+          errors,
+        });
+      },
     }),
   );
   app.enableVersioning({
