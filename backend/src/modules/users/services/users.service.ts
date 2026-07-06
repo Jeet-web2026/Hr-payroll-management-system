@@ -409,7 +409,7 @@ export class UsersService {
     });
 
     if (isUserExsist) {
-      return new ConflictException('User already exsist!');
+      throw new ConflictException('User already exsist!');
     }
 
     const [firstName, lastName] = body.name.trim().split(' ');

@@ -17,9 +17,10 @@ import { Field } from "@/components/ui/field";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import apiService from "@/comon/api/apiService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function AddUser() {
+    const navigate = useNavigate();
     const { data: currentUser } = useCurrentUser();
     const [permissionData, setPermissionData] = useState<any[]>([]);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -99,14 +100,27 @@ export function AddUser() {
     const usercreationFormSubmit = async (event: any) => {
         event.preventDefault();
 
-        try {
-            const response = await apiService.post("/v2/user/add", formData);
+        const payload = {
+            name: `${formData['first-name']} ${formData['last-name']}`,
+            contactNumber: formData['phone-number'],
+            uanNumber: formData['uan-number'],
+            email: formData['email'],
+            establishedAt: formData['dob'],
+            address: formData['address'],
+            status: formData['status'],
+            password: formData['password'],
+            role: formData['role'],
+        };
 
-            console.log(response);
-            toast.success("User created successfully");
+        try {
+            const response = await apiService.post("/v2/user/add", payload);
+            toast.success(response.data.message);
+            setFromdata(initialFormData);
+            navigate('/manage-permissions');
+
         } catch (error: any) {
             setErrors(error.response.data.errors);
-            console.log(error.response.data.errors);
+            toast.error(error.response.data.message);
         }
     }
 
@@ -261,31 +275,61 @@ export function AddUser() {
                                     <div className="space-y-2">
                                         <Label>Employee ID</Label>
                                         <Input placeholder="EMP-001" value={formData['employee-id']} name="employee-id" onChange={handleChange} />
+                                        {errors['employee-id'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['employee-id'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Designation</Label>
                                         <Input placeholder="Software Engineer" value={formData['designation']} name="designation" onChange={handleChange} />
+                                        {errors['designation'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['designation'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Department</Label>
                                         <Input placeholder="Engineering" value={formData['department']} name="department" onChange={handleChange} />
+                                        {errors['department'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['department'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Joining Date</Label>
                                         <Input type="date" value={formData['joining-date']} name="joining-date" onChange={handleChange} />
+                                        {errors['joining-date'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['joining-date'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Contract Start Date</Label>
                                         <Input type="date" value={formData['contract-start-date']} name="contract-start-date" onChange={handleChange} />
+                                        {errors['contract-start-date'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['contract-start-date'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Contract End Date</Label>
                                         <Input type="date" value={formData['contract-end-date']} name="contract-end-date" onChange={handleChange} />
+                                        {errors['contract-end-date'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['contract-end-date'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
@@ -309,16 +353,31 @@ export function AddUser() {
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        {errors['employment-type'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['employment-type'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Salary</Label>
                                         <Input placeholder="50000" value={formData['salary']} name="salary" onChange={handleChange} />
+                                        {errors['salary'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['salary'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label>Work Location</Label>
                                         <Input placeholder="Mumbai Office" value={formData['work-location']} name="work-location" onChange={handleChange} />
+                                        {errors['work-location'] && (
+                                            <p className="text-xs text-red-400 capitalize">
+                                                {errors['work-location'].join(", ")}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
@@ -355,6 +414,11 @@ export function AddUser() {
                                             )}
                                         </SelectContent>
                                     </Select>
+                                    {errors['role'] && (
+                                        <p className="text-xs text-red-400 capitalize">
+                                            {errors['role'].join(", ")}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -369,6 +433,11 @@ export function AddUser() {
                                             <SelectItem value="suspended">Suspended</SelectItem>
                                         </SelectContent>
                                     </Select>
+                                    {errors['status'] && (
+                                        <p className="text-xs text-red-400 capitalize">
+                                            {errors['status'].join(", ")}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -381,6 +450,11 @@ export function AddUser() {
                                         value={formData['password']}
                                         onChange={handleChange}
                                     />
+                                    {errors['password'] && (
+                                        <p className="text-xs text-red-400 capitalize">
+                                            {errors['password'].join(", ")}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="space-y-2 mb-5 mt-3">
                                     <h3 className="mb-3">Manage Permissions</h3>
