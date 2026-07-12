@@ -471,7 +471,26 @@ export class UsersController {
     description: 'User id for delete or suspend the user',
     example: 'sdfbsdjfnsdfnsddsds',
   })
-  @HttpCode(204)
+  @ApiResponse({
+    status: 200,
+    description: 'User updated successfully',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'User suspended/deleted successfully',
+      data: {},
+      meta: null,
+      path: '/api/user/delete/dsjdfdfjdsjsdnsds',
+      method: 'PUT',
+      timestamp: '2026-07-12T08:42:07.830Z',
+    },
+  })
+  @ApiOperation({
+    summary: 'Permanently Delete or Suspend a user',
+    description:
+      'Permanently deletes or suspend the specified user account from the system. This action cannot be undone. A valid JWT access token and the appropriate permissions are required to perform this operation.',
+  })
+  @HttpCode(200)
   @Version('2')
   @Role(UserRole.ADMIN, UserRole.HR)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -487,7 +506,51 @@ export class UsersController {
   @Version('2')
   @HttpCode(201)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Role(UserRole.ADMIN)
+  @ApiResponse({
+    status: 200,
+    description: 'Request successful',
+    example: {
+      success: true,
+      statusCode: 201,
+      message: 'Request successful',
+      data: {
+        id: 'kjsjfhsdjdsjvdsfjdfdf',
+        firstName: 'hello',
+        lastName: 'world',
+        email: 'demo2company@yopmail.com',
+        password: 'dkfjgsdjsdfkjfd',
+        phone: '9163715179',
+        role: 'company',
+        status: 'active',
+        lastLogin: null,
+        ipAddress: null,
+        isEmailVerified: true,
+        profilePicture: null,
+        loginStatus: null,
+        createdAt: '2026-07-12T04:48:44.514Z',
+        otp: null,
+        otpExpiry: null,
+        updatedAt: '2026-07-12T04:48:44.514Z',
+        deletedAt: null,
+        details: {
+          id: 'sdfjkhsdjsjksd',
+          dob: '2026-06-21',
+          address: 'demo address',
+          companyUanNumber: 'Utz1478920',
+        },
+      },
+      meta: null,
+      path: '/api/v2/user/add',
+      method: 'POST',
+      timestamp: '2026-07-12T10:26:06.288Z',
+    },
+  })
+  @ApiOperation({
+    summary: 'Create a new user',
+    description:
+      'Creates a new user account with the provided personal, employment, role, and permission details. The request is validated before the user is created. A valid JWT access token and the appropriate permissions are required to perform this operation.',
+  })
+  @Role(UserRole.ADMIN, UserRole.HR, UserRole.COMPANY)
   addUser(@Body() body: AddUserFromAdmin) {
     return this.usersService.addUser(body);
   }

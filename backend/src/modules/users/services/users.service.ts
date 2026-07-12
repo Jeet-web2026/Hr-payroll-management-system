@@ -376,7 +376,7 @@ export class UsersService {
     }
 
     return {
-      message: 'User deleted successfully',
+      message: 'User suspended successfully',
     };
   }
 
