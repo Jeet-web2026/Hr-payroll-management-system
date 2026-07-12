@@ -66,7 +66,7 @@ export const PermissionManagement = () => {
 
   const permanentDelete = async (userId: any) => {
     try {
-      await apiService.delete(`/user/delete/${userId}?permanentDelete=true`, {});
+      await apiService.delete(`/v2/user/delete/${userId}?permanentDelete=true`, {});
       await fetchUsers();
 
       setTimeout(() => {

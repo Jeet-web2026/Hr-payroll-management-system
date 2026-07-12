@@ -463,10 +463,17 @@ export class UsersController {
     required: false,
     description:
       'Set to true for permanent deletion, otherwise the user will be soft deleted.',
+    example: 'true',
+  })
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    description: 'User id for delete or suspend the user',
+    example: 'sdfbsdjfnsdfnsddsds',
   })
   @HttpCode(204)
   @Version('2')
-  @Role(UserRole.ADMIN)
+  @Role(UserRole.ADMIN, UserRole.HR)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @UseGuards(AuthGuard('jwt'))
   delete(
