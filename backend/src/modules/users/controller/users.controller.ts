@@ -28,9 +28,11 @@ import { Role } from '../../../comon/decorators/roles.decorator';
 import { RolesGuard } from '../../../comon/guards/roles.guard';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCookieAuth,
   ApiHeader,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -54,7 +56,7 @@ import {
     statusCode: 401,
     errors: 'Internal Server Error',
     message: 'Unauthorized',
-    path: '/api/user/me',
+    path: '{api path}',
     method: 'GET',
     timestamp: '2026-07-12T08:09:46.061Z',
   },
@@ -255,10 +257,50 @@ export class UsersController {
 
   @Get('/:userId')
   @UseGuards(AuthGuard('jwt'))
-  view(
-    @Param('userId') userId: string,
-    @Query('activity') activity: string,
-  ): UserResponseDto {
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    description: 'User id for fetch the user details.',
+    example: 'sdfbsdjfnsdfnsddsds',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Request successful',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Request successful',
+      data: {
+        id: 'kjiujkhuinnk',
+        firstName: 'changed',
+        lastName: 'User',
+        email: 'demo@yopmail.com',
+        role: 'employee',
+        status: 'active',
+        loginStatus: 'online',
+        isEmailVerified: true,
+        lastLogin: '2026-06-21T11:33:17.003Z',
+        phone: null,
+        profilePicture: null,
+        employment: null,
+        details: null,
+        usersPermissionManagement: {
+          notifications: true,
+          leaveManagement: true,
+          attendanceManagement: true,
+        },
+      },
+      meta: null,
+      path: '/api/user/kjhhjkj',
+      method: 'GET',
+      timestamp: '2026-07-12T08:31:35.822Z',
+    },
+  })
+  @ApiOperation({
+    summary: 'Retrive user info.',
+    description: 'Retrieve info of users.',
+  })
+  view(@Param('userId') userId: string): UserResponseDto {
     return plainToInstance(
       UserResponseDto,
       this.usersService.findById(userId),
@@ -270,6 +312,74 @@ export class UsersController {
 
   @Put('/update/:userId')
   @UseGuards(AuthGuard('jwt'))
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    description: 'User id for update the user details.',
+    example: 'sdfbsdjfnsdfnsddsds',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User updated successfully',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Request successful',
+      data: {
+        id: 'dsjdfdfjdsjsdnsds',
+        firstName: 'changed2',
+        lastName: 'User',
+        email: 'demo@yopmail.com',
+        role: 'employee',
+        status: 'active',
+        loginStatus: 'online',
+        isEmailVerified: true,
+        lastLogin: '2026-06-21T11:33:17.003Z',
+        phone: null,
+        profilePicture: null,
+        employment: null,
+        details: null,
+      },
+      meta: null,
+      path: '/api/user/update/dsjdfdfjdsjsdnsds',
+      method: 'PUT',
+      timestamp: '2026-07-12T08:42:07.830Z',
+    },
+  })
+  @ApiOperation({
+    summary: 'Update user information',
+    description:
+      'Updates the details of an existing user. Only the fields provided in the request body will be updated. This endpoint requires a valid JWT access token and appropriate permissions to modify user information.',
+  })
+  @ApiBody({
+    description: 'Update user information',
+    schema: {
+      type: 'object',
+      properties: {
+        firstName: {
+          type: 'string',
+          example: 'John',
+          description: 'First name of the user',
+        },
+        lastName: {
+          type: 'string',
+          example: 'Doe',
+          description: 'Last name of the user',
+        },
+        email: {
+          type: 'string',
+          format: 'email',
+          example: 'john@example.com',
+          description: 'Email address',
+        },
+        contactNumber: {
+          type: 'string',
+          example: '+919876543210',
+          description: 'Contact number',
+        },
+      },
+    },
+  })
   update(
     @Param('userId') userId: string,
     @Body() userData: Partial<User>,
@@ -285,6 +395,58 @@ export class UsersController {
 
   @Patch('/update/:userId')
   @UseGuards(AuthGuard('jwt'))
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    description: 'User id for update the user details.',
+    example: 'sdfbsdjfnsdfnsddsds',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User updated successfully',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Request successful',
+      data: {
+        id: 'dsjdfdfjdsjsdnsds',
+        firstName: 'changed2',
+        lastName: 'User',
+        email: 'demo@yopmail.com',
+        role: 'employee',
+        status: 'active',
+        loginStatus: 'online',
+        isEmailVerified: true,
+        lastLogin: '2026-06-21T11:33:17.003Z',
+        phone: null,
+        profilePicture: null,
+        employment: null,
+        details: null,
+      },
+      meta: null,
+      path: '/api/user/update/dsjdfdfjdsjsdnsds',
+      method: 'PUT',
+      timestamp: '2026-07-12T08:42:07.830Z',
+    },
+  })
+  @ApiOperation({
+    summary: 'Update user information',
+    description:
+      'Updates the details of an existing user. Only the fields provided in the request body will be updated. This endpoint requires a valid JWT access token and appropriate permissions to modify user information.',
+  })
+  @ApiBody({
+    description: 'Update user information',
+    schema: {
+      type: 'object',
+      properties: {
+        firstName: {
+          type: 'string',
+          example: 'John',
+          description: 'First name of the user',
+        },
+      },
+    },
+  })
   edit(@Param('userId') userId: string, @Body() userData: Partial<User>) {
     return plainToInstance(
       UserResponseDto,
