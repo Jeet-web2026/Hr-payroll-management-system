@@ -15,7 +15,7 @@ import {
 @Controller('dashboard')
 @ApiTags('Dashboard')
 @ApiBearerAuth('access-token')
-@ApiCookieAuth('refreshToken')
+@ApiCookieAuth('refresh-token')
 @ApiHeader({
   name: 'Cookie',
   description: 'HTTP-only cookie containing the refresh token.',
