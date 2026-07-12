@@ -26,15 +26,95 @@ import { plainToInstance } from 'class-transformer';
 import { AddUserFromAdmin } from '../../../comon/dto/admin/add-user.dto';
 import { Role } from '../../../comon/decorators/roles.decorator';
 import { RolesGuard } from '../../../comon/guards/roles.guard';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiHeader,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @Controller('user')
 @ApiTags('User Management')
+@ApiBearerAuth()
+@ApiCookieAuth('refreshToken')
+@ApiHeader({
+  name: 'Cookie',
+  description: 'HTTP-only cookie containing the refresh token.',
+  required: true,
+  example: 'refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+})
+@ApiUnauthorizedResponse({
+  description: 'Login expired or invalidated. Please log in again.',
+  example: {
+    success: false,
+    statusCode: 401,
+    errors: 'Internal Server Error',
+    message: 'Unauthorized',
+    path: '/api/user/me',
+    method: 'GET',
+    timestamp: '2026-07-12T08:09:46.061Z',
+  },
+})
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: 'Get authenticated user information',
+    description:
+      'Retrieves the profile information of the currently authenticated user. A valid JWT access token must be provided in the Authorization header. Returns the user details associated with the authenticated session.',
+  })
+  @ApiResponse({
+    description: 'Request successful',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Request successful',
+      data: {
+        id: 'dfgdjgdfjdfjkf',
+        firstName: 'TeamHub',
+        lastName: 'Admin',
+        email: 'example@teamhub.com',
+        role: 'admin',
+        status: 'active',
+        loginStatus: 'online',
+        isEmailVerified: true,
+        lastLogin: '2026-07-12T08:13:50.184Z',
+        phone: null,
+        profilePicture: null,
+        employment: null,
+        details: null,
+        usersPermissionManagement: {
+          manageUser: true,
+          notifications: true,
+          holidayManagement: false,
+          employeeManagement: false,
+          attendanceManagement: false,
+          payrollManagement: false,
+          leaveManagement: false,
+          recruitmentManagement: false,
+          dashboard: {
+            totalEmployeeCount: true,
+            newJoineesCount: true,
+            activeEmployeeCount: true,
+            joiningRateCount: true,
+            totalGrowth: {
+              type: 'company_basis',
+            },
+          },
+        },
+      },
+      meta: null,
+      path: '/api/user/me',
+      method: 'GET',
+      timestamp: '2026-07-12T08:14:08.113Z',
+    },
+  })
   getProfile(@GetUser() user: JwtUser): UserResponseDto {
     const userData = this.usersService.findById(user.id);
     return plainToInstance(UserResponseDto, userData, {
@@ -43,6 +123,46 @@ export class UsersController {
   }
 
   @Get('/permissions')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: 'Get all available permissions',
+    description:
+      'Returns all available system permissions that can be assigned to users or roles. The response includes the unique identifier and permission value for each permission. A valid JWT access token is required to access this endpoint.',
+  })
+  @ApiResponse({
+    description: 'Request successful',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Request successful',
+      data: {
+        '0': {
+          id: '29107837-cf7d-4eb3-bb19-3f7a19ff5d62',
+          permissionvalue: 'user-management',
+        },
+        '1': {
+          id: '22ef56b5-8b34-4ee3-86cc-74dbab0c0209',
+          permissionvalue: 'leave-management',
+        },
+        '2': {
+          id: '91ac16f4-2891-4514-babb-7696a3fbb3e6',
+          permissionvalue: 'employee-management',
+        },
+        '3': {
+          id: '8d827489-3041-4d59-b8d0-cbaef9ed7ce3',
+          permissionvalue: 'payroll-management',
+        },
+        '4': {
+          id: 'b42e569a-b4f1-4ba3-bfac-6349f810662a',
+          permissionvalue: 'recruit-management',
+        },
+      },
+      meta: null,
+      path: '/api/user/permissions',
+      method: 'GET',
+      timestamp: '2026-07-12T08:18:37.612Z',
+    },
+  })
   permissions() {
     return this.usersService.allPermissions();
   }
