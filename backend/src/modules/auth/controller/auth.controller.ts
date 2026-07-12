@@ -21,9 +21,15 @@ import { AuthGuard } from '@nestjs/passport';
 import type { GoogleRequest } from '../../../comon/requests/googleRequest';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiHeader,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 @Controller('auth')
@@ -202,6 +208,17 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(200)
+  @ApiOperation({
+    summary: 'Refresh access token',
+    description:
+      'Generates a new access token using a valid refresh token. The refresh token must be provided in the request cookie or authorization header. If the refresh token is valid and has not expired or been revoked, a new access token is issued.',
+  })
+  @ApiHeader({
+    name: 'Cookie',
+    description: 'Authentication cookie',
+    required: true,
+    example: 'refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  })
   async refreshToken(
     @Req() req: express.Request,
   ): Promise<{ accessToken: string }> {
@@ -216,10 +233,38 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
+  @ApiOperation({
+    summary: 'Authenticate with Google',
+    description:
+      'Initiates the Google OAuth 2.0 authentication flow. The user is redirected to the Google sign-in page to grant access. No request body or authentication token is required.',
+  })
+  @ApiResponse({
+    status: 302,
+    description:
+      'Redirects the user to the Google authentication and consent screen.',
+  })
   googleLogin() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
+  @ApiOperation({
+    summary: 'Google OAuth callback',
+    description:
+      'Handles the callback from Google after successful authentication. The user Google profile is validated, the application authenticates or registers the user, generates JWT tokens, stores the refresh token in an HTTP-only cookie, and redirects the user to the frontend with the access token.',
+  })
+  @ApiResponse({
+    status: 302,
+    description:
+      'Redirects the authenticated user to the frontend application with the access token and sets the refresh token as a secure HTTP-only cookie.',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'Authentication failed because the Google account could not be verified or access was denied.',
+  })
+  @ApiInternalServerErrorResponse({
+    description:
+      'An unexpected error occurred while processing the LinkedIn authentication request.',
+  })
   async googleRedirect(
     @Req() req: GoogleRequest,
     @Res() res: express.Response,
@@ -244,10 +289,38 @@ export class AuthController {
 
   @Get('linkedin')
   @UseGuards(AuthGuard('linkedin'))
+  @ApiOperation({
+    summary: 'Authenticate with LinkedIn',
+    description:
+      'Initiates the LinkedIn OAuth 2.0 authentication flow by redirecting the user to the LinkedIn sign-in and authorization page. After successful authentication, LinkedIn redirects the user to the configured callback endpoint.',
+  })
+  @ApiResponse({
+    status: 302,
+    description:
+      'Redirects the user to the LinkedIn authentication and authorization page.',
+  })
   linkedInLogin() {}
 
   @Get('linkedin/callback')
   @UseGuards(AuthGuard('linkedin'))
+  @ApiOperation({
+    summary: 'LinkedIn OAuth callback',
+    description:
+      'Handles the callback from LinkedIn after successful authentication. The application retrieves the user profile, authenticates or registers the user, generates JWT access and refresh tokens, stores the refresh token in a secure HTTP-only cookie, and redirects the user to the frontend application with the access token.',
+  })
+  @ApiResponse({
+    status: 302,
+    description:
+      'Successfully authenticates the user, sets the refresh token as a secure HTTP-only cookie, and redirects the user to the frontend application with the access token.',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'Authentication failed because the LinkedIn account could not be verified or the user denied access.',
+  })
+  @ApiInternalServerErrorResponse({
+    description:
+      'An unexpected error occurred while processing the LinkedIn authentication request.',
+  })
   async linkedinRedirect(
     @Req() req: express.Request,
     @Res() res: express.Response,
@@ -277,10 +350,38 @@ export class AuthController {
 
   @Get('facebook')
   @UseGuards(AuthGuard('facebook'))
+  @ApiOperation({
+    summary: 'Authenticate with Facebook',
+    description:
+      'Initiates the Facebook OAuth 2.0 authentication flow by redirecting the user to the Facebook login and authorization page. After successful authentication, Facebook redirects the user to the configured callback endpoint.',
+  })
+  @ApiResponse({
+    status: 302,
+    description:
+      'Redirects the user to the Facebook authentication and authorization page.',
+  })
   async facebookLogin() {}
 
   @Get('facebook/callback')
   @UseGuards(AuthGuard('facebook'))
+  @ApiOperation({
+    summary: 'Facebook OAuth callback',
+    description:
+      'Handles the callback from Facebook after successful authentication. The application retrieves the authenticated user profile, authenticates or registers the user, generates JWT access and refresh tokens, stores the refresh token in a secure HTTP-only cookie, and redirects the user to the frontend application with the access token.',
+  })
+  @ApiResponse({
+    status: 302,
+    description:
+      'Successfully authenticates the user, sets the refresh token as a secure HTTP-only cookie, and redirects the user to the frontend application with the access token.',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'Authentication failed because the Facebook account could not be verified or the user denied access.',
+  })
+  @ApiInternalServerErrorResponse({
+    description:
+      'An unexpected error occurred while processing the Facebook authentication request.',
+  })
   async facebookRedirect(
     @Req() req: express.Request,
     @Res() res: express.Response,
@@ -306,6 +407,58 @@ export class AuthController {
   @Post('logout')
   @HttpCode(200)
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: 'Logout user',
+    description:
+      'Logs out the authenticated user by invalidating the access token, clearing the refresh token cookie, and terminating the current session. A valid JWT access token in the Authorization header and a valid refresh token in the Cookie header are required.',
+  })
+  @ApiBearerAuth()
+  @ApiCookieAuth('refreshToken')
+  @ApiHeader({
+    name: 'Cookie',
+    description: 'HTTP-only cookie containing the refresh token.',
+    required: true,
+    example: 'refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  })
+  @ApiOkResponse({
+    description: 'Logged out successfully',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Logged out successfully',
+      data: {},
+      meta: null,
+      path: '/api/auth/logout',
+      method: 'POST',
+      timestamp: '2026-07-12T07:58:25.498Z',
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'Unauthorized. The access token or refresh token is missing, invalid, expired, or revoked.',
+    example: {
+      success: false,
+      statusCode: 401,
+      errors: 'Internal Server Error',
+      message: 'Login expired or invalidated. Please log in again.',
+      path: '/api/auth/logout',
+      method: 'POST',
+      timestamp: '2026-07-12T08:00:46.265Z',
+    },
+  })
+  @ApiBadRequestResponse({
+    description:
+      'The logout request is invalid or the required authentication headers are missing.',
+    example: {
+      success: false,
+      statusCode: 401,
+      errors: 'Internal Server Error',
+      message: 'Unauthorized',
+      path: '/api/auth/logout',
+      method: 'POST',
+      timestamp: '2026-07-12T08:01:23.361Z',
+    },
+  })
   async logout(
     @Req() req: express.Request,
     @Res({ passthrough: true }) res: express.Response,
