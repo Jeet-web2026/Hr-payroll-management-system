@@ -65,10 +65,26 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('TeamHub API Documentation')
-    .setDescription('API documentation for TeamHub application. Use this documentation to understand the available endpoints, request/response formats, and authentication requirements. Also use the base URL(' + apiUrl + ') for API requests based on the environment (development or production).')
+    .setDescription(
+      'API documentation for TeamHub application. Use this documentation to understand the available endpoints, request/response formats, and authentication requirements. Also use the base URL(' +
+        apiUrl +
+        ') for API requests based on the environment (development or production).',
+    )
     .setTermsOfService(`${apiUrl}/terms`)
-    .setLicense('MIT License', 'https://github.com/twbs/bootstrap/blob/main/LICENSE')
+    .setLicense(
+      'MIT License',
+      'https://github.com/twbs/bootstrap/blob/main/LICENSE',
+    )
     .addServer(apiUrl, 'Base URL for API requests')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter your JWT access token',
+      },
+      'access-token',
+    )
     .setVersion('1.1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

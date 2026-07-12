@@ -412,7 +412,7 @@ export class AuthController {
     description:
       'Logs out the authenticated user by invalidating the access token, clearing the refresh token cookie, and terminating the current session. A valid JWT access token in the Authorization header and a valid refresh token in the Cookie header are required.',
   })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiCookieAuth('refreshToken')
   @ApiHeader({
     name: 'Cookie',

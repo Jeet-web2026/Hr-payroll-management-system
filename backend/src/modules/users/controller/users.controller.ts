@@ -41,7 +41,7 @@ import {
 
 @Controller('user')
 @ApiTags('User Management')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @ApiCookieAuth('refreshToken')
 @ApiHeader({
   name: 'Cookie',

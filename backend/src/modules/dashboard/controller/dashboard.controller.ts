@@ -14,7 +14,7 @@ import {
 
 @Controller('dashboard')
 @ApiTags('Dashboard')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @ApiCookieAuth('refreshToken')
 @ApiHeader({
   name: 'Cookie',

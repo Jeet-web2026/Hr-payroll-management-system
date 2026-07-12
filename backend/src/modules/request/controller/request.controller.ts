@@ -13,7 +13,7 @@ import {
 
 @Controller('requests')
 @ApiTags('Leave Requests')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @ApiCookieAuth('refreshToken')
 @ApiHeader({
   name: 'Cookie',
