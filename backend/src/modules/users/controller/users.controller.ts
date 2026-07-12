@@ -26,7 +26,7 @@ import { plainToInstance } from 'class-transformer';
 import { AddUserFromAdmin } from '../../../comon/dto/admin/add-user.dto';
 import { Role } from '../../../comon/decorators/roles.decorator';
 import { RolesGuard } from '../../../comon/guards/roles.guard';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
 @ApiTags('User Management')
@@ -64,8 +64,64 @@ export class UsersController {
   @ApiQuery({
     name: 'activity',
     required: false,
-    description: 'Filter users by activity status (e.g., permission-management)',
+    description:
+      'Filter users by activity status (e.g., permission-management)',
     example: 'permission-management',
+  })
+  @ApiOperation({
+    summary:
+      'Get all users with pagination and optional activity filter for permission management or newly joined users based on authenticated user role.',
+    description:
+      'Retrieve a paginated list of users. You can filter by activity status using the "activity" query parameter.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Request successful',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Request successful',
+      data: [
+        {
+          id: 'bssbsjkbkjjsddnfd',
+          firstName: 'demo',
+          lastName: 'company',
+          email: 'demo@yopmail.com',
+          password:
+            '$2b$08$Ld.1QypJ9Q9KnMqQGjnoxuPFsyJgJ3dY3znwwSz2MMZaRGPK0G26O',
+          phone: '4578925602',
+          role: 'company',
+          status: 'active',
+          lastLogin: null,
+          ipAddress: null,
+          isEmailVerified: true,
+          profilePicture: null,
+          loginStatus: null,
+          createdAt: '2026-07-06T12:03:07.331Z',
+          otp: null,
+          otpExpiry: null,
+          updatedAt: '2026-07-06T12:03:07.331Z',
+          deletedAt: null,
+          employment: null,
+          details: {
+            id: '417f0581-b0c9-4388-8ca5-98e7a8539d5e',
+            dob: '2026-06-28',
+            address: 'sddsdsdsd',
+            companyUanNumber: 'example',
+          },
+        },
+      ],
+      meta: {
+        total: 1,
+        currentPage: 1,
+        nextPage: null,
+        lastPage: 1,
+        limit: 10,
+      },
+      path: '/api/user/all?page=1&limit=10',
+      method: 'GET',
+      timestamp: '2026-07-12T05:32:56.371Z',
+    },
   })
   allUsers(
     @Query('page', ParseIntPipe) page: number,
