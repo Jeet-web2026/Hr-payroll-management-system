@@ -177,9 +177,9 @@ export function AddUser() {
                                     <div className="space-y-2 lg:col-span-2">
                                         <Label>UAN Number</Label>
                                         <Input type="text" value={formData['uan-number']} name="uan-number" onChange={handleChange} />
-                                        {errors['uan-number'] && (
+                                        {errors['uanNumber'] && (
                                             <p className="text-xs text-red-400 capitalize">
-                                                {errors['uan-number'].join(", ")}
+                                                {errors['uanNumber'].join(", ")}
                                             </p>
                                         )}
                                     </div>

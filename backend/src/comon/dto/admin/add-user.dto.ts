@@ -3,7 +3,6 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsOptional,
   IsString,
   Matches,
   MinLength,
@@ -12,13 +11,17 @@ import {
   UserRole,
   UserStatus,
 } from '../../../modules/users/models/user.entity';
+import { Transform } from 'class-transformer';
 
 export class AddUserFromAdmin {
-  @IsNotEmpty()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString()
+  @IsNotEmpty({
+    message: 'Name is required.',
+  })
   name!: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   uanNumber?: string;
 
