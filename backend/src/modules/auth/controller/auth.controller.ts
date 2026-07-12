@@ -19,8 +19,10 @@ import { EmailVerificationDto } from '../../../comon/dto/auth/emailVerification.
 import * as express from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import type { GoogleRequest } from '../../../comon/requests/googleRequest';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('Authentication')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

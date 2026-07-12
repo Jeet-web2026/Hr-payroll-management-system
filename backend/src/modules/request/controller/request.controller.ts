@@ -2,8 +2,10 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import * as express from 'express';
 import { RequestService } from '../service/request.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('requests')
+@ApiTags('Leave Requests')
 export class RequestController {
   constructor(private readonly reqService: RequestService) {}
 

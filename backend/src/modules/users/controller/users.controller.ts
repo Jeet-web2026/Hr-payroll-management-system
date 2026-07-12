@@ -26,8 +26,10 @@ import { plainToInstance } from 'class-transformer';
 import { AddUserFromAdmin } from '../../../comon/dto/admin/add-user.dto';
 import { Role } from '../../../comon/decorators/roles.decorator';
 import { RolesGuard } from '../../../comon/guards/roles.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
+@ApiTags('User Management')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
