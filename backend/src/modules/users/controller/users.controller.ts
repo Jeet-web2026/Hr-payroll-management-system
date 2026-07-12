@@ -26,7 +26,7 @@ import { plainToInstance } from 'class-transformer';
 import { AddUserFromAdmin } from '../../../comon/dto/admin/add-user.dto';
 import { Role } from '../../../comon/decorators/roles.decorator';
 import { RolesGuard } from '../../../comon/guards/roles.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
 @ApiTags('User Management')
@@ -49,6 +49,24 @@ export class UsersController {
 
   @Get('all')
   @UseGuards(AuthGuard('jwt'))
+  @ApiQuery({
+    name: 'page',
+    required: true,
+    description: 'Page number for pagination',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: true,
+    description: 'Number of items per page',
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'activity',
+    required: false,
+    description: 'Filter users by activity status (e.g., permission-management)',
+    example: 'permission-management',
+  })
   allUsers(
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
@@ -102,6 +120,16 @@ export class UsersController {
   }
 
   @Delete('/delete/:userId')
+  @ApiQuery({
+    name: 'permanentDelete',
+    required: false,
+    description:
+      'Set to true for permanent deletion, otherwise the user will be soft deleted.',
+  })
+  @HttpCode(204)
+  @Version('2')
+  @Role(UserRole.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @UseGuards(AuthGuard('jwt'))
   delete(
     @Param('userId') userId: string,
