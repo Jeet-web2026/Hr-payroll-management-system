@@ -12,7 +12,7 @@ export const AuthSuccess = () => {
 
         if (token) {
             TokenService.set(token);
-            navigate("/dashboard");
+            navigate("/role/selection");
         } else {
             navigate("/");
         }

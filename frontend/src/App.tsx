@@ -16,6 +16,7 @@ import { EditUser } from './pages/user/edit'
 import { Toaster } from './components/ui/sonner'
 import NotFound from './pages/others/not-found'
 import { AddUser } from './pages/user/add'
+import RoleSelection from './pages/others/role-selection'
 
 function App() {
 
@@ -72,6 +73,11 @@ function App() {
         <Route path="/user/add" element={
           <ProtectedRoute>
             <AddUser />
+          </ProtectedRoute>
+        } />
+        <Route path="/role/selection" element={
+          <ProtectedRoute>
+            <RoleSelection />
           </ProtectedRoute>
         } />
 

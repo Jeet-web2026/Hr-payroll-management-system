@@ -140,7 +140,17 @@ export function AddUser() {
                 <form className="space-y-6" onSubmit={usercreationFormSubmit}>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Personal Information</CardTitle>
+                            <div className="flex items-center justify-between">
+                                <CardTitle>Personal Information</CardTitle>
+                                <CardTitle>
+                                    <Link to={`/continue-with/ai/${createUserType}-screening`}>
+                                        <Button variant={"outline"} className="cursor-pointer">
+                                            <i className="ri-sparkling-line"></i>
+                                            Continue with AI
+                                        </Button>
+                                    </Link>
+                                </CardTitle>
+                            </div>
                             <CardDescription>
                                 Enter basic {createUserType} details.
                             </CardDescription>

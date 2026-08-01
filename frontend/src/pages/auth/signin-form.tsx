@@ -66,7 +66,12 @@ export function SigninForm({
       const res = await apiService.post('/auth/signin', formData);
       ResponseHandler(res);
       TokenService.set(res.data.data.accessToken);
-      navigate("/dashboard");
+
+      if (res.data?.data?.role === 'admin') {
+        navigate("/dashboard");
+      } else {
+        navigate("/role/selection");
+      }
     } catch (error) {
       ResponseHandler(error);
     } finally {
