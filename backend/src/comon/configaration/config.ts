@@ -6,7 +6,7 @@ export const BaseConfig = () => ({
   database: {
     dbUrl: process.env.DB_URL,
     type: process.env.DB_TYPE,
-    autoloadEntities: process.env.NODE_ENV === 'development',
+    autoloadEntities: true,
     synchronize: process.env.NODE_ENV === 'development',
   },
   redis: {
