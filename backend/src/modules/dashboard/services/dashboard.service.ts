@@ -8,4 +8,8 @@ export class DashboardService {
   getDashboardData(user: any) {
     return this.userService.statictics(user.id);
   }
+
+  getStatChart(user: any) {
+    return this.userService.getStatChart(user.id);
+  }
 }

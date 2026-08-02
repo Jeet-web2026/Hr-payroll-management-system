@@ -46,7 +46,7 @@ export class MailService {
                     <table cellpadding="0" cellspacing="0" style="margin:30px 0;">
                         <tr>
                         <td align="center">
-                            <a href="${process.env.APP_URL}/auth/otp-verification?otp=${otp}&&email=${to}" 
+                            <a href="${this.configService.get<string>('frontendUrl')}/auth/otp-verification?otp=${otp}&&email=${to}" 
                             style="
                                 background:#4F46E5;
                                 color:#ffffff;
@@ -92,7 +92,7 @@ export class MailService {
   }
 
   async sendResetPasswordEmail(to: string, token: string): Promise<void> {
-    const resetUrl = `${process.env.APP_URL}/reset-password?token=${token}`;
+    const resetUrl = `${this.configService.get<string>('frontendUrl')}/reset-password?token=${token}`;
     await this.mailerService.sendMail({
       to,
       subject: 'Reset Your Password',
@@ -110,7 +110,7 @@ export class MailService {
   }
 
   async sendEmailVerification(to: string, token: string): Promise<void> {
-    const verifyUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
+    const verifyUrl = `${this.configService.get<string>('frontendUrl')}/verify-email?token=${token}`;
     await this.mailerService.sendMail({
       to,
       subject: 'Verify Your Email',
@@ -128,7 +128,7 @@ export class MailService {
   }
 
   async senduserCreatedEmail(to: string, data: any) {
-    const baseUrl = this.configService.get('APP_URL');
+    const baseUrl = this.configService.get<string>('frontendUrl');
     await this.mailerService.sendMail({
       to,
       subject: 'Welcome to Our Organization 🎉',

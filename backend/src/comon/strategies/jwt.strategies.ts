@@ -1,5 +1,6 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import * as express from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -9,11 +10,20 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    protected readonly configService: ConfigService,
   ) {
+    const secretOrKey = configService.get<string>(
+      'baseAuth.jwt.authTokenSecret',
+    );
+
+    if (!secretOrKey) {
+      throw new Error('Missing required JWT secret configuration');
+    }
+    
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_ACCESS_SECRET || 'default_secret',
+      secretOrKey,
       passReqToCallback: true,
     });
   }

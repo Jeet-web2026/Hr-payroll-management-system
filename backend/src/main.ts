@@ -18,7 +18,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
@@ -55,13 +55,7 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
-  /*
-  Swagger setup for API documentation.  
-  */
-  const apiUrl =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:4000'
-      : 'https://hr-payroll-management-system.onrender.com';
+  const apiUrl = process.env.BASE_URL ?? 'http://localhost:4000';
 
   const config = new DocumentBuilder()
     .setTitle('TeamHub API Documentation')

@@ -10,7 +10,7 @@ import {
 import { LoginStatus, User, UserRole, UserStatus } from '../models/user.entity';
 import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, LessThan, Repository } from 'typeorm';
+import { Between, In, LessThan, Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
@@ -21,6 +21,8 @@ import { UserPermissions } from '../models/userPermissions.entity';
 import { AddUserFromAdmin } from '../../../comon/dto/admin/add-user.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UsercreatedEvent } from '../../mail/events/mail.event';
+import { StatisticsResult } from '../types/dashboardstat.type';
+import { DateRanges } from '../types/dashboardstatdaterange.type';
 
 @Injectable()
 export class UsersService {
@@ -188,23 +190,20 @@ export class UsersService {
     return `${day}${month}${year}${hours}${minutes}`;
   }
 
-  async statictics(id: string): Promise<{
-    totalEmployees: number;
-    newJoinees: number;
-    activeEmployees: number;
-    joiningRate: number;
-    employeeGrowthRate: number;
-    newJoineesRate: number;
-    newJoiningRate: number;
-  }> {
+  async statictics(id: string): Promise<StatisticsResult> {
     const user = await this.findById(id);
 
-    const totalEmployees =
-      user.role === UserRole.HR
-        ? await this.userRepository.count({
-            where: { role: UserRole.EMPLOYEE },
-          })
-        : 0;
+    switch (user.role) {
+      case UserRole.HR:
+        return this.getHrStatistics();
+      case UserRole.ADMIN:
+        return this.getAdminStatistics();
+      default:
+        return this.getDefaultStatistics();
+    }
+  }
+
+  private getDateRanges(): DateRanges {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -218,36 +217,50 @@ export class UsersService {
       (now.getTime() - startOfMonth.getTime()) / (1000 * 60 * 60 * 24),
     );
 
+    return {
+      startOfMonth,
+      endOfMonth,
+      previousMonthStart,
+      previousMonthEnd,
+      daysPassed,
+    };
+  }
+  private getDefaultStatistics(): StatisticsResult {
+    return {
+      totalEmployees: 0,
+      newJoinees: 0,
+      activeEmployees: 0,
+      joiningRate: 0,
+      employeeGrowthRate: 0,
+      newJoineesRate: 0,
+      newJoiningRate: 0,
+    };
+  }
+
+  private async getHrStatistics(): Promise<StatisticsResult> {
+    const {
+      startOfMonth,
+      endOfMonth,
+      previousMonthStart,
+      previousMonthEnd,
+      daysPassed,
+    } = this.getDateRanges();
     const expectedJoinees = (daysPassed / 2) * 5;
-    const newJoinees =
-      user.role === UserRole.HR
-        ? await this.userRepository.count({
-            where: {
-              role: UserRole.EMPLOYEE,
-              status: UserStatus.ACTIVE,
-              createdAt: Between(startOfMonth, endOfMonth),
-            },
-          })
-        : 0;
-    const activeEmployees =
-      user.role === UserRole.HR
-        ? await this.userRepository.count({
-            where: { role: UserRole.EMPLOYEE, status: UserStatus.ACTIVE },
-          })
-        : 0;
 
-    const joiningRate =
-      user.role === UserRole.HR
-        ? totalEmployees > 0
-          ? Math.round((newJoinees / totalEmployees) * 100)
-          : 0
-        : 0;
+    const totalEmployees = await this.userRepository.count({
+      where: { role: UserRole.EMPLOYEE },
+    });
 
-    const totalEmployeesCurrent = await this.userRepository.count({
+    const newJoinees = await this.userRepository.count({
       where: {
         role: UserRole.EMPLOYEE,
         status: UserStatus.ACTIVE,
+        createdAt: Between(startOfMonth, endOfMonth),
       },
+    });
+
+    const activeEmployees = await this.userRepository.count({
+      where: { role: UserRole.EMPLOYEE, status: UserStatus.ACTIVE },
     });
 
     const totalEmployeesPrevious = await this.userRepository.count({
@@ -258,13 +271,6 @@ export class UsersService {
       },
     });
 
-    const employeeGrowthRate =
-      user.role === UserRole.HR && totalEmployeesPrevious > 0
-        ? ((totalEmployeesCurrent - totalEmployeesPrevious) /
-            totalEmployeesPrevious) *
-          100
-        : 0;
-
     const prevMonthJoinees = await this.userRepository.count({
       where: {
         role: UserRole.EMPLOYEE,
@@ -273,13 +279,100 @@ export class UsersService {
       },
     });
 
+    const joiningRate =
+      totalEmployees > 0 ? Math.round((newJoinees / totalEmployees) * 100) : 0;
+
+    const employeeGrowthRate =
+      totalEmployeesPrevious > 0
+        ? ((activeEmployees - totalEmployeesPrevious) /
+            totalEmployeesPrevious) *
+          100
+        : 0;
+
     const newJoineesRate =
-      user.role === UserRole.HR && prevMonthJoinees > 0
+      prevMonthJoinees > 0
         ? ((newJoinees - prevMonthJoinees) / prevMonthJoinees) * 100
         : 0;
 
     const newJoiningRate =
-      user.role === UserRole.HR && expectedJoinees > 0
+      expectedJoinees > 0
+        ? Math.round(((newJoinees - expectedJoinees) / expectedJoinees) * 100)
+        : 0;
+
+    return {
+      totalEmployees,
+      newJoinees,
+      activeEmployees,
+      joiningRate,
+      employeeGrowthRate,
+      newJoineesRate,
+      newJoiningRate,
+    };
+  }
+
+  private async getAdminStatistics(): Promise<StatisticsResult> {
+    const {
+      startOfMonth,
+      endOfMonth,
+      previousMonthStart,
+      previousMonthEnd,
+      daysPassed,
+    } = this.getDateRanges();
+    const expectedJoinees = (daysPassed / 2) * 5;
+
+    const scopedRoles = [UserRole.COMPANY];
+
+    const totalEmployees = await this.userRepository.count({
+      where: { role: In(scopedRoles) },
+      withDeleted: true,
+    });
+
+    const newJoinees = await this.userRepository.count({
+      where: {
+        role: In(scopedRoles),
+        status: UserStatus.ACTIVE,
+        createdAt: Between(startOfMonth, endOfMonth),
+      },
+      withDeleted: true,
+    });
+
+    const activeEmployees = await this.userRepository.count({
+      where: { role: In(scopedRoles), status: UserStatus.ACTIVE },
+    });
+
+    const totalEmployeesPrevious = await this.userRepository.count({
+      where: {
+        role: In(scopedRoles),
+        status: UserStatus.ACTIVE,
+        createdAt: LessThan(startOfMonth),
+      },
+    });
+
+    const prevMonthJoinees = await this.userRepository.count({
+      where: {
+        role: In(scopedRoles),
+        status: UserStatus.ACTIVE,
+        createdAt: Between(previousMonthStart, previousMonthEnd),
+      },
+    });
+
+    const joiningRate =
+      totalEmployees > 0 ? Math.round((newJoinees / totalEmployees) * 100) : 0;
+
+    const employeeGrowthRate =
+      totalEmployeesPrevious > 0
+        ? ((activeEmployees - totalEmployeesPrevious) /
+            totalEmployeesPrevious) *
+          100
+        : 0;
+
+    const newJoineesRate =
+      prevMonthJoinees > 0
+        ? ((newJoinees - prevMonthJoinees) / prevMonthJoinees) * 100
+        : 0;
+
+    const newJoiningRate =
+      expectedJoinees > 0
         ? Math.round(((newJoinees - expectedJoinees) / expectedJoinees) * 100)
         : 0;
 
@@ -507,5 +600,111 @@ export class UsersService {
       leaveManagement: true,
       attendanceManagement: true,
     };
+  }
+
+  async getStatChart(userId: string) {
+    let user: User;
+    try {
+      user = await this.findById(userId);
+    } catch (error) {
+      throw new NotFoundException(`User not exsists`);
+    }
+
+    switch (user.role) {
+      case UserRole.ADMIN:
+        return this.getAdminStatChart();
+      default:
+        return;
+    }
+  }
+
+  private async getAdminStatChart(
+    monthDate: Date = new Date(),
+  ): Promise<{ date: string; active: number; newlyJoined: number }[]> {
+    const startOfMonth = new Date(
+      monthDate.getFullYear(),
+      monthDate.getMonth() - 3,
+      1,
+      0,
+      0,
+      0,
+      0,
+    );
+    const endOfMonth = monthDate;
+
+    const newlyJoinedRaw = await this.userRepository
+      .createQueryBuilder('user')
+      .select('DATE(user.createdAt)', 'date')
+      .addSelect('COUNT(*)', 'count')
+      .where('user.role = :role', { role: UserRole.COMPANY })
+      .andWhere('user.createdAt BETWEEN :start AND :end', {
+        start: startOfMonth,
+        end: endOfMonth,
+      })
+      .groupBy('DATE(user.createdAt)')
+      .having('COUNT(*) > 0')
+      .orderBy('DATE(user.createdAt)', 'ASC')
+      .getRawMany();
+
+    const activeRaw = await this.userRepository
+      .createQueryBuilder('user')
+      .select('DATE(user.createdAt)', 'date')
+      .addSelect('COUNT(*)', 'count')
+      .where('user.role = :role', { role: UserRole.COMPANY })
+      .andWhere('user.status = :status', { status: UserStatus.ACTIVE })
+      .andWhere('user.createdAt BETWEEN :start AND :end', {
+        start: startOfMonth,
+        end: endOfMonth,
+      })
+      .groupBy('DATE(user.createdAt)')
+      .having('COUNT(*) > 0')
+      .orderBy('DATE(user.createdAt)', 'ASC')
+      .getRawMany();
+
+    return this.mergeStatRows(
+      newlyJoinedRaw,
+      activeRaw,
+      startOfMonth,
+      endOfMonth,
+    );
+  }
+
+  private mergeStatRows(
+    newlyJoinedRaw: { date: string; count: string }[],
+    activeRaw: { date: string; count: string }[],
+    startOfMonth: Date,
+    endDate: Date,
+  ): { date: string; active: number; newlyJoined: number }[] {
+    const dateMap = new Map<string, { active: number; newlyJoined: number }>();
+
+    const cursor = new Date(startOfMonth);
+    while (cursor <= endDate) {
+      dateMap.set(this.formatDate(cursor), { active: 0, newlyJoined: 0 });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    for (const row of newlyJoinedRaw) {
+      const date = this.formatDate(row.date);
+      const entry = dateMap.get(date) ?? { active: 0, newlyJoined: 0 };
+      entry.newlyJoined = Number(row.count);
+      dateMap.set(date, entry);
+    }
+
+    for (const row of activeRaw) {
+      const date = this.formatDate(row.date);
+      const entry = dateMap.get(date) ?? { active: 0, newlyJoined: 0 };
+      entry.active = Number(row.count);
+      dateMap.set(date, entry);
+    }
+
+    return Array.from(dateMap.entries())
+      .map(([date, counts]) => ({ date, ...counts }))
+      .filter((row) => row.active > 0 || row.newlyJoined > 0)
+      .sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  private formatDate(date: string | Date): string {
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
   }
 }

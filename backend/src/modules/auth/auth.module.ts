@@ -19,10 +19,12 @@ import { FacebookStrategy } from '../../comon/strategies/facebook.strategies';
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         global: true,
-        secret: configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
+        secret: configService.getOrThrow<string>(
+          'baseAuth.jwt.authTokenSecret',
+        ),
         signOptions: {
           expiresIn: configService.get<string>(
-            'JWT_EXPIRES_IN',
+            'baseAuth.jwt.authTokenExpiry',
             '60s',
           ) as StringValue,
         },

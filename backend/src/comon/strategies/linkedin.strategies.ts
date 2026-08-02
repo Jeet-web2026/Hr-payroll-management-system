@@ -11,11 +11,11 @@ export class LinkedinStrategy extends PassportStrategy(Strategy, 'linkedin') {
 
       tokenURL: 'https://www.linkedin.com/oauth/v2/accessToken',
 
-      clientID: configService.get<string>('LINKEDIN_CLIENT_ID')!,
+      clientID: configService.get<string>('socialAuth.linkedin.clientId')!,
 
-      clientSecret: configService.get<string>('LINKEDIN_CLIENT_SECRET')!,
+      clientSecret: configService.get<string>('socialAuth.linkedin.clientSecret')!,
 
-      callbackURL: configService.get<string>('LINKEDIN_CALLBACK_URL')!,
+      callbackURL: configService.get<string>('socialAuth.linkedin.callbackUrl')!,
 
       scope: ['openid', 'profile', 'email'],
     });

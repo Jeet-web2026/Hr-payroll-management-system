@@ -31,11 +31,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 @ApiTags('Authentication')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post('signin')
   @ApiOperation({
@@ -283,7 +287,7 @@ export class AuthController {
     });
 
     return res.redirect(
-      `${process.env.APP_URL}/auth/success?accessToken=${data.accessToken}`,
+      `${this.configService.get<string>('frontendUrl')}/auth/success?accessToken=${data.accessToken}`,
     );
   }
 
@@ -344,7 +348,7 @@ export class AuthController {
     });
 
     return res.redirect(
-      `${process.env.APP_URL}/auth/success?accessToken=${data.accessToken}`,
+      `${this.configService.get<string>('frontendUrl')}/auth/success?accessToken=${data.accessToken}`,
     );
   }
 
@@ -400,7 +404,7 @@ export class AuthController {
     });
 
     return res.redirect(
-      `${process.env.APP_URL}/auth/success?accessToken=${data.accessToken}`,
+      `${this.configService.get<string>('frontendUrl')}/auth/success?accessToken=${data.accessToken}`,
     );
   }
 

@@ -14,10 +14,13 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import apiService from "@/comon/api/apiService";
 import { toast } from "sonner";
+import { useRoleLabel } from "@/hooks/userRoleLabel";
 
 export function SectionCards() {
 
   const [isPending, setIsPending] = useState(false);
+  const user = useRoleLabel();
+
   const [data, setData] = useState({
     totalEmployees: 0,
     newJoinees: 0,
@@ -57,7 +60,7 @@ export function SectionCards() {
         <>
           <Card className="@container/card">
             <CardHeader>
-              <CardDescription>Total Employees</CardDescription>
+              <CardDescription>Total {user}</CardDescription>
               <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                 {data.totalEmployees}
               </CardTitle>
@@ -80,7 +83,7 @@ export function SectionCards() {
           </Card>
           <Card className="@container/card">
             <CardHeader>
-              <CardDescription>New Joinees</CardDescription>
+              <CardDescription>New {user}</CardDescription>
               <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                 {data.newJoinees}
               </CardTitle>
@@ -103,14 +106,14 @@ export function SectionCards() {
           </Card>
           <Card className="@container/card">
             <CardHeader>
-              <CardDescription>Active Employees</CardDescription>
+              <CardDescription>Active {user}</CardDescription>
               <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                 {data.activeEmployees}
               </CardTitle>
             </CardHeader>
             <CardFooter className="flex-col items-start gap-1.5 text-sm">
               <div className="line-clamp-1 flex gap-2 font-medium">
-                Strong user retention{" "}
+                Strong {user} retention{" "}
                 <TrendingUpIcon className="size-4" />
               </div>
               <div className="text-muted-foreground">Engagement exceed targets</div>
