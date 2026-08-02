@@ -6,6 +6,9 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(protected readonly configService: ConfigService) {
+    console.log('callbackURL:', configService.get<string>('socialAuth.facebook.callbackUrl'));
+    console.log('clientSecret:', configService.get<string>('socialAuth.facebook.clientSecret'));
+    console.log('clientId:', configService.get<string>('socialAuth.facebook.clientId'));
     super({
       clientID: configService.getOrThrow<string>('socialAuth.google.clientId'),
       clientSecret: configService.getOrThrow<string>('socialAuth.google.clientSecret'),
