@@ -1,4 +1,14 @@
-import { Controller, Get, Req, UseGuards, Version } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Req,
+  UseGuards,
+  Version,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBearerAuth,
@@ -30,46 +40,79 @@ export class NotificationsController {
       statusCode: 200,
       message: 'Request successful',
       data: {
-        id: 'dfgdjgdfjdfjkf',
-        firstName: 'TeamHub',
-        lastName: 'Admin',
-        email: 'example@teamhub.com',
-        role: 'admin',
-        status: 'active',
-        loginStatus: 'online',
-        isEmailVerified: true,
-        lastLogin: '2026-07-12T08:13:50.184Z',
-        phone: null,
-        profilePicture: null,
-        employment: null,
-        details: null,
-        usersPermissionManagement: {
-          manageUser: true,
-          notifications: true,
-          holidayManagement: false,
-          employeeManagement: false,
-          attendanceManagement: false,
-          payrollManagement: false,
-          leaveManagement: false,
-          recruitmentManagement: false,
-          dashboard: {
-            totalEmployeeCount: true,
-            newJoineesCount: true,
-            activeEmployeeCount: true,
-            joiningRateCount: true,
-            totalGrowth: {
-              type: 'company_basis',
-            },
-          },
+        '0': {
+          content: 'demo subject',
+          status: 'new',
+          receivedAt: '08/02/2026, 02:00 AM',
         },
       },
       meta: null,
-      path: '/api/user/me',
+      path: '/api/v2/notifications/all',
       method: 'GET',
-      timestamp: '2026-07-12T08:14:08.113Z',
+      timestamp: '2026-08-02T14:27:31.161Z',
     },
   })
   getAllNotifications(@Req() req: express.Request) {
     return this.notificationService.getAllNotifications(req.user);
+  }
+
+  @Version('2')
+  @Patch('read/:notificationId')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: 'Mark a notification as read',
+    description:
+      'Marks the notification with the given ID as read for the currently authenticated user. A valid JWT access token must be provided in the Authorization header. Returns the updated notification.',
+  })
+  @ApiResponse({
+    description: 'Request successful',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Request successful',
+      data: {},
+      meta: null,
+      path: '/api/v2/notifications/read/bbbd8342-58dd-495d-84cd-a947105b9ff3',
+      method: 'PATCH',
+      timestamp: '2026-08-02T16:00:37.850Z',
+    },
+  })
+  readNotification(
+    @Param('notificationId', ParseUUIDPipe) notificationId: string,
+  ) {
+    return this.notificationService.readNotification(notificationId);
+  }
+
+  @Version('2')
+  @Delete('delete/:notificationId')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: 'Delete a notification',
+    description:
+      'Deletes the notification with the given ID. A valid JWT access token must be provided in the Authorization header. Only authorized users (e.g. admin) may delete notifications.',
+  })
+  @ApiResponse({
+    description: 'Request successful',
+    example: {
+      success: true,
+      statusCode: 200,
+      message: 'Request successful',
+      data: {
+        '0': {
+          content: 'demo subject',
+          status: 'new',
+          receivedAt: '08/02/2026, 02:00 AM',
+        },
+      },
+      meta: null,
+      path: '/api/v2/notifications/all',
+      method: 'GET',
+      timestamp: '2026-08-02T14:27:31.161Z',
+    },
+  })
+  deleteNotification(
+    @Param('notificationId', ParseUUIDPipe) notificationId: string,
+  ) {
+    return this.notificationService.deleteNotification(notificationId);
   }
 }

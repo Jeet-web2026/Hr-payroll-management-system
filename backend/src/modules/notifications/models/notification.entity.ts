@@ -44,6 +44,12 @@ export class Notification {
   @Index()
   userId!: string;
 
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  readAt!: Date;
+
   @DeleteDateColumn()
   deletedAt!: Date;
 

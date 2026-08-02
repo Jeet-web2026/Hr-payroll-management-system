@@ -116,6 +116,7 @@ const NotificationManagement = () => {
                                 ) : (
                                     <TableRow>
                                         <TableCell className="text-center text-base" colSpan={4}>
+                                            <i className="ri-notification-snooze-line me-2"></i>
                                             No notifications found.
                                         </TableCell>
                                     </TableRow>

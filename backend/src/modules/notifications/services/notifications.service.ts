@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from '../../users/services/users.service';
 import { User, UserRole } from '../../users/models/user.entity';
 import { NotificationResponse } from '../types/responseType';
 import { Notification } from '../models/notification.entity';
-import { Between, In, Repository } from 'typeorm';
+import { Between, In, IsNull, Repository } from 'typeorm';
 import { NotificationStatus } from '../enums/notificationStatus.enum';
 import { NotificationType } from '../enums/notificationType.enum';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -45,7 +45,9 @@ export class NotificationsService {
         status: In([NotificationStatus.NEW, NotificationStatus.READ]),
         createdAt: Between(weekStartDate, today),
         notificationType: NotificationType.COMPANY_NOTIFICATION,
+        readAt: IsNull(),
       },
+      withDeleted: true,
       order: { createdAt: 'DESC' },
     });
 
@@ -73,6 +75,7 @@ export class NotificationsService {
         status: In([NotificationStatus.NEW, NotificationStatus.READ]),
         createdAt: Between(weekStartDate, today),
         notificationType: NotificationType.USER_NOTIFICATION,
+        readAt: IsNull(),
       },
       order: { createdAt: 'DESC' },
     });
@@ -104,6 +107,7 @@ export class NotificationsService {
           NotificationType.HR_NOTIFICATION,
           NotificationType.USER_NOTIFICATION,
         ]),
+        readAt: IsNull(),
       },
       order: { createdAt: 'DESC' },
     });
@@ -135,6 +139,7 @@ export class NotificationsService {
         createdAt: Between(weekStartDate, today),
         notificationType: NotificationType.USER_NOTIFICATION,
         userId: userId,
+        readAt: IsNull(),
       },
       order: { createdAt: 'DESC' },
     });
@@ -151,5 +156,34 @@ export class NotificationsService {
         year: 'numeric',
       }),
     }));
+  }
+
+  async readNotification(notificationId: string): Promise<void> {
+    const notification = await this.notificationRepository.findOneBy({
+      id: notificationId,
+    });
+
+    if (!notification) {
+      throw new NotFoundException('Notification not found');
+    }
+
+    notification.status = NotificationStatus.READ;
+    notification.readAt = new Date();
+    await this.notificationRepository.save(notification);
+
+    return;
+  }
+
+  async deleteNotification(notificationId: string): Promise<void> {
+    const notification = await this.notificationRepository.findOneBy({
+      id: notificationId,
+    });
+
+    if (!notification) {
+      throw new NotFoundException('Notification not found');
+    }
+
+    await this.notificationRepository.softRemove(notification);
+    return;
   }
 }
