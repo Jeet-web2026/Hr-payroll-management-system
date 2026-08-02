@@ -15,6 +15,7 @@ import { PermissionmanagementModule } from './modules/permissionmanagement/permi
 import { PermissionmanagementService } from './modules/permissionmanagement/service/permissionmanagement.service';
 import { PermissionmanagementcontrollerController } from './modules/permissionmanagement/controller/permissionmanagementcontroller.controller';
 import { BaseConfig } from './comon/configaration/config';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { BaseConfig } from './comon/configaration/config';
       ttl: 1000 * 60 * 5,
     }),
     PermissionmanagementModule,
+    NotificationsModule,
   ],
   controllers: [AppController, PermissionmanagementcontrollerController],
   providers: [AppService, PermissionmanagementService],
