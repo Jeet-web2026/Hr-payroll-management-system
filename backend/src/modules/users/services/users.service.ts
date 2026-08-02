@@ -285,14 +285,16 @@ export class UsersService {
 
     const employeeGrowthRate =
       totalEmployeesPrevious > 0
-        ? ((activeEmployees - totalEmployeesPrevious) /
-            totalEmployeesPrevious) *
-          100
+        ? Math.round(
+            ((activeEmployees - totalEmployeesPrevious) /
+              totalEmployeesPrevious) *
+              100,
+          )
         : 0;
 
     const newJoineesRate =
       prevMonthJoinees > 0
-        ? ((newJoinees - prevMonthJoinees) / prevMonthJoinees) * 100
+        ? Math.round(((newJoinees - prevMonthJoinees) / prevMonthJoinees) * 100)
         : 0;
 
     const newJoiningRate =
@@ -362,14 +364,16 @@ export class UsersService {
 
     const employeeGrowthRate =
       totalEmployeesPrevious > 0
-        ? ((activeEmployees - totalEmployeesPrevious) /
-            totalEmployeesPrevious) *
-          100
+        ? Math.round(
+            ((activeEmployees - totalEmployeesPrevious) /
+              totalEmployeesPrevious) *
+              100,
+          )
         : 0;
 
     const newJoineesRate =
       prevMonthJoinees > 0
-        ? ((newJoinees - prevMonthJoinees) / prevMonthJoinees) * 100
+        ? Math.round(((newJoinees - prevMonthJoinees) / prevMonthJoinees) * 100)
         : 0;
 
     const newJoiningRate =

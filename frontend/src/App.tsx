@@ -17,6 +17,7 @@ import { Toaster } from './components/ui/sonner'
 import NotFound from './pages/others/not-found'
 import { AddUser } from './pages/user/add'
 import RoleSelection from './pages/others/role-selection'
+import NotificationManagement from './pages/others/notificationManagement'
 
 function App() {
 
@@ -78,6 +79,12 @@ function App() {
         <Route path="/role/selection" element={
           <ProtectedRoute>
             <RoleSelection />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/notifications" element={
+          <ProtectedRoute>
+            <NotificationManagement />
           </ProtectedRoute>
         } />
 
