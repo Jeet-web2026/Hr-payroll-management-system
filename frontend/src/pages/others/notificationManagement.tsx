@@ -24,30 +24,31 @@ const NotificationManagement = () => {
     const { data: currentUser } = useCurrentUser();
     const [isLoading, setIsLoading] = useState(false);
     const [notificationsData, setNotificationsData] = useState<NotificationsDataType[]>([]);
+    const [isMarkRead, setMarkRead] = useState(false);
+    const [isDeleting, setDeleting] = useState(false);
+
+    const fetchNotifications = async () => {
+        try {
+            setIsLoading(true);
+
+            const response = await apiService.get('/v2/notifications/all', {});
+
+            const raw = response?.data?.data;
+
+            const data: NotificationsDataType[] =
+                Array.isArray(raw) ? raw :
+                    typeof raw === 'object' && raw !== null ? Object.values(raw) :
+                        [];
+
+            setNotificationsData(data);
+        } catch (err) {
+            toast.error('Something went wrong!');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchNotifications = async () => {
-            try {
-                setIsLoading(true);
-
-                const response = await apiService.get('/v2/notifications/all', {});
-
-                const raw = response?.data?.data;
-
-                const data: NotificationsDataType[] =
-                    Array.isArray(raw) ? raw :
-                        typeof raw === 'object' && raw !== null ? Object.values(raw) :
-                            [];
-
-                setNotificationsData(data);
-            } catch (err) {
-                toast.error('Something went wrong!');
-                console.error(err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
         fetchNotifications();
     }, []);
 
@@ -61,6 +62,32 @@ const NotificationManagement = () => {
                 return <Badge variant="destructive" className="rounded">Deleted</Badge>
             default:
                 return <Badge variant="secondary" className="rounded">{notificationStatus}</Badge>
+        }
+    }
+
+    const markAsRead = async (notificationId: string) => {
+        try {
+            setMarkRead(true);
+            await apiService.patch(`/v2/notifications/read/${notificationId}`, {});
+            await fetchNotifications();
+            toast.success("Notification read successfully!")
+        } catch (err) {
+            toast.error("Somethng went wrong!")
+        } finally {
+            setMarkRead(false);
+        }
+    }
+
+    const deleteNotification = async (notificationId: string) => {
+        try {
+            setDeleting(true);
+            await apiService.delete(`/v2/notifications/delete/${notificationId}`, {});
+            await fetchNotifications();
+            toast.success("Notification deleted successfully!")
+        } catch (err) {
+            toast.error("Somethng went wrong!")
+        } finally {
+            setDeleting(false);
         }
     }
     return (
@@ -80,7 +107,7 @@ const NotificationManagement = () => {
                             <>
                                 {isLoading ? (
                                     <TableRow>
-                                        <TableCell className="border text-center" colSpan={4}>
+                                        <TableCell className="border text-center flex flex-row text-base gap-2" colSpan={4}>
                                             <i className="ri-loader-4-line animate-spin"></i> Loading...
                                         </TableCell>
                                     </TableRow>
@@ -98,18 +125,20 @@ const NotificationManagement = () => {
                                                 {setNotificationBadge(notification.status as NotificationStatusType)}
                                             </TableCell>
                                             <TableCell className="border">
-                                                <ButtonGroup>
-                                                    <Button variant="outline" className="cursor-pointer">
-                                                        <i className="ri-eye-line"></i>
-                                                        Read
-                                                    </Button>
-                                                    {currentUser?.role === 'admin' && (
-                                                        <Button variant="destructive" className="cursor-pointer">
-                                                            <i className="ri-delete-bin-5-line"></i>
-                                                            Delete
+                                                {notification.status !== 'deleted' && <>
+                                                    <ButtonGroup>
+                                                        <Button disabled={isMarkRead} onClick={() => markAsRead(notification.id)} variant="outline" className="cursor-pointer">
+                                                            <i className={isMarkRead ? "ri-loader-4-line animate-spin" : "ri-eye-line"}></i>
+                                                            {isMarkRead ? "Processing..." : "Read"}
                                                         </Button>
-                                                    )}
-                                                </ButtonGroup>
+                                                        {currentUser?.role === 'admin' && (
+                                                            <Button disabled={isDeleting} onClick={() => deleteNotification(notification.id)} variant="destructive" className="cursor-pointer">
+                                                                <i className={isDeleting ? "ri-loader-4-line animate-spin" : "ri-delete-bin-5-line"}></i>
+                                                                {isDeleting ? "Deleting..." : "Delete"}
+                                                            </Button>
+                                                        )}
+                                                    </ButtonGroup>
+                                                </>}
                                             </TableCell>
                                         </TableRow>
                                     ))

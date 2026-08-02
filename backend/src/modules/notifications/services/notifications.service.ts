@@ -42,7 +42,7 @@ export class NotificationsService {
 
     const notifications = await this.notificationRepository.find({
       where: {
-        status: In([NotificationStatus.NEW, NotificationStatus.READ]),
+        status: In([NotificationStatus.NEW, NotificationStatus.READ, NotificationStatus.DELETED]),
         createdAt: Between(weekStartDate, today),
         notificationType: NotificationType.COMPANY_NOTIFICATION,
         readAt: IsNull(),
@@ -62,6 +62,7 @@ export class NotificationsService {
         month: '2-digit',
         year: 'numeric',
       }),
+      id: n.id,
     }));
   }
 
@@ -91,6 +92,7 @@ export class NotificationsService {
         month: '2-digit',
         year: 'numeric',
       }),
+      id: n.id,
     }));
   }
 
@@ -123,6 +125,7 @@ export class NotificationsService {
         month: '2-digit',
         year: 'numeric',
       }),
+      id: n.id,
     }));
   }
 
@@ -155,6 +158,7 @@ export class NotificationsService {
         month: '2-digit',
         year: 'numeric',
       }),
+      id: n.id,
     }));
   }
 
@@ -182,6 +186,9 @@ export class NotificationsService {
     if (!notification) {
       throw new NotFoundException('Notification not found');
     }
+
+    notification.status = NotificationStatus.DELETED;
+    await this.notificationRepository.save(notification);
 
     await this.notificationRepository.softRemove(notification);
     return;
