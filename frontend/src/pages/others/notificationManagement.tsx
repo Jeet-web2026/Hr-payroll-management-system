@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge"
 const NotificationManagement = () => {
     const { data: currentUser } = useCurrentUser();
     const [isLoading, setIsLoading] = useState(false);
-    const [Notifications, setNotificationsData] = useState<NotificationsDataType[]>([]);
+    const [notificationsData, setNotificationsData] = useState<NotificationsDataType[]>([]);
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -77,41 +77,50 @@ const NotificationManagement = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {isLoading ?
-                                <>
+                            <>
+                                {isLoading ? (
                                     <TableRow>
-                                        <TableCell className="text-center flex gap-2 text-base" colSpan={4}>
-                                            <i className="ri-loader-4-line animate-spin"></i> Loading
+                                        <TableCell className="border text-center" colSpan={4}>
+                                            <i className="ri-loader-4-line animate-spin"></i> Loading...
                                         </TableCell>
                                     </TableRow>
-                                </> :
-                                <>
-                                    {Notifications.map((Notification, index) => (
-                                        <TableRow key={index} className={`${Notification.status === 'new' ? 'bg-zinc-900' : ''}`}>
-                                            <TableCell className="font-medium border capitalize">{Notification.content}</TableCell>
-                                            <TableCell className="border">{Notification.receivedAt}</TableCell>
-                                            <TableCell className="border">{setNotificationBadge(Notification.status as NotificationStatusType)}</TableCell>
+                                ) : notificationsData.length > 0 ? (
+                                    notificationsData.map((notification, index) => (
+                                        <TableRow
+                                            key={index}
+                                            className={notification.status === 'new' ? 'bg-zinc-900' : ''}
+                                        >
+                                            <TableCell className="font-medium border capitalize">
+                                                {notification.content}
+                                            </TableCell>
+                                            <TableCell className="border">{notification.receivedAt}</TableCell>
+                                            <TableCell className="border">
+                                                {setNotificationBadge(notification.status as NotificationStatusType)}
+                                            </TableCell>
                                             <TableCell className="border">
                                                 <ButtonGroup>
-                                                    <Button variant={"outline"} className="cursor-pointer">
+                                                    <Button variant="outline" className="cursor-pointer">
                                                         <i className="ri-eye-line"></i>
                                                         Read
                                                     </Button>
-                                                    {currentUser ? currentUser.role === 'admin' &&
-                                                        <>
-                                                            <Button variant={"destructive"} className="cursor-pointer">
-                                                                <i className="ri-delete-bin-5-line"></i>
-                                                                Delete
-                                                            </Button>
-                                                        </> : null
-                                                    }
+                                                    {currentUser?.role === 'admin' && (
+                                                        <Button variant="destructive" className="cursor-pointer">
+                                                            <i className="ri-delete-bin-5-line"></i>
+                                                            Delete
+                                                        </Button>
+                                                    )}
                                                 </ButtonGroup>
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                </>
-
-                            }
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell className="text-center text-base" colSpan={4}>
+                                            No notifications found.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </>
                         </TableBody>
                     </Table>
                 </CardContent>
