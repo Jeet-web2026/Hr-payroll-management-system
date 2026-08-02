@@ -1,4 +1,4 @@
-import type { UserPermission } from "@/comon/types/userDatatype"
+import type { UserPermission } from "@/comon/types/user/userDatatype"
 import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,

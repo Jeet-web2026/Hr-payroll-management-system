@@ -17,7 +17,7 @@ import { toast } from "sonner"
 import { Skeleton } from "./ui/skeleton"
 import logo from "@/assets/images/logo.png"
 import { Link } from "react-router-dom"
-import type { UserPermission } from "@/comon/types/userDatatype"
+import type { UserPermission } from "@/comon/types/user/userDatatype"
 import { useCurrentUser } from "@/hooks/userData"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

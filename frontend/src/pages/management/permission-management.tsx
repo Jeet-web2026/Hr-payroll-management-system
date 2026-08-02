@@ -1,6 +1,6 @@
 import apiService from "@/comon/api/apiService"
 import { DashboardLayout } from "@/comon/dashboardLayout"
-import type { UserDatatype } from "@/comon/types/userDatatype"
+import type { UserDatatype } from "@/comon/types/user/userDatatype"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"

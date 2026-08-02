@@ -24,7 +24,7 @@ import { useEffect, useState } from "react";
 import apiService from "@/comon/api/apiService";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { UserDatatype } from "@/comon/types/userDatatype";
+import type { UserDatatype } from "@/comon/types/user/userDatatype";
 
 export function EditUser() {
     const param = useParams();

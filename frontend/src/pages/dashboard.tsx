@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card } from "@/components/ui/card"
 import { BadgeAlert, BadgeCheckIcon, ScanEye } from "lucide-react"
 import { Link } from "react-router-dom"
-import type { UserDatatype } from "@/comon/types/userDatatype"
+import type { UserDatatype } from "@/comon/types/user/userDatatype"
 
 export const Dashboard = () => {
     const [userData, setUserData] = useState<UserDatatype | null>(null);
