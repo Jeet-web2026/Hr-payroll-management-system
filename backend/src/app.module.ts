@@ -30,15 +30,30 @@ import { BaseConfig } from './comon/configaration/config';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
-        type: configService.get<'postgres'>('database.type'),
-        url: configService.get('database.dbUrl'),
-        autoLoadEntities: configService.get<boolean>('database.autoloadEntities'),
-        synchronize: configService.get<boolean>('database.synchronize'),
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      }),
+      useFactory: (configService: ConfigService): TypeOrmModuleOptions => {
+        console.log('[TypeORM] NODE_ENV:', process.env.NODE_ENV);
+        console.log('[TypeORM] DB_URL:', configService.get('database.dbUrl'));
+        console.log(
+          '[TypeORM] synchronize:',
+          configService.get<boolean>('database.synchronize'),
+        );
+        console.log(
+          '[TypeORM] autoLoadEntities:',
+          configService.get<boolean>('database.autoloadEntities'),
+        );
+
+        return {
+          type: configService.get<'postgres'>('database.type'),
+          url: configService.get('database.dbUrl'),
+          autoLoadEntities: configService.get<boolean>(
+            'database.autoloadEntities',
+          ),
+          synchronize: configService.get<boolean>('database.synchronize'),
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        };
+      },
     }),
     MailModule,
     EventEmitterModule.forRoot(),
