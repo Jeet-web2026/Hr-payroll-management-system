@@ -18,14 +18,15 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart"
 import { useRoleLabel } from "@/hooks/userRoleLabel"
+import apiService from "@/comon/api/apiService"
 
 export const description = "An interactive area chart"
 
-const chartData = [
-  { date: "2024-04-01", active: 222, newlyJoined: 150 },
-  { date: "2024-04-02", active: 97, newlyJoined: 180 },
-  { date: "2024-06-30", active: 446, newlyJoined: 400 },
-]
+type ChartPoint = {
+  date: string
+  active: number
+  newlyJoined: number
+}
 
 const chartConfigByRole: Record<string, ChartConfig> = {
   Employees: {
@@ -53,7 +54,11 @@ const chartConfigByRole: Record<string, ChartConfig> = {
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState("90d")
-  const roleLabel = useRoleLabel();
+  const roleLabel = useRoleLabel()
+
+  const [chartData, setChartData] = React.useState<ChartPoint[]>([])
+  const [isLoading, setIsLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
 
   const label = roleLabel ?? "Employees"
   const chartConfig = chartConfigByRole[label]
@@ -64,19 +69,71 @@ export function ChartAreaInteractive() {
     }
   }, [isMobile])
 
-  const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date)
-    const referenceDate = new Date("2024-06-30")
-    let daysToSubtract = 90
-    if (timeRange === "30d") {
-      daysToSubtract = 30
-    } else if (timeRange === "7d") {
-      daysToSubtract = 7
+  React.useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+
+        const response = await apiService.get('v2/dashboard/stat-charts', {})
+
+        const rawData: ChartPoint[] =
+          Array.isArray(response) ? response :
+            Array.isArray(response?.data) ? response.data :
+              typeof response === 'object' && response !== null ? Object.values(response.data?.data) :
+                []
+
+        if (rawData.length === 0) {
+          console.warn('Chart data empty or unexpected response shape:', response)
+        }
+
+        setChartData(rawData)
+      } catch (err) {
+        setError('Failed to load chart data')
+        console.error(err)
+      } finally {
+        setIsLoading(false)
+      }
     }
-    const startDate = new Date(referenceDate)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
-    return date >= startDate
-  })
+
+    fetchChartData()
+  }, [])
+
+  const filteredData = Array.isArray(chartData)
+    ? chartData.filter((item) => {
+      const date = new Date(item.date)
+      const referenceDate = new Date()
+      let daysToSubtract = 90
+      if (timeRange === "30d") {
+        daysToSubtract = 30
+      } else if (timeRange === "7d") {
+        daysToSubtract = 7
+      }
+      const startDate = new Date(referenceDate)
+      startDate.setDate(startDate.getDate() - daysToSubtract)
+      return date >= startDate
+    })
+    : []
+
+  if (isLoading) {
+    return (
+      <Card className="@container/card">
+        <CardContent className="flex h-[250px] items-center justify-center">
+          Loading chart...
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card className="@container/card">
+        <CardContent className="flex h-[250px] items-center justify-center text-destructive">
+          {error}
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card className="@container/card">
@@ -88,7 +145,6 @@ export function ChartAreaInteractive() {
           </span>
           <span className="@[540px]/card:hidden">Last 3 months</span>
         </CardDescription>
-
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer
