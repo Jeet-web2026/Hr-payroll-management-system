@@ -7,7 +7,6 @@ import { ConfigService } from '@nestjs/config';
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private configService: ConfigService) {
     const callbackUrl = configService.getOrThrow<string>('socialAuth.google.callbackUrl');
-    console.log(callbackUrl)
     super({
       clientID: configService.getOrThrow<string>('socialAuth.google.clientId'),
       clientSecret: configService.getOrThrow<string>('socialAuth.google.clientSecret'),

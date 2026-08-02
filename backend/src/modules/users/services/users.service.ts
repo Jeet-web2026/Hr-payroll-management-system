@@ -1,6 +1,7 @@
 import {
   BadGatewayException,
   ConflictException,
+  ForbiddenException,
   HttpException,
   Inject,
   Injectable,
@@ -430,8 +431,6 @@ export class UsersService {
       query.withDeleted();
     }
 
-    console.log(skip, limit);
-
     const [data, total] = await query
       .orderBy('user.createdAt', 'DESC')
       .skip(skip)
@@ -607,18 +606,29 @@ export class UsersService {
     try {
       user = await this.findById(userId);
     } catch (error) {
-      throw new NotFoundException(`User not exsists`);
+      throw new NotFoundException(`User not exists`);
     }
+
+    let role: UserRole;
 
     switch (user.role) {
       case UserRole.ADMIN:
-        return this.getAdminStatChart();
+        role = UserRole.COMPANY;
+        break;
+      case UserRole.HR:
+        role = UserRole.EMPLOYEE;
+        break;
       default:
-        return;
+        throw new ForbiddenException(
+          'User role is not authorized to view statistics',
+        );
     }
+
+    return this.getStatChartData(role);
   }
 
-  private async getAdminStatChart(
+  private async getStatChartData(
+    userRole: UserRole,
     monthDate: Date = new Date(),
   ): Promise<{ date: string; active: number; newlyJoined: number }[]> {
     const startOfMonth = new Date(
@@ -636,7 +646,7 @@ export class UsersService {
       .createQueryBuilder('user')
       .select('DATE(user.createdAt)', 'date')
       .addSelect('COUNT(*)', 'count')
-      .where('user.role = :role', { role: UserRole.COMPANY })
+      .where('user.role = :role', { role: userRole })
       .andWhere('user.createdAt BETWEEN :start AND :end', {
         start: startOfMonth,
         end: endOfMonth,
@@ -650,7 +660,7 @@ export class UsersService {
       .createQueryBuilder('user')
       .select('DATE(user.createdAt)', 'date')
       .addSelect('COUNT(*)', 'count')
-      .where('user.role = :role', { role: UserRole.COMPANY })
+      .where('user.role = :role', { role: userRole })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE })
       .andWhere('user.createdAt BETWEEN :start AND :end', {
         start: startOfMonth,
