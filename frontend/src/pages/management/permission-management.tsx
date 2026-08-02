@@ -23,6 +23,8 @@ export const PermissionManagement = () => {
   };
   const [data, setData] = useState<UserDatatype[]>([]);
   const [loading, isLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSuspending, setIsSuspending] = useState(false);
   const [meta, setMeta] = useState<Meta | null>(null);
   let page = 1;
   let limit = 10;
@@ -46,7 +48,8 @@ export const PermissionManagement = () => {
 
   const suspendUser = async (userId: any) => {
     try {
-      await apiService.delete(`/user/delete/${userId}`, {});
+      setIsSuspending(true);
+      await apiService.delete(`/v2/user/delete/${userId}`, {});
       await fetchUsers();
 
       setTimeout(() => {
@@ -61,11 +64,14 @@ export const PermissionManagement = () => {
         position: "top-right",
         richColors: true,
       });
+    } finally {
+      setIsSuspending(false);
     }
   };
 
   const permanentDelete = async (userId: any) => {
     try {
+      setIsDeleting(true);
       await apiService.delete(`/v2/user/delete/${userId}?permanentDelete=true`, {});
       await fetchUsers();
 
@@ -80,6 +86,8 @@ export const PermissionManagement = () => {
         position: "top-right",
         richColors: true,
       });
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -189,11 +197,21 @@ export const PermissionManagement = () => {
                                   </DialogHeader>
 
                                   <DialogFooter>
-                                    <Button variant="secondary" onClick={() => permanentDelete(user.id)}>
-                                      Delete Permanently
+                                    <Button variant="secondary" className="cursor-pointer" onClick={() => permanentDelete(user.id)} disabled={isDeleting}>
+                                      {isDeleting ?
+                                        <>
+                                          <i className="ri-loader-4-line animate-spin"></i>
+                                          <span>Deleting User...</span>
+                                        </>
+                                        : "Delete Permanently"}
                                     </Button>
-                                    <Button variant="destructive" onClick={() => suspendUser(user.id)}>
-                                      Suspend User
+                                    <Button variant="destructive" className="cursor-pointer" onClick={() => suspendUser(user.id)} disabled={isSuspending}>
+                                      {isSuspending ?
+                                        <>
+                                          <i className="ri-loader-4-line animate-spin"></i>
+                                          <span>Suspending User...</span>
+                                        </>
+                                        : "Suspend User"}
                                     </Button>
                                   </DialogFooter>
                                 </DialogContent>

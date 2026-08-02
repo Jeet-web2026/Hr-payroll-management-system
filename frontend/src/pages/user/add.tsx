@@ -24,6 +24,7 @@ export function AddUser() {
     const { data: currentUser } = useCurrentUser();
     const [permissionData, setPermissionData] = useState<any[]>([]);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const permissions = permissionData.reduce((acc, permission) => {
         acc[permission.permissionvalue] = false;
         return acc;
@@ -99,6 +100,7 @@ export function AddUser() {
 
     const usercreationFormSubmit = async (event: any) => {
         event.preventDefault();
+        setIsSubmitting(true);
 
         const payload = {
             name: `${formData['first-name']} ${formData['last-name']}`,
@@ -121,6 +123,8 @@ export function AddUser() {
         } catch (error: any) {
             setErrors(error.response.data.errors);
             toast.error(error.response.data.message);
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -500,8 +504,13 @@ export function AddUser() {
                             </Button>
                         </Link>
 
-                        <Button type="submit" className="cursor-pointer">
-                            Create User
+                        <Button type="submit" className="cursor-pointer" disabled={isSubmitting}>
+                            {isSubmitting ?
+                                <>
+                                    <i className="ri-loader-4-line animate-spin"></i>
+                                    <span>Creating User...</span>
+                                </>
+                                : "Create User"}
                         </Button>
                     </div>
                 </form>
