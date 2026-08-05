@@ -18,6 +18,7 @@ import NotFound from './pages/others/not-found'
 import { AddUser } from './pages/user/add'
 import RoleSelection from './pages/others/role-selection'
 import NotificationManagement from './pages/others/notificationManagement'
+import Settings from './pages/settings/settings'
 
 function App() {
 
@@ -85,6 +86,12 @@ function App() {
         <Route path="/notifications" element={
           <ProtectedRoute>
             <NotificationManagement />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/settings" element={
+          <ProtectedRoute>
+            <Settings />
           </ProtectedRoute>
         } />
 

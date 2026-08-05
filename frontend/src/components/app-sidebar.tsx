@@ -145,7 +145,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     navSecondary: [
       {
         title: "Settings",
-        url: "#",
+        url: "/settings",
         icon: (
           <Settings2Icon
           />
