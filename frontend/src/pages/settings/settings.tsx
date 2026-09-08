@@ -32,9 +32,12 @@ import {
 } from "@/components/ui/select";
 import { DashboardLayout } from "@/comon/dashboardLayout";
 import { Switch } from "@/components/ui/switch";
+import { useCurrentUser } from "@/hooks/userData";
 
 
 export default function Settings() {
+    const { data: currentUser } = useCurrentUser();
+    console.log(currentUser);
 
     return (
         <DashboardLayout sideHeader="Settings">
@@ -42,89 +45,91 @@ export default function Settings() {
 
                 <div className="space-y-5">
 
-                    <Card className="rounded-2xl shadow-sm">
+                    {currentUser && <>
+                        <Card className="rounded-2xl shadow-sm">
 
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <User size={20} />
-                                Profile Information
-                            </CardTitle>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <User size={20} />
+                                    Profile Information
+                                </CardTitle>
 
-                            <CardDescription>
-                                Update your personal details.
-                            </CardDescription>
+                                <CardDescription>
+                                    Update your personal details.
+                                </CardDescription>
 
-                        </CardHeader>
+                            </CardHeader>
 
-                        <hr />
-
-
-                        <CardContent className="space-y-6">
+                            <hr />
 
 
-                            <div className="flex items-center gap-5">
+                            <CardContent className="space-y-6">
 
-                                <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold">
-                                    JN
+
+                                <div className="flex items-center gap-5">
+
+                                    <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold">
+                                        {currentUser.firstName[0] + currentUser.lastName[0]}
+                                    </div>
+
+
+                                    <Button variant="outline">
+                                        Change Avatar
+                                    </Button>
+
+
                                 </div>
 
 
-                                <Button variant="outline">
-                                    Change Avatar
+
+                                <div className="grid md:grid-cols-2 gap-5">
+
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Name</Label>
+                                        <Input value={currentUser.firstName + " " + currentUser.lastName} />
+                                    </div>
+
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Email</Label>
+                                        <Input
+                                            value={currentUser.email}
+                                        />
+                                    </div>
+
+
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Phone</Label>
+                                        <Input value={currentUser.phone} />
+                                    </div>
+
+
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Role</Label>
+
+                                        <Input className="capitalize"
+                                            value={currentUser.role}
+                                        />
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <Button>
+                                    Save Changes
                                 </Button>
 
 
-                            </div>
+                            </CardContent>
 
+                        </Card>
 
-
-                            <div className="grid md:grid-cols-2 gap-5">
-
-
-                                <div className="flex flex-col gap-2">
-                                    <Label>Name</Label>
-                                    <Input placeholder="Jit Nath" />
-                                </div>
-
-
-                                <div className="flex flex-col gap-2">
-                                    <Label>Email</Label>
-                                    <Input
-                                        placeholder="jit@example.com"
-                                    />
-                                </div>
-
-
-
-                                <div className="flex flex-col gap-2">
-                                    <Label>Phone</Label>
-                                    <Input placeholder="+91 XXXXX XXXXX" />
-                                </div>
-
-
-
-                                <div className="flex flex-col gap-2">
-                                    <Label>Role</Label>
-
-                                    <Input
-                                        disabled
-                                        value="Software Developer"
-                                    />
-
-                                </div>
-
-
-                            </div>
-
-
-                            <Button>
-                                Save Changes
-                            </Button>
-
-
-                        </CardContent>
-
-                    </Card>
+                    </>}
 
                     <Card className="rounded-2xl">
 
@@ -203,7 +208,7 @@ export default function Settings() {
 
                                 <div>
                                     <p className="font-medium">
-                                        Compact Mode
+                                        Full Screen
                                     </p>
 
                                     <p className="text-sm text-muted-foreground">
