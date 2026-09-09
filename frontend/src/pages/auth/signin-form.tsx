@@ -43,11 +43,19 @@ export function SigninForm({
     password: ""
   };
 
+  type FormErrors = {
+    email?: string[];
+    password?: string[];
+    general?: string[];
+  };
+
   const [formData, setFormData] = useState(initialFormData);
 
   const [isPending, setIsPending] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrors({});
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -57,7 +65,9 @@ export function SigninForm({
     const { email, password } = formData;
 
     if (!email || !password) {
-      toast.error("All fields are required", { position: "top-right", richColors: true });
+      setErrors({
+        general: ['All fields are required']
+      })
       return;
     }
 
@@ -66,18 +76,24 @@ export function SigninForm({
       const res = await apiService.post('/auth/signin', formData);
       ResponseHandler(res);
       TokenService.set(res.data.data.accessToken);
+      setFormData(initialFormData);
 
       if (res.data?.data?.role === 'admin') {
         navigate("/dashboard");
       } else {
         navigate("/role/selection");
       }
-    } catch (error) {
-      ResponseHandler(error);
+    } catch (error: any) {
+      if (error.response?.data?.statusCode === 400) {
+        setErrors(error.response.data.errors);
+      } else {
+        setErrors({ general: error.response?.data?.message });
+      }
     } finally {
-      setFormData(initialFormData);
+      formData.password = '';
       setIsPending(false);
     }
+
   }
 
 
@@ -94,6 +110,14 @@ export function SigninForm({
                     Enter your email below to create your account
                   </p>
                 </div>
+                {
+                  errors.general && (
+                    <p className="text-sm text-destructive border bg-red-950 p-2 rounded-md text-center">
+                      <i className="ri-error-warning-line me-2 text-base"></i>
+                      {errors.general}
+                    </p>
+                  )
+                }
                 <Field>
                   <FieldLabel htmlFor="email">Email</FieldLabel>
                   <Input
@@ -104,12 +128,22 @@ export function SigninForm({
                     value={formData.email}
                     onChange={handleChange}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-destructive">
+                      {errors.email[0]}
+                    </p>
+                  )}
                 </Field>
                 <Field>
                   <Field className="flex flex-col gap-4">
                     <Field>
                       <FieldLabel htmlFor="password">Password</FieldLabel>
                       <Input id="password" type="password" name="password" onChange={handleChange} value={formData.password} />
+                      {errors.password && (
+                        <p className="text-sm text-destructive">
+                          {errors.password[0]}
+                        </p>
+                      )}
                     </Field>
                   </Field>
                   <FieldDescription>
@@ -117,14 +151,17 @@ export function SigninForm({
                   </FieldDescription>
                 </Field>
                 <Field>
-                  <Button type="submit" disabled={isPending}>
+                  <Button type="submit" disabled={isPending} className="cursor-pointer">
                     {isPending ? (
                       <>
                         <i className="ri-loader-2-line animate-spin text-lg me-1"></i>
                         Logging in...
                       </>
                     ) : (
-                      'Login Account'
+                      <>
+                        <i className="ri-lock-2-line text-base me-1"></i>
+                        Login Account
+                      </>
                     )}
                   </Button>
                 </Field>

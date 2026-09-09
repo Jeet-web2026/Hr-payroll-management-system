@@ -36,7 +36,7 @@ export class AuthService {
       const user = await this.userService.findByEmail(signinDto.email);
 
       if (!user) {
-        throw new NotFoundException('Wrong credentials.');
+        throw new NotFoundException('Invalid credentials, please check your email and password then try again.');
       }
 
       if (!user.isEmailVerified) {
@@ -51,7 +51,7 @@ export class AuthService {
       );
 
       if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid credentials');
+        throw new UnauthorizedException('Invalid credentials, please check your email and password then try again.');
       }
 
       await this.userService.updateUser(user.id, {
