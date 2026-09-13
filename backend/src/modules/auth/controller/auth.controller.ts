@@ -286,8 +286,10 @@ export class AuthController {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
+    let selectedRole = data.role ?? 'notSelected'; 
+
     return res.redirect(
-      `${this.configService.get<string>('frontendUrl')}/auth/success?accessToken=${data.accessToken}`,
+      `${this.configService.get<string>('frontendUrl')}/auth/success?accessToken=${data.accessToken}&userRole=${selectedRole}`,
     );
   }
 

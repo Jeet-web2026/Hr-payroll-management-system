@@ -38,6 +38,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { SaveAdditionalDetailsforNextStep } from '../../../comon/dto/user/userAdditionalInfornextSteps.dto';
 
 @Controller('user')
 @ApiTags('User Management')
@@ -505,6 +506,7 @@ export class UsersController {
   @Post('add')
   @Version('2')
   @HttpCode(201)
+  @Role(UserRole.ADMIN, UserRole.HR)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiResponse({
     status: 200,
@@ -553,5 +555,19 @@ export class UsersController {
   @Role(UserRole.ADMIN, UserRole.HR, UserRole.COMPANY)
   addUser(@Body() body: AddUserFromAdmin) {
     return this.usersService.addUser(body);
+  }
+
+  @Version('2')
+  @Post('next-step')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
+  saveInfotogetNextStep(@Body() body: SaveAdditionalDetailsforNextStep, @Req() req: express.Request) {
+    const userDetails = {
+      role: body.role,
+      lastLogin: new Date()
+    }
+
+    console.log(req)
+    // return this.usersService.updateUser(req, userDetails);
   }
 }

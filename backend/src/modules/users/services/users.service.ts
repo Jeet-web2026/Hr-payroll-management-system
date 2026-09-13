@@ -148,7 +148,7 @@ export class UsersService {
           lastName: userData.lastName,
           email: userData.email,
           password: hashedPassword,
-          role: UserRole.EMPLOYEE,
+          role: null,
           status: UserStatus.ACTIVE,
           otp: null,
           otpExpiry: null,
@@ -418,7 +418,7 @@ export class UsersService {
       [UserRole.EMPLOYEE]: UserRole.EMPLOYEE,
     };
 
-    const setRole = roleMap[currentUserRole];
+    const setRole = currentUserRole ? roleMap[currentUserRole] : null;
     const query = this.userRepository
       .createQueryBuilder('user')
       .where('user.role = :role', {

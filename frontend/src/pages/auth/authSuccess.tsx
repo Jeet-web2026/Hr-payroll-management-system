@@ -1,4 +1,5 @@
 import { TokenService } from "@/comon/api/tokenService";
+import { NOT_SELECTED } from "@/comon/constraints/constraints";
 import { GuestLayout } from "@/comon/guestLayout"
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -9,10 +10,11 @@ export const AuthSuccess = () => {
 
     useEffect(() => {
         const token = params.get("accessToken");
+        const userRole = params.get('userRole');
 
         if (token) {
             TokenService.set(token);
-            navigate("/role/selection");
+            userRole === NOT_SELECTED ? navigate('/role/selection?step=1&progress=35') : navigate('/dashboard');
         } else {
             navigate("/");
         }

@@ -53,9 +53,9 @@ export class User {
   @Column({
     type: 'enum',
     enum: UserRole,
-    default: UserRole.EMPLOYEE,
+    nullable: true
   })
-  role!: UserRole;
+  role!: UserRole | null;
 
   @Column({
     type: 'enum',
