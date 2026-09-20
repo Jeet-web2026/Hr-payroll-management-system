@@ -2,6 +2,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { MailListener } from './listner/mail.listner';
 import { MailService } from './service/mail.service';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MailService } from './service/mail.service';
         },
       }),
     }),
+    UsersModule,
   ],
   providers: [MailService, MailListener],
   exports: [MailService],

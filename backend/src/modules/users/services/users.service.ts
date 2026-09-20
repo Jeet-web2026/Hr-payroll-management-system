@@ -558,10 +558,12 @@ export class UsersService {
         name: newlyCreatedUser.firstName + newlyCreatedUser.lastName,
         loginId: newlyCreatedUser.email,
         password: body.password,
+        permissionData: body,
+        userId: newUser.id,
       }),
     );
 
-    return await this.userPermissionManagement(newUser.id, body);
+    return newUser;
   }
 
   private adminUserPermissionManagement(): UserPermission {
@@ -815,10 +817,7 @@ export class UsersService {
     return d.toISOString().split('T')[0];
   }
 
-  private async userPermissionManagement(
-    userId: string,
-    data: AddUserFromAdmin,
-  ) {
+  async userPermissionManagement(userId: string, data: AddUserFromAdmin) {
     const permissions = Object.keys(data.permissions);
 
     for (const permission of permissions) {
