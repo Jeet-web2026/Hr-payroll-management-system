@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/chart"
 import { useRoleLabel } from "@/hooks/userRoleLabel"
 import apiService from "@/comon/api/apiService"
-import { toast } from "sonner"
 
 export const description = "An interactive area chart"
 
