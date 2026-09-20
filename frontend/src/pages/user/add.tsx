@@ -125,9 +125,6 @@ export function AddUser() {
             permissions: permissionsPayload,
         };
 
-        console.log(payload);
-        return;
-
         try {
             const response = await apiService.post("/v2/user/add", payload);
             toast.success(response.data.message);

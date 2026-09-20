@@ -15,10 +15,10 @@ export class UserPermissionManagement {
   id!: string;
 
   @Column({
-    type: 'json',
+    type: 'varchar',
     nullable: true,
   })
-  permissonIds!: string[];
+  permissonId!: string;
 
   @ManyToOne(() => User, (user) => user.permissions, {
     onDelete: 'CASCADE',

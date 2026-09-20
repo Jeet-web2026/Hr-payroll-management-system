@@ -43,7 +43,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserPermissions)
-    private readonly userPermissionMangementrepository: Repository<UserPermissions>,
+    private readonly userPermissionRepository: Repository<UserPermissions>,
     @InjectRepository(UserDetails)
     private readonly userDetailsRepository: Repository<UserDetails>,
     @InjectRepository(UserEmployment)
@@ -518,7 +518,7 @@ export class UsersService {
   }
 
   async allPermissions() {
-    return this.userPermissionMangementrepository.find();
+    return this.userPermissionRepository.find();
   }
 
   async addUser(body: AddUserFromAdmin) {
@@ -549,6 +549,8 @@ export class UsersService {
       },
     });
 
+    const newUser = await this.userRepository.save(newlyCreatedUser);
+
     this.eventService.emit(
       'user.created',
       new UsercreatedEvent(newlyCreatedUser.email, {
@@ -559,7 +561,7 @@ export class UsersService {
       }),
     );
 
-    return await this.userRepository.save(newlyCreatedUser);
+    return await this.userPermissionManagement(newUser.id, body);
   }
 
   private adminUserPermissionManagement(): UserPermission {
@@ -813,17 +815,43 @@ export class UsersService {
     return d.toISOString().split('T')[0];
   }
 
-  // private async userPermissionManagement(userId: string, data: object) {
-  //   let permissiondata = await this.userPermissionManagementRepository.find({
-  //     where: { user: { id: userId } },
-  //   });
+  private async userPermissionManagement(
+    userId: string,
+    data: AddUserFromAdmin,
+  ) {
+    const permissions = Object.keys(data.permissions);
 
-  //   if (permissiondata) {
-  //     Object.assign(permissiondata, data);
-  //   } else {
-  //     permissiondata = this.userPermissionManagementRepository.create(data);
-  //   }
+    for (const permission of permissions) {
+      const permissionRecord = await this.userPermissionRepository.findOne({
+        where: {
+          permissionvalue: permission,
+        },
+      });
 
-  //   return await this.userPermissionManagementRepository.save(permissiondata)
-  // }
+      if (!permissionRecord) {
+        continue;
+      }
+
+      const existingPermission =
+        await this.userPermissionManagementRepository.findOne({
+          where: {
+            user: {
+              id: userId,
+            },
+            permissonId: permissionRecord.id,
+          },
+        });
+
+      if (!existingPermission) {
+        const newPermisson = this.userPermissionManagementRepository.create({
+          user: { id: userId },
+          permissonId: permission,
+        });
+
+        await this.userPermissionManagementRepository.save(newPermisson);
+      }
+    }
+
+    return;
+  }
 }
