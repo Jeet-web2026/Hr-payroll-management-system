@@ -91,6 +91,8 @@ export const PermissionManagement = () => {
     }
   }
 
+  const userType = currentUser.role === "admin" ? "Company" : currentUser === "hr" ? "Candidate" : "";
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -111,7 +113,7 @@ export const PermissionManagement = () => {
                 {canAddUser && (
                   <Link to="/user/add" className="border px-2 rounded float-end mb-3 bg-green-700 py-2 flex flex-row items-center gap-2">
                     <PlusCircleIcon className="size-4" />
-                    Add user
+                    Add {userType}
                   </Link>
                 )}
                 <Table>

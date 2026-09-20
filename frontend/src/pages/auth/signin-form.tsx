@@ -77,7 +77,7 @@ export function SigninForm({
       TokenService.set(res.data.data.accessToken);
       setFormData(initialFormData);
 
-      if (res.data?.data?.role === 'admin') {
+      if (res.data?.data?.role) {
         navigate("/dashboard");
       } else {
         navigate("/role/selection");

@@ -7,9 +7,11 @@ import {
   DeleteDateColumn,
   Index,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 import { UserEmployment } from './userEmplyment.entity';
 import { UserDetails } from './userDetails.entity';
+import { UserPermissionManagement } from './userPermissionManagement.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -53,7 +55,7 @@ export class User {
   @Column({
     type: 'enum',
     enum: UserRole,
-    nullable: true
+    nullable: true,
   })
   role!: UserRole | null;
 
@@ -109,4 +111,9 @@ export class User {
     cascade: true,
   })
   details!: UserDetails;
+
+  @OneToMany(() => UserPermissionManagement, (permission) => permission.user, {
+    cascade: true,
+  })
+  permissions!: UserPermissionManagement[];
 }

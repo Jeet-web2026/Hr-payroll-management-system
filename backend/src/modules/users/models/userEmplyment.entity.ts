@@ -15,11 +15,11 @@ export class UserEmployment {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   @Index()
   employeeId!: string;
 
-  @Column({ length: 150 })
+  @Column({ length: 150, nullable: true })
   companyName!: string;
 
   @Column({ length: 100, nullable: true })
@@ -34,7 +34,7 @@ export class UserEmployment {
   @Column({ length: 100, nullable: true })
   manager?: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   joiningDate!: Date;
 
   @Column({ type: 'date', nullable: true })

@@ -84,10 +84,6 @@ export function ChartAreaInteractive() {
               typeof response === 'object' && response !== null ? Object.values(response.data?.data) :
                 []
 
-        if (rawData.length === 0) {
-          toast.error('Something went wrong!');
-        }
-
         setChartData(rawData)
       } catch (err) {
         setError('Failed to load chart data')

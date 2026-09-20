@@ -24,6 +24,7 @@ export function AddUser() {
     const { data: currentUser } = useCurrentUser();
     const [permissionData, setPermissionData] = useState<any[]>([]);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
+    const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const permissions = permissionData.reduce((acc, permission) => {
         acc[permission.permissionvalue] = false;
@@ -102,6 +103,15 @@ export function AddUser() {
         event.preventDefault();
         setIsSubmitting(true);
 
+        const permissionsPayload = permissionData.reduce((acc, permission) => {
+            acc[permission.permissionvalue] = Boolean(
+                formData[permission.permissionvalue]
+            );
+
+            return acc;
+        }, {} as Record<string, boolean>);
+
+
         const payload = {
             name: `${formData['first-name']} ${formData['last-name']}`,
             contactNumber: formData['phone-number'],
@@ -112,7 +122,11 @@ export function AddUser() {
             status: formData['status'],
             password: formData['password'],
             role: formData['role'],
+            permissions: permissionsPayload,
         };
+
+        console.log(payload);
+        return;
 
         try {
             const response = await apiService.post("/v2/user/add", payload);
@@ -227,7 +241,7 @@ export function AddUser() {
                                             `Established At`
                                         )}
                                     </Label>
-                                    <Input type="date" name="dob" value={formData['dob']} onChange={handleChange} />
+                                    <Input type="date" name="dob" value={formData['dob']} max={new Date().toISOString().split("T")[0]} onChange={handleChange} />
                                     {errors['establishedAt'] && (
                                         <p className="text-xs text-red-400 capitalize">
                                             {errors['establishedAt'].join(", ")}
@@ -418,6 +432,7 @@ export function AddUser() {
                                                 <>
                                                     <SelectItem value="admin">Admin</SelectItem>
                                                     <SelectItem value="company">Company</SelectItem>
+                                                    <SelectItem value="hr">HR</SelectItem>
                                                 </>
                                             ) : (
                                                 <>
@@ -456,14 +471,30 @@ export function AddUser() {
 
                                 <div className="space-y-2">
                                     <Label>Password</Label>
-                                    <Input
-                                        type="password"
-                                        placeholder="Temporary password"
-                                        className="w-full"
-                                        name="password"
-                                        value={formData['password']}
-                                        onChange={handleChange}
-                                    />
+                                    <div className="relative w-full">
+                                        <Input
+                                            type={showPassword ? "text" : "password"}
+                                            placeholder="Temporary password"
+                                            className="w-full pr-10"
+                                            name="password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                        />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword((prev) => !prev)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
+                                        >
+                                            <i
+                                                className={
+                                                    showPassword
+                                                        ? "ri-eye-off-line text-lg"
+                                                        : "ri-eye-line text-lg"
+                                                }
+                                            />
+                                        </button>
+                                    </div>
                                     {errors['password'] && (
                                         <p className="text-xs text-red-400 capitalize">
                                             {errors['password'].join(", ")}

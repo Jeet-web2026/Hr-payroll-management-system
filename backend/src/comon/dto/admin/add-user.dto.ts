@@ -3,6 +3,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsObject,
   IsString,
   Matches,
   MinLength,
@@ -102,4 +103,8 @@ export class AddUserFromAdmin {
     message: 'Password must be at least 8 characters long',
   })
   password!: string;
+
+  @IsNotEmpty()
+  @IsObject()
+  permissions!: {}
 }

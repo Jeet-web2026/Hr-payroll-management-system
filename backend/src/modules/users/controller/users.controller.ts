@@ -39,6 +39,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { SaveAdditionalDetailsforNextStep } from '../../../comon/dto/user/userAdditionalInfornextSteps.dto';
+import type { AuthenticatedRequest } from '../../../comon/interfaces/authinticatedUserRequest.interface';
 
 @Controller('user')
 @ApiTags('User Management')
@@ -561,13 +562,11 @@ export class UsersController {
   @Post('next-step')
   @HttpCode(200)
   @UseGuards(AuthGuard('jwt'))
-  saveInfotogetNextStep(@Body() body: SaveAdditionalDetailsforNextStep, @Req() req: express.Request) {
-    const userDetails = {
-      role: body.role,
-      lastLogin: new Date()
-    }
-
-    console.log(req)
-    // return this.usersService.updateUser(req, userDetails);
+  async saveInfotogetNextStep(
+    @Body() body: SaveAdditionalDetailsforNextStep,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    await this.usersService.saveNextStep(req.user?.id, body);
+    return { success: true };
   }
 }

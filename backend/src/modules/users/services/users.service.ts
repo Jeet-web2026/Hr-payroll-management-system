@@ -11,7 +11,15 @@ import {
 import { LoginStatus, User, UserRole, UserStatus } from '../models/user.entity';
 import { UserDataDto } from '../../../comon/dto/auth/userData.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, LessThan, Repository } from 'typeorm';
+import {
+  Between,
+  DataSource,
+  DeepPartial,
+  EntityManager,
+  In,
+  LessThan,
+  Repository,
+} from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { SocialAuthDto } from '../../../comon/dto/auth/socialAuth.dto';
 import { PaginatedResponse } from '../../../comon/interfaces/paginatedDataresponse.interface';
@@ -24,14 +32,24 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UsercreatedEvent } from '../../mail/events/mail.event';
 import { StatisticsResult } from '../types/dashboardstat.type';
 import { DateRanges } from '../types/dashboardstatdaterange.type';
+import { UserDetails } from '../models/userDetails.entity';
+import { UserEmployment } from '../models/userEmplyment.entity';
+import { UserPermissionManagement } from '../models/userPermissionManagement.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserPermissions)
     private readonly userPermissionMangementrepository: Repository<UserPermissions>,
+    @InjectRepository(UserDetails)
+    private readonly userDetailsRepository: Repository<UserDetails>,
+    @InjectRepository(UserEmployment)
+    private readonly userEmploymentRepository: Repository<UserEmployment>,
+    @InjectRepository(UserPermissionManagement)
+    private readonly userPermissionManagementRepository: Repository<UserPermissionManagement>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly eventService: EventEmitter2,
@@ -50,6 +68,7 @@ export class UsersService {
         relations: ['employment', 'details'],
         withDeleted: true,
       });
+
       const userPermissions = await this.usersPermissionManagement(user);
 
       const response = {
@@ -112,8 +131,11 @@ export class UsersService {
   async updateUser(
     userId: string,
     updateUserDto: Partial<User>,
+    manager?: EntityManager,
   ): Promise<User> {
-    const user = await this.userRepository.findOne({
+    const repo = manager ? manager.getRepository(User) : this.userRepository;
+
+    const user = await repo.findOne({
       where: { id: userId },
       withDeleted: true,
       relations: ['employment', 'details'],
@@ -123,9 +145,9 @@ export class UsersService {
       throw new NotFoundException('User does not exist.');
     }
 
-    Object.assign(user, updateUserDto);
+    repo.merge(user, updateUserDto);
 
-    return await this.userRepository.save(user);
+    return await repo.save(user);
   }
 
   async socialLogin(userData: SocialAuthDto, ipAddress: string) {
@@ -149,7 +171,7 @@ export class UsersService {
           email: userData.email,
           password: hashedPassword,
           role: null,
-          status: UserStatus.ACTIVE,
+          status: UserStatus.INACTIVE,
           otp: null,
           otpExpiry: null,
           profilePicture: userData.picture,
@@ -631,6 +653,75 @@ export class UsersService {
     return this.getStatChartData(role);
   }
 
+  async editUserDetails(userid: string, dto: any, manager?: EntityManager) {
+    const repo = manager
+      ? manager.getRepository(UserDetails)
+      : this.userDetailsRepository;
+
+    let userDetail = await repo.findOne({
+      where: { user: { id: userid } },
+    });
+
+    if (userDetail) {
+      repo.merge(userDetail, dto);
+    } else {
+      userDetail = repo.create({
+        ...dto,
+        user: { id: userid },
+      } as DeepPartial<UserDetails>);
+    }
+
+    return await repo.save(userDetail);
+  }
+
+  async editUserEmploymentDetails(
+    userId: string,
+    dto: any,
+    manager?: EntityManager,
+  ) {
+    const repo = manager
+      ? manager.getRepository(UserEmployment)
+      : this.userEmploymentRepository;
+
+    let userEmploymentDetail = await repo.findOne({
+      where: { user: { id: userId } },
+    });
+
+    if (userEmploymentDetail) {
+      repo.merge(userEmploymentDetail, dto);
+    } else {
+      userEmploymentDetail = repo.create({
+        ...dto,
+        user: { id: userId },
+      } as DeepPartial<UserEmployment>);
+    }
+
+    return await repo.save(userEmploymentDetail);
+  }
+
+  async saveNextStep(userId: string, body: any) {
+    try {
+      const { role, ...details } = body;
+      const employmentDetails = {
+        employeeCode: body.joiningId,
+        joiningDate: body.joininDate,
+      };
+      await this.dataSource.transaction(async (manager) => {
+        await this.updateUser(userId, { role, lastLogin: new Date() }, manager);
+        await this.editUserDetails(userId, { dob: details.dob }, manager);
+        await this.editUserEmploymentDetails(
+          userId,
+          employmentDetails,
+          manager,
+        );
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
   private async getStatChartData(
     userRole: UserRole,
     monthDate: Date = new Date(),
@@ -721,4 +812,18 @@ export class UsersService {
     const d = new Date(date);
     return d.toISOString().split('T')[0];
   }
+
+  // private async userPermissionManagement(userId: string, data: object) {
+  //   let permissiondata = await this.userPermissionManagementRepository.find({
+  //     where: { user: { id: userId } },
+  //   });
+
+  //   if (permissiondata) {
+  //     Object.assign(permissiondata, data);
+  //   } else {
+  //     permissiondata = this.userPermissionManagementRepository.create(data);
+  //   }
+
+  //   return await this.userPermissionManagementRepository.save(permissiondata)
+  // }
 }
