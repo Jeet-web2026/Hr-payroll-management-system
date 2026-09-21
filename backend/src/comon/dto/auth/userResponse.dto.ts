@@ -1,4 +1,12 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
+
+@Exclude()
+export class UserDetailsDto {
+  @Expose() id!: string;
+  @Expose() dob!: Date;
+  @Expose() address!: string;
+  @Expose() companyUanNumber!: string;
+}
 
 @Exclude()
 export class UserResponseDto {
@@ -33,11 +41,8 @@ export class UserResponseDto {
   };
 
   @Expose()
-  details?: {
-    id: string;
-    dob: Date;
-    address: string;
-  };
+  @Type(() => UserDetailsDto)
+  details?: UserDetailsDto;
 
   @Expose()
   message?: string;

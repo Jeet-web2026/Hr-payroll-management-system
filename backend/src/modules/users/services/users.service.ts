@@ -69,6 +69,8 @@ export class UsersService {
         withDeleted: true,
       });
 
+      console.log(user);
+
       const userPermissions = await this.usersPermissionManagement(user);
 
       const response = {
