@@ -20,8 +20,6 @@ export const Userview = () => {
                 setLoading(true);
                 const data = await apiService.get(`user/${userId}`, {});
                 setData(data.data.data);
-
-                console.log(data.data.data)
             } catch (error) {
                 toast.error("Failed to fetch user data", { position: "top-right", richColors: true });
             } finally {
@@ -191,20 +189,22 @@ export const Userview = () => {
                                     </h3>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
-                                            <div className="flex items-center gap-3">
-                                                <div className="h-12 w-12 flex items-center justify-center bg-red-100 rounded-lg">
-                                                    📄
-                                                </div>
+                                        {data && data.details?.companyUanNumber &&
+                                            <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-12 w-12 flex items-center justify-center bg-red-100 rounded-lg">
+                                                        No.
+                                                    </div>
 
-                                                <div>
-                                                    <p className="font-semibold">Aadhar Card</p>
-                                                    <p className="text-sm text-gray-500">
-                                                        PDF Document
-                                                    </p>
+                                                    <div>
+                                                        <p className="font-semibold">UEN Number</p>
+                                                        <p className="text-sm text-gray-500">
+                                                            {data.details?.companyUanNumber}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
 
                                         <div className="p-5 border rounded-xl hover:shadow-md transition">
                                             <div className="flex items-center gap-3">
@@ -235,8 +235,23 @@ export const Userview = () => {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div className="p-5 border rounded-xl hover:shadow-md transition">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 flex items-center justify-center bg-red-100 rounded-lg">
+                                                    📄
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-semibold">Voter ID</p>
+                                                    <p className="text-sm text-gray-500">
+                                                        PDF Document
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                         {data && data.role !== 'company' && <>
-                                        
+
                                             <div className="p-5 border rounded-xl hover:shadow-md transition">
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-12 w-12 flex items-center justify-center bg-blue-100 rounded-lg">

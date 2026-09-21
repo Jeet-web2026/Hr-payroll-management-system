@@ -32,6 +32,7 @@ export type UserDatatype = {
         id?: string;
         dob?: Date;
         address?: string;
+        companyUanNumber: string;
     };
 };
 

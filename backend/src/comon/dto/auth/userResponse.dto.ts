@@ -9,6 +9,24 @@ export class UserDetailsDto {
 }
 
 @Exclude()
+export class UserEmploymentDetailsDto {
+  @Expose() id!: string;
+  @Expose() employeeId!: string;
+  @Expose() companyName!: string;
+  @Expose() department?: string;
+  @Expose() designation?: string;
+  @Expose() headOfDepartment?: string;
+  @Expose() manager?: string;
+  @Expose() joiningDate!: Date;
+  @Expose() leavingDate?: Date;
+  @Expose() salary?: number;
+  @Expose() employmentStatus!: string;
+  @Expose() employmentType?: string;
+  @Expose() employeeCode?: string;
+  @Expose() workLocation?: string;
+}
+
+@Exclude()
 export class UserResponseDto {
   @Expose() id!: string;
   @Expose() firstName!: string;
@@ -23,22 +41,8 @@ export class UserResponseDto {
   @Expose() profilePicture!: string;
 
   @Expose()
-  employment?: {
-    id: string;
-    employeeId: string;
-    companyName: string;
-    department?: string;
-    designation?: string;
-    headOfDepartment?: string;
-    manager?: string;
-    joiningDate: Date;
-    leavingDate?: Date;
-    salary?: number;
-    employmentStatus: string;
-    employmentType?: string;
-    employeeCode?: string;
-    workLocation?: string;
-  };
+  @Type(() => UserDetailsDto)
+  employment?: UserEmploymentDetailsDto;
 
   @Expose()
   @Type(() => UserDetailsDto)
