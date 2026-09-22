@@ -37,7 +37,6 @@ import { useCurrentUser } from "@/hooks/userData";
 
 export default function Settings() {
     const { data: currentUser } = useCurrentUser();
-    console.log(currentUser);
 
     return (
         <DashboardLayout sideHeader="Settings">
