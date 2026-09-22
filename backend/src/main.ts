@@ -11,10 +11,12 @@ import { HttpExceptionFilter } from './comon/exceptions/http-exception.filter';
 import { GlobalResponseInterceptor } from './comon/interceptors/globalSuccessResponse.interceptor';
 import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 
 async function bootstrap() {
   process.env.TZ = 'Asia/Kolkata';
   const app = await NestFactory.create(AppModule);
+  app.use(helmet())
   app.use(cookieParser());
   app.setGlobalPrefix('api');
   app.enableCors({
@@ -55,7 +57,7 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
-  const apiUrl = process.env.BASE_URL ?? 'http://localhost:4000';
+  const apiUrl = process.env.BASE_URL ?? `http://localhost:${process.env.PORT}`;
 
   const config = new DocumentBuilder()
     .setTitle('TeamHub API Documentation')
