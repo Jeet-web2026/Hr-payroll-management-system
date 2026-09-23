@@ -1,0 +1,2 @@
+export const MAX_ATTEMPT_FOR_AUTHENTICATION = 5;
+export const MAX_REQ_SECOND = 60;

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
@@ -16,6 +16,8 @@ import { PermissionmanagementService } from './modules/permissionmanagement/serv
 import { PermissionmanagementcontrollerController } from './modules/permissionmanagement/controller/permissionmanagementcontroller.controller';
 import { BaseConfig } from './comon/configaration/config';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { RedisModule } from './modules/cache/redis.module';
+import { AuthRateLimiterMiddleware } from './comon/middlewares/authrateLimiter.middleware';
 
 @Module({
   imports: [
@@ -34,7 +36,9 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
       useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
         type: configService.get<'postgres'>('database.type'),
         url: configService.get('database.dbUrl'),
-        autoLoadEntities: configService.get<boolean>('database.autoloadEntities'),
+        autoLoadEntities: configService.get<boolean>(
+          'database.autoloadEntities',
+        ),
         synchronize: configService.get<boolean>('database.synchronize'),
         ssl: {
           rejectUnauthorized: false,
@@ -50,8 +54,13 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     }),
     PermissionmanagementModule,
     NotificationsModule,
+    RedisModule,
   ],
   controllers: [AppController, PermissionmanagementcontrollerController],
   providers: [AppService, PermissionmanagementService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthRateLimiterMiddleware).forRoutes('auth/signin');
+  }
+}

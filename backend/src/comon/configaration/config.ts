@@ -10,9 +10,7 @@ export const BaseConfig = () => ({
     synchronize: process.env.NODE_ENV === 'development',
   },
   redis: {
-    password: process.env.REDIS_PASSWORD,
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
+    url: process.env.REDIS_URL,
   },
   socialAuth: {
     facebook: {
