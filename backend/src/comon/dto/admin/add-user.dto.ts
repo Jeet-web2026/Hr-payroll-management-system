@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsObject,
+  IsOptional,
   IsString,
   Matches,
   MinLength,
@@ -33,7 +34,7 @@ export class AddUserFromAdmin {
     description: 'UAN number of the company.',
     example: '1234567890`',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   uanNumber?: string;
 
