@@ -370,9 +370,12 @@ export function EditUser() {
                         </div>
                     </>
                 ) : (
-                    <div className="min-h-screen">
-                        <Card className="p-0">
-                            <Skeleton className="min-h-screen" />
+                    <div className="flex flex-col md:flex-row gap-5">
+                        <Card className="p-0 w-1/3">
+                            <Skeleton className="min-h-[550px]" />
+                        </Card>
+                        <Card className="p-0 w-2/3">
+                            <Skeleton className="min-h-[550px]" />
                         </Card>
                     </div>
                 )}
