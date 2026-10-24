@@ -146,6 +146,7 @@ export class UsersService {
     }
 
     repo.merge(user, updateUserDto);
+    await this.cacheManager.del(`user:${user.id}`);
 
     return await repo.save(user);
   }

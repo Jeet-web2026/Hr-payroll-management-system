@@ -1,40 +1,41 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import apiService from "../api/apiService";
 import { TokenService } from "../api/tokenService";
 import { GuestLayout } from "../guestLayout";
+import { useCurrentUser } from "@/hooks/userData";
+
+const FullPageSpinner = () => (
+    <GuestLayout>
+        <span className="animate-spin text-4xl"><i className="ri-loader-2-line"></i></span>
+    </GuestLayout>
+);
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
+    const [tokenReady, setTokenReady] = useState(!!TokenService.get());
+    const [tokenFailed, setTokenFailed] = useState(false);
 
     useEffect(() => {
-        const checkAuth = async () => {
-            const token = TokenService.get();
+        if (tokenReady) return;
 
-            if (token) {
-                setLoading(false);
-                return;
-            }
-
+        const getToken = async () => {
             try {
                 const res = await apiService.post("/auth/refresh", {});
                 TokenService.set(res.data.data.accessToken);
+                setTokenReady(true);
             } catch {
-                navigate("/");
-            } finally {
-                setLoading(false);
+                setTokenFailed(true);
             }
         };
 
-        checkAuth();
-    }, []);
+        getToken();
+    }, [tokenReady]);
 
-    if (loading) return <>
-        <GuestLayout>
-            <span className="animate-spin text-4xl"><i className="ri-loader-2-line"></i></span>
-        </GuestLayout>
-    </>;
+    const { data: user, isPending, isError } = useCurrentUser({ enabled: tokenReady });
+
+    if (tokenFailed) return <Navigate to="/" />;
+    if (!tokenReady || isPending) return <FullPageSpinner />;
+    if (isError || !user) return <Navigate to="/" />;
 
     return <>{children}</>;
 };

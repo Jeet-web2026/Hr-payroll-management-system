@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { DashboardLayout } from "@/comon/dashboardLayout";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import apiService from "@/comon/api/apiService";
 import { toast } from "sonner";
@@ -356,9 +356,11 @@ export function EditUser() {
                                             </TabsContent>
 
                                             <div className="flex lg:flex-row flex-col justify-end items-center gap-3 mt-5 mb-2.5">
-                                                <Button variant="outline" className="p-4">
-                                                    Cancel
-                                                </Button>
+                                                <Link to={"/manage-permissions"}>
+                                                    <Button variant="outline" className="p-4">
+                                                        Cancel
+                                                    </Button>
+                                                </Link>
                                                 <Button className="p-4">
                                                     Save Changes
                                                 </Button>

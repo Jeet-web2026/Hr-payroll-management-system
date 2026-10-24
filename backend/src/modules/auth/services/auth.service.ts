@@ -176,6 +176,7 @@ export class AuthService {
       }
 
       const accessToken = await this.getAccessToken(user);
+      await this.cacheManager.clear();
       return { accessToken };
     } catch (error) {
       throw new UnauthorizedException('Login expired. Please login again.');
