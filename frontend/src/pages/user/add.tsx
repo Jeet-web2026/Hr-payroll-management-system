@@ -133,7 +133,6 @@ export function AddUser() {
 
         } catch (error: any) {
             setErrors(error.response.data.errors);
-            toast.error(error.response.data.message);
         } finally {
             setIsSubmitting(false);
         }

@@ -38,7 +38,7 @@ export class MailListener {
   @OnEvent('mail.reset-password', { async: true })
   async handleResetPasswordEmail(event: ResetPasswordMailEvent) {
     try {
-      await this.mailService.sendResetPasswordEmail(event.to, event.token);
+      await this.mailService.sendResetPasswordEmail(event.to, event.data);
       this.logger.log(`✅ Reset password email sent to ${event.to}`);
     } catch (error) {
       this.logger.error(`❌ Failed to send reset email to ${event.to}`, error);

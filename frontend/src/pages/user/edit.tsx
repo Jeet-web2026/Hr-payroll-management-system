@@ -28,6 +28,8 @@ import type { UserDatatype } from "@/comon/types/user/userDatatype";
 import { Textarea } from "@/components/ui/textarea";
 import { useCurrentUser } from "@/hooks/userData";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Field, FieldGroup } from "@/components/ui/field";
 
 export function EditUser() {
     const param = useParams();
@@ -36,6 +38,9 @@ export function EditUser() {
 
     const [userData, setUserData] = useState<UserDatatype | null>(null);
     const [loading, setLoading] = useState(false);
+    const [resetformloading, setresetformLoading] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
+    const [typepassword, setTypepassword] = useState(true);
 
     const fetchUserData = async () => {
         setLoading(true);
@@ -79,6 +84,53 @@ export function EditUser() {
         const year = dob ? new Date(dob).getFullYear() : '';
         return `${first}${last}${year}`;
     };
+
+    const resetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        const password = String(formData.get('password') ?? '');
+        const confirmPassword = String(formData.get('confirm_password') ?? '');
+
+        if (!password || !confirmPassword) {
+            setPasswordError('Please fill in both fields.');
+            return;
+        }
+
+        if (password.length < 8) {
+            setPasswordError('Password must be at least 8 characters.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setPasswordError('Passwords do not match.');
+            return;
+        }
+
+        setresetformLoading(true);
+        try {
+            const response = await apiService.patch(`/user/update/${userId}`, {
+                password,
+            });
+            setUserData(response.data?.data);
+            fetchUserData();
+            toast.success('Password updated successfully!');
+            form.reset();
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'Failed to update password.');
+        } finally {
+            setresetformLoading(false);
+        }
+    };
+
+    const viewActualPassword = () => {
+        if (typepassword) {
+            setTypepassword(false)
+        } else {
+            setTypepassword(true)
+        }
+    }
 
     return (
         <DashboardLayout sideHeader={`Edit ${currentUser.role === 'admin' ? "Company" : "Candidate"}`}>
@@ -149,12 +201,74 @@ export function EditUser() {
                                         <Separator className="my-5" />
 
                                         <div className="space-y-2">
-                                            <Button
-                                                variant="outline"
-                                                className="w-full"
-                                            >
-                                                Reset Password
-                                            </Button>
+                                            <Dialog>
+                                                <DialogTrigger className="w-full">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full"
+                                                    >
+                                                        Reset Password
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-sm">
+                                                    <form onSubmit={resetPassword}>
+                                                        <DialogHeader>
+                                                            <DialogTitle>Change Password</DialogTitle>
+                                                            <DialogDescription>
+                                                                Make changes to your profile here. Click save when you&apos;re
+                                                                done.
+                                                            </DialogDescription>
+                                                        </DialogHeader>
+                                                        <FieldGroup className="my-5">
+                                                            <Field>
+                                                                <Label htmlFor="password">Password</Label>
+                                                                <div className="flex flex-row items-center">
+                                                                    <Input
+                                                                        id="password"
+                                                                        name="password"
+                                                                        type={typepassword ? "password" : "text"}
+                                                                        autoComplete="new-password"
+                                                                        aria-invalid={!!passwordError}
+                                                                        className="rounded-r-none"
+                                                                        onChange={() => passwordError && setPasswordError('')}
+                                                                    />
+                                                                    <Button className="rounded-l-none text-lg py-3" type="button" variant={"outline"} onClick={viewActualPassword}>
+                                                                        <i className={typepassword ? "ri-eye-line" : "ri-eye-close-line"}></i>
+                                                                    </Button>
+                                                                </div>
+                                                            </Field>
+                                                            <Field>
+                                                                <Label htmlFor="confirm_password">Confirm Password</Label>
+                                                                <Input
+                                                                    id="confirm_password"
+                                                                    name="confirm_password"
+                                                                    type="password"
+                                                                    autoComplete="new-password"
+                                                                    aria-invalid={!!passwordError}
+                                                                    onChange={() => passwordError && setPasswordError('')}
+                                                                />
+                                                            </Field>
+                                                        </FieldGroup>
+
+                                                        {passwordError && (
+                                                            <p role="alert" className="text-sm text-destructive -mt-3 mb-3">
+                                                                {passwordError}
+                                                            </p>
+                                                        )}
+                                                        <DialogFooter>
+                                                            <DialogTrigger>
+                                                                <Button variant="outline">Cancel</Button>
+                                                            </DialogTrigger>
+                                                            <Button type="submit">
+                                                                {resetformloading ? <>
+                                                                    <i className="ri-loader-2-line animate-spin"></i>
+                                                                    Saving Changes</> : <>Save Changes</>}
+                                                            </Button>
+                                                        </DialogFooter>
+                                                    </form>
+                                                </DialogContent>
+                                            </Dialog>
+
                                             {userData.status === 'suspended' ? (
                                                 <>
                                                     <Button onClick={() => activateAccount(userData.id)} className="w-full">

@@ -91,20 +91,34 @@ export class MailService {
     });
   }
 
-  async sendResetPasswordEmail(to: string, token: string): Promise<void> {
-    const resetUrl = `${this.configService.get<string>('frontendUrl')}/reset-password?token=${token}`;
+  async sendResetPasswordEmail(to: string, data: any): Promise<void> {
     await this.mailerService.sendMail({
       to,
-      subject: 'Reset Your Password',
+      subject: 'Your password reset successfully!',
       html: `
-        <h2>Reset Your Password</h2>
-        <p>This link expires in <strong>15 minutes</strong>.</p>
-        <a href="${resetUrl}" 
-            style="padding: 10px 20px; background: #4F46E5; color: white; 
-                    border-radius: 5px; text-decoration: none;">
-            Reset Password
-        </a>
-        <p>If you didn't request this, please ignore this email.</p>
+        <h2>Hi, ${data.name}</h2>
+        <h2>${data.body}</h2>
+        <div
+            style="
+              background-color: #F8FAFC;
+              padding: 15px;
+              border-radius: 6px;
+              margin: 20px 0;
+            "
+          >
+            <p style="margin: 0;">
+              <strong>Email:</strong> ${data.loginId}
+            </p>
+            <p style="margin: 10px 0 0;">
+              <strong>Passowrd:</strong> ${data.password}
+            </p>
+
+            <p style="color: red;">*Please do not share your creadentials with anyone.</p>
+          </div>
+
+          <p>
+            If you have any questions or need assistance, please contact your administrator team.
+          </p>
      `,
     });
   }

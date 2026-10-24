@@ -10,7 +10,7 @@ export class WelcomeMailEvent {
 export class ResetPasswordMailEvent {
   constructor(
     public readonly to: string,
-    public readonly token: string,
+    public readonly data: any,
   ) {}
 }
 

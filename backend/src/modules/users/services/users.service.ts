@@ -29,7 +29,7 @@ import type { Cache } from 'cache-manager';
 import { UserPermissions } from '../models/userPermissions.entity';
 import { AddUserFromAdmin } from '../../../comon/dto/admin/add-user.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { UsercreatedEvent } from '../../mail/events/mail.event';
+import { ResetPasswordMailEvent, UsercreatedEvent } from '../../mail/events/mail.event';
 import { StatisticsResult } from '../types/dashboardstat.type';
 import { DateRanges } from '../types/dashboardstatdaterange.type';
 import { UserDetails } from '../models/userDetails.entity';
@@ -143,6 +143,21 @@ export class UsersService {
 
     if (!user) {
       throw new NotFoundException('User does not exist.');
+    }
+
+    if (updateUserDto.password) {
+      this.eventService.emit(
+        'mail.reset-password',
+        new ResetPasswordMailEvent(user.email, {
+          body: `Your password reset successfully. Don't share these credentials with anyone.`,
+          name: user.firstName + user.lastName,
+          loginId: user.email,
+          password: updateUserDto.password,
+          permissionData: updateUserDto,
+          userId: user.id,
+        }),
+      );
+      updateUserDto.password = await this.hashPassword(updateUserDto.password);
     }
 
     repo.merge(user, updateUserDto);
@@ -547,7 +562,7 @@ export class UsersService {
         address: body.address,
         dob: body.establishedAt,
         companyUanNumber: body.uanNumber,
-      }
+      },
     });
 
     const newUser = await this.userRepository.save(newlyCreatedUser);
@@ -854,5 +869,9 @@ export class UsersService {
     }
 
     return;
+  }
+
+  private hashPassword(password: string) {
+    return bcrypt.hash(password, 10);
   }
 }
