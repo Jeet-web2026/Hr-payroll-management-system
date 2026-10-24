@@ -25,6 +25,7 @@ import apiService from "@/comon/api/apiService";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { UserDatatype } from "@/comon/types/user/userDatatype";
+import { Textarea } from "@/components/ui/textarea";
 
 export function EditUser() {
     const param = useParams();
@@ -64,7 +65,6 @@ export function EditUser() {
     useEffect(() => {
         fetchUserData();
     }, []);
-
     return (
         <DashboardLayout sideHeader="Edit User">
             <div className="min-h-screen bg-muted/30 p-6">
@@ -72,7 +72,7 @@ export function EditUser() {
                     <>
                         <div className="grid gap-6 lg:grid-cols-12">
                             <div className="lg:col-span-3">
-                                <Card>
+                                <Card className="h-full">
                                     <CardContent className="pt-6">
                                         <div className="flex flex-col items-center">
                                             <Avatar className="h-28 w-28">
@@ -84,9 +84,11 @@ export function EditUser() {
                                                 {userData.firstName} {userData.lastName}
                                             </h2>
 
-                                            <p className="text-sm text-muted-foreground">
-                                                Full Stack Developer
-                                            </p>
+                                            {userData.role !== 'company' && <>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {userData.designation}
+                                                </p>
+                                            </>}
 
                                             <Badge className="mt-3 capitalize">
                                                 {userData.status}
@@ -98,28 +100,33 @@ export function EditUser() {
                                         <div className="space-y-4 text-sm">
                                             <div>
                                                 <p className="text-muted-foreground">
-                                                    Employee ID
+                                                    {userData.role === 'company' ? "UAN Number" : "Employee ID"}
                                                 </p>
                                                 <p className="font-medium">
-                                                    EMP-1001
+                                                    {userData.role === 'company' ? userData.details?.companyUanNumber : userData.employment?.employeeId}
                                                 </p>
                                             </div>
+                                            {userData.role !== 'company' && <>
+                                                <div>
+                                                    <p className="text-muted-foreground">
+                                                        Department
+                                                    </p>
+                                                    <p className="font-medium">
+                                                        Engineering
+                                                    </p>
+                                                </div>
+                                            </>}
 
                                             <div>
                                                 <p className="text-muted-foreground">
-                                                    Department
+                                                    {userData.role === 'company' ? "Established" : "Joining"} Date
                                                 </p>
                                                 <p className="font-medium">
-                                                    Engineering
-                                                </p>
-                                            </div>
-
-                                            <div>
-                                                <p className="text-muted-foreground">
-                                                    Joined Date
-                                                </p>
-                                                <p className="font-medium">
-                                                    01 Jan 2025
+                                                    {userData.details?.dob ? new Date(userData.details?.dob).toLocaleDateString("en-IN", {
+                                                        day: "2-digit",
+                                                        month: "short",
+                                                        year: "numeric",
+                                                    }) : "N/A"}
                                                 </p>
                                             </div>
                                         </div>
@@ -148,7 +155,7 @@ export function EditUser() {
                             </div>
 
                             <div className="lg:col-span-9">
-                                <Card>
+                                <Card className="h-full">
                                     <CardHeader>
                                         <CardTitle>
                                             Update Details
@@ -157,14 +164,16 @@ export function EditUser() {
 
                                     <CardContent>
                                         <Tabs defaultValue="personal">
-                                            <TabsList className="grid w-full grid-cols-3" style={{ height: "45px" }}>
+                                            <TabsList className={`grid w-full ${userData.role !== 'company' ? 'grid-cols-3' : 'grid-cols-2'
+                                                }`} style={{ height: "45px" }}>
                                                 <TabsTrigger value="personal">
                                                     Personal
                                                 </TabsTrigger>
-
-                                                <TabsTrigger value="employment">
-                                                    Employment
-                                                </TabsTrigger>
+                                                {userData.role !== 'company' && <>
+                                                    <TabsTrigger value="employment">
+                                                        Employment
+                                                    </TabsTrigger>
+                                                </>}
 
                                                 <TabsTrigger value="account">
                                                     Account
@@ -194,57 +203,62 @@ export function EditUser() {
                                                         <Input className="h-9.5" value={userData.phone} disabled />
                                                     </div>
 
-                                                    <div>
-                                                        <Label className="mb-3">Date of Birth</Label>
-                                                        <Input type="date" />
-                                                    </div>
+                                                    {userData.role !== 'company' && <>
+                                                        <div>
+                                                            <Label className="mb-3">Date of Birth</Label>
+                                                            <Input type="date" />
+                                                        </div>
 
-                                                    <div>
-                                                        <Label className="mb-3">Gender</Label>
-                                                        <Input className="h-9.5" />
-                                                    </div>
+                                                        <div>
+                                                            <Label className="mb-3">Gender</Label>
+                                                            <Input className="h-9.5" />
+                                                        </div>
+                                                    </>}
 
                                                     <div className="md:col-span-2">
                                                         <Label className="mb-3">Address</Label>
-                                                        <Input className="h-9.5" />
+                                                        <Textarea>
+                                                            {userData.details?.address}
+                                                        </Textarea>
                                                     </div>
                                                 </div>
                                             </TabsContent>
+                                            {userData.role !== 'company' && <>
+                                                <TabsContent value="employment">
+                                                    <div className="grid gap-4 md:grid-cols-2 mt-6">
 
-                                            <TabsContent value="employment">
-                                                <div className="grid gap-4 md:grid-cols-2 mt-6">
+                                                        <div>
+                                                            <Label className="mb-3">Designation</Label>
+                                                            <Input className="h-9.5" />
+                                                        </div>
 
-                                                    <div>
-                                                        <Label className="mb-3">Designation</Label>
-                                                        <Input className="h-9.5" />
+                                                        <div>
+                                                            <Label className="mb-3">Department</Label>
+                                                            <Input className="h-9.5" />
+                                                        </div>
+
+                                                        <div>
+                                                            <Label className="mb-3">Joining Date</Label>
+                                                            <Input type="date" />
+                                                        </div>
+
+                                                        <div>
+                                                            <Label className="mb-3">Manager</Label>
+                                                            <Input className="h-9.5" />
+                                                        </div>
+
+                                                        <div>
+                                                            <Label className="mb-3">Salary</Label>
+                                                            <Input className="h-9.5" />
+                                                        </div>
+
+                                                        <div>
+                                                            <Label className="mb-3">Employment Type</Label>
+                                                            <Input className="h-9.5" />
+                                                        </div>
                                                     </div>
-
-                                                    <div>
-                                                        <Label className="mb-3">Department</Label>
-                                                        <Input className="h-9.5" />
-                                                    </div>
-
-                                                    <div>
-                                                        <Label className="mb-3">Joining Date</Label>
-                                                        <Input type="date" />
-                                                    </div>
-
-                                                    <div>
-                                                        <Label className="mb-3">Manager</Label>
-                                                        <Input className="h-9.5" />
-                                                    </div>
-
-                                                    <div>
-                                                        <Label className="mb-3">Salary</Label>
-                                                        <Input className="h-9.5" />
-                                                    </div>
-
-                                                    <div>
-                                                        <Label className="mb-3">Employment Type</Label>
-                                                        <Input className="h-9.5" />
-                                                    </div>
-                                                </div>
-                                            </TabsContent>
+                                                </TabsContent>
+                                            </>}
 
                                             <TabsContent value="account">
                                                 <div className="grid gap-4 md:grid-cols-2 mt-6">

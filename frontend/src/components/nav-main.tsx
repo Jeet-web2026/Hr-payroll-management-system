@@ -11,7 +11,7 @@ import { Bell, Settings } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export function NavMain({
-  items, permissions
+  items, permissions, currentUser
 }: {
   items: {
     title: string
@@ -19,6 +19,7 @@ export function NavMain({
     icon?: React.ReactNode
   }[]
   permissions?: UserPermission | null
+  currentUser?: any
 }) {
   return (
     <SidebarGroup>
@@ -33,7 +34,7 @@ export function NavMain({
                 <Link to="/manage-permissions" className="flex gap-2 items-center">
                   <Settings
                   />
-                  <span>Manage Permissions</span>
+                  <span>Manage {currentUser.role === 'admin' ? 'Company' : 'Candidate'}</span>
                 </Link>
               </SidebarMenuButton>
             ] : []}

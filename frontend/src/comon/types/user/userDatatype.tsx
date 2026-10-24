@@ -45,6 +45,7 @@ export type UserPermission = {
     payrollManagement?: boolean;
     leaveManagement?: boolean;
     recruitmentManagement?: boolean;
+    joininRequestInvitation?: boolean;
     dashboard?: {
         totalEmployeeCount?: boolean;
         newJoineesCount?: boolean;

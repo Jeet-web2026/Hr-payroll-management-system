@@ -546,7 +546,7 @@ export class UsersService {
         address: body.address,
         dob: body.establishedAt,
         companyUanNumber: body.uanNumber,
-      },
+      }
     });
 
     const newUser = await this.userRepository.save(newlyCreatedUser);
@@ -576,6 +576,7 @@ export class UsersService {
       payrollManagement: false,
       leaveManagement: false,
       recruitmentManagement: false,
+      joininRequestInvitation: true,
       dashboard: {
         totalEmployeeCount: true,
         newJoineesCount: true,

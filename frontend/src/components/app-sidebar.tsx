@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, MailIcon, CalendarClock, IdCardLanyard, ChartAreaIcon, ClipboardSignatureIcon, CalendarX, ScanSearchIcon } from "lucide-react"
+import { LayoutDashboardIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, MailIcon, CalendarClock, IdCardLanyard, ChartAreaIcon, ClipboardSignatureIcon, CalendarX, ScanSearchIcon, UserStar } from "lucide-react"
 import { toast } from "sonner"
 import { Skeleton } from "./ui/skeleton"
 import logo from "@/assets/images/logo.png"
@@ -82,6 +82,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Employees",
             url: "#",
             icon: <IdCardLanyard />,
+          },
+        ]
+        : []),
+      ...(permissionData && permissionData.joininRequestInvitation
+        ? [
+          {
+            title: "Joining Requests",
+            url: "/joining-requests",
+            icon: <UserStar />,
           },
         ]
         : []),
@@ -187,7 +196,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} permissions={permissionData} />
+        <NavMain items={data.navMain} permissions={permissionData} currentUser={currentUser} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
