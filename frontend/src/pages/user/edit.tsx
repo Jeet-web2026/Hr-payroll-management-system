@@ -26,10 +26,13 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { UserDatatype } from "@/comon/types/user/userDatatype";
 import { Textarea } from "@/components/ui/textarea";
+import { useCurrentUser } from "@/hooks/userData";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function EditUser() {
     const param = useParams();
     const userId = param.userId;
+    const { data: currentUser } = useCurrentUser();
 
     const [userData, setUserData] = useState<UserDatatype | null>(null);
     const [loading, setLoading] = useState(false);
@@ -65,8 +68,20 @@ export function EditUser() {
     useEffect(() => {
         fetchUserData();
     }, []);
+
+    const generateUsername = (
+        firstName?: string,
+        lastName?: string,
+        dob?: string | Date
+    ) => {
+        const first = (firstName ?? '').trim().slice(0, 2).toLowerCase();
+        const last = (lastName ?? '').trim().slice(0, 2).toLowerCase();
+        const year = dob ? new Date(dob).getFullYear() : '';
+        return `${first}${last}${year}`;
+    };
+
     return (
-        <DashboardLayout sideHeader="Edit User">
+        <DashboardLayout sideHeader={`Edit ${currentUser.role === 'admin' ? "Company" : "Candidate"}`}>
             <div className="min-h-screen bg-muted/30 p-6">
                 {!loading && userData ? (
                     <>
@@ -265,22 +280,77 @@ export function EditUser() {
 
                                                     <div>
                                                         <Label className="mb-3">Username</Label>
-                                                        <Input className="h-9.5" />
+                                                        <Input
+                                                            className="h-9.5 uppercase"
+                                                            value={generateUsername(userData.firstName, userData.lastName, userData.details?.dob)}
+                                                            readOnly
+                                                        />
                                                     </div>
 
                                                     <div>
                                                         <Label className="mb-3">Role</Label>
-                                                        <Input className="h-9.5" />
+                                                        {currentUser.role === 'admin' ? (
+                                                            <Select
+                                                                value={userData.role}
+                                                                onValueChange={(value) =>
+                                                                    setUserData((prev) => ({ ...prev, role: value }))
+                                                                }
+                                                            >
+                                                                <SelectTrigger className="h-9.5 w-full capitalize">
+                                                                    <SelectValue placeholder="Select role" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="admin">Admin</SelectItem>
+                                                                    <SelectItem value="company">Company</SelectItem>
+                                                                    <SelectItem value="user">User</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        ) : (
+                                                            <Input
+                                                                className="h-9.5 capitalize"
+                                                                value={userData.role}
+                                                                readOnly
+                                                            />
+                                                        )}
                                                     </div>
 
                                                     <div>
                                                         <Label className="mb-3">Status</Label>
-                                                        <Input className="h-9.5" />
+                                                        {currentUser.role === 'admin' ? (
+                                                            <Select
+                                                                value={userData.status}
+                                                                onValueChange={(value) =>
+                                                                    setUserData((prev) => ({ ...prev, status: value }))
+                                                                }
+                                                            >
+                                                                <SelectTrigger className="h-9.5 w-full capitalize">
+                                                                    <SelectValue placeholder="Select status" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="active">Active</SelectItem>
+                                                                    <SelectItem value="inactive">Inactive</SelectItem>
+                                                                    <SelectItem value="suspended">Suspended</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        ) : (
+                                                            <Input
+                                                                className="h-9.5 capitalize"
+                                                                value={userData.status}
+                                                                readOnly
+                                                            />
+                                                        )}
                                                     </div>
 
                                                     <div>
                                                         <Label className="mb-3">Last Login</Label>
-                                                        <Input disabled />
+                                                        <Input
+                                                            readOnly
+                                                            value={
+                                                                userData.lastLogin
+                                                                    ? new Date(userData.lastLogin).toLocaleDateString('en-CA')
+                                                                    : ''
+                                                            }
+                                                        />
                                                     </div>
                                                 </div>
                                             </TabsContent>
