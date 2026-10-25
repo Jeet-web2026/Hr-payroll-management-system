@@ -19,6 +19,7 @@ import { AddUser } from './pages/user/add'
 import RoleSelection from './pages/others/role-selection'
 import NotificationManagement from './pages/others/notificationManagement'
 import Settings from './pages/settings/settings'
+import { JoininRequests } from './pages/join-requests/joiningrequests'
 
 function App() {
 
@@ -45,6 +46,12 @@ function App() {
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/joining-requests" element={
+          <ProtectedRoute>
+            <JoininRequests />
           </ProtectedRoute>
         } />
         <Route path="/inbox" element={
