@@ -198,16 +198,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="py-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
+              className="data-[slot=sidebar-menu-button]:p-1.5! h-11"
             >
               <Link to="/dashboard">
-                <img src={logo} alt="TeamHub" className="w-7 h-7" />
-                <span className="text-base font-semibold">TeamHub</span>
+                <img src={logo} alt="TeamHub" className="w-9 h-9" />
+                <span className="text-2xl font-semibold">TeamHub</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
