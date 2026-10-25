@@ -17,4 +17,6 @@ export interface UserPermission {
   leaveManagement?: boolean;
   recruitmentManagement?: boolean;
   joininRequestInvitation?: boolean;
+  billingManageMent?: boolean;
+  promotionManagement?: boolean;
 }

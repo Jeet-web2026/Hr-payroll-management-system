@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, MailIcon, CalendarClock, IdCardLanyard, ChartAreaIcon, ClipboardSignatureIcon, CalendarX, ScanSearchIcon, LucideHousePlus } from "lucide-react"
+import { LayoutDashboardIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, MailIcon, CalendarClock, IdCardLanyard, ChartAreaIcon, ClipboardSignatureIcon, CalendarX, ScanSearchIcon, LucideHousePlus, ChartNetwork, CreditCard } from "lucide-react"
 import { toast } from "sonner"
 import { Skeleton } from "./ui/skeleton"
 import logo from "@/assets/images/logo.png"
@@ -91,6 +91,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Joining Requests",
             url: "/joining-requests",
             icon: <LucideHousePlus />,
+          },
+        ]
+        : []),
+      ...(permissionData && permissionData.promotionManagement
+        ? [
+          {
+            title: "Promotion Management",
+            url: "/promotion-management",
+            icon: <ChartNetwork />,
+          },
+        ]
+        : []),
+      ...(permissionData && permissionData.billingManageMent
+        ? [
+          {
+            title: "Billing",
+            url: "/billing-management",
+            icon: <CreditCard />,
           },
         ]
         : []),

@@ -29,7 +29,10 @@ import type { Cache } from 'cache-manager';
 import { UserPermissions } from '../models/userPermissions.entity';
 import { AddUserFromAdmin } from '../../../comon/dto/admin/add-user.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ResetPasswordMailEvent, UsercreatedEvent } from '../../mail/events/mail.event';
+import {
+  ResetPasswordMailEvent,
+  UsercreatedEvent,
+} from '../../mail/events/mail.event';
 import { StatisticsResult } from '../types/dashboardstat.type';
 import { DateRanges } from '../types/dashboardstatdaterange.type';
 import { UserDetails } from '../models/userDetails.entity';
@@ -593,6 +596,8 @@ export class UsersService {
       leaveManagement: false,
       recruitmentManagement: false,
       joininRequestInvitation: true,
+      billingManageMent: true,
+      promotionManagement: true,
       dashboard: {
         totalEmployeeCount: true,
         newJoineesCount: true,
